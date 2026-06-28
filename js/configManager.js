@@ -286,6 +286,7 @@ const ConfigManager = {
         document.getElementById('nav-global-settings').addEventListener('click', () => this.editTopLevelField('global', 'Global App Settings'));
         document.getElementById('nav-reusable-text').addEventListener('click', () => this.editTopLevelField('reusableText', 'Reusable Texts'));
         document.getElementById('nav-parser-rules').addEventListener('click', () => this.editTopLevelField('parserRules', 'Alert Parser Rules'));
+        document.getElementById('nav-help-guide').addEventListener('click', () => this.editTopLevelField('HELP', 'Expression & Variable Guide'));
         document.getElementById('nav-master-json').addEventListener('click', () => this.editTopLevelField('MASTER', 'Entire Configuration JSON (Master)'));
     },
 
@@ -331,6 +332,138 @@ const ConfigManager = {
         const editorArea = document.getElementById('admin-editor-area');
         let targetData = fieldKey === 'MASTER' ? this.activeConfig : this.activeConfig[fieldKey] || {};
         
+        if (fieldKey === 'HELP') {
+            document.getElementById('admin-editor-area').innerHTML = `
+            <div class="h-full overflow-y-auto pr-2 pb-10 max-w-4xl mx-auto space-y-6">
+                
+                <!-- Main Header -->
+                <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 shadow-md">
+                    <h2 class="text-2xl font-black text-green-400 mb-2">Alarm Alert Assistant - Complete Admin & Configuration Guide</h2>
+                    <p class="text-gray-300 text-sm">Welcome to the <strong>Alarm Alert Assistant</strong>. This guide explains how to use <strong>Admin Mode</strong> to build, modify, and customize Alarm Profiles natively. This covers creating a profile, understanding its features, and using the built-in Expression Builder to make your forms and SOPs dynamic.</p>
+                </div>
+
+                <!-- 1. Entering Admin Mode -->
+                <div class="bg-gray-900 border border-gray-700 rounded-lg p-5">
+                    <h3 class="text-lg font-black text-yellow-400 mb-4 border-b border-yellow-900 pb-2">1. Entering Admin Mode & Creating a Profile</h3>
+                    <ul class="list-disc pl-5 space-y-2 text-sm text-gray-300">
+                        <li><strong>To access Admin Mode:</strong> Click the blue <code class="bg-blue-900 text-blue-200 px-1 rounded">Admin Mode</code> button in the top-right corner of the main screen.</li>
+                        <li><strong>To create a new Profile:</strong> Look at the left sidebar under "Alarm Profiles" and click the <code class="bg-gray-800 px-1 rounded font-mono">+</code> button.</li>
+                        <li>You will be prompted for an <strong>Alarm Code (ID)</strong> (e.g., <code class="text-pink-300 font-mono">RPL</code> or <code class="text-pink-300 font-mono">SCL</code>). This ID <em>must</em> match the parsed Alarm Type exactly so the system knows which profile to load when an alert is pasted.</li>
+                    </ul>
+                </div>
+
+                <!-- 2. Profile Config -->
+                <div class="bg-gray-900 border border-gray-700 rounded-lg p-5">
+                    <h3 class="text-lg font-black text-blue-400 mb-4 border-b border-blue-900 pb-2">2. Profile Configuration Breakdown</h3>
+                    <p class="text-sm text-gray-300 mb-4">Each Profile dictates exactly how the UI behaves when that specific Alarm is parsed.</p>
+                    
+                    <div class="space-y-4 text-sm text-gray-300">
+                        <div>
+                            <h4 class="font-bold text-gray-200">Identity</h4>
+                            <ul class="list-disc pl-5 mt-1 space-y-1 text-xs text-gray-400">
+                                <li><strong class="text-gray-300">Alarm Code (ID):</strong> The exact tag parsed from the raw alert string (e.g., <code class="text-pink-300 font-mono">GSP</code>).</li>
+                                <li><strong class="text-gray-300">Profile Name:</strong> The human-readable name of the alarm (e.g., General Suction Pressure).</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 class="font-bold text-gray-200">Investigation Phases</h4>
+                            <p class="text-xs">Phases break down your workflow into chronological steps (e.g., Phase 1: Diagnosis, Phase 2: Action).</p>
+                            <ul class="list-disc pl-5 mt-1 space-y-1 text-xs text-gray-400">
+                                <li><strong class="text-gray-300">ID & Title:</strong> Internal reference name and UI Display Name.</li>
+                                <li><strong class="text-gray-300">Sequence:</strong> The numbered order of the phase (1, 2, 3).</li>
+                                <li><strong class="text-gray-300">Activate If:</strong> A Javascript condition that determines when this phase unlocks (e.g., <code class="text-pink-300 font-mono">store_contact !== ""</code>).</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-gray-200">Generated Form Fields</h4>
+                            <p class="text-xs">This block generates the actual interactive questions the agent must answer.</p>
+                            <ul class="list-disc pl-5 mt-1 space-y-1 text-xs text-gray-400">
+                                <li><strong class="text-gray-300">ID (Ref):</strong> The variable name for the field (e.g., <code class="text-pink-300 font-mono">action_taken</code>). Do not use spaces.</li>
+                                <li><strong class="text-gray-300">Label (UI):</strong> The question shown to the user.</li>
+                                <li><strong class="text-gray-300">Type:</strong> Text Input, Text Area, Radio Group, Select (Dropdown), or Time.</li>
+                                <li><strong class="text-gray-300">Source Default:</strong> Matches native Parser extracts (like <code class="text-pink-300 font-mono">parsed_high_case</code>) to auto-fill forms.</li>
+                                <li><strong class="text-gray-300">Visible If:</strong> Javascript condition to pop up the field conditionally. Leave blank to always show.</li>
+                                <li><strong class="text-gray-300">Phase Assignment:</strong> The ID of the Phase this question belongs to.</li>
+                                <li><strong class="text-gray-300">Options:</strong> Comma-separated choices for Radio/Select.</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 class="font-bold text-gray-200">SOP Structure (Knowledge View)</h4>
+                            <p class="text-xs">SOP sections display your Wiki guides to the agent.</p>
+                            <ul class="list-disc pl-5 mt-1 space-y-1 text-xs text-gray-400">
+                                <li><strong class="text-gray-300">Title & HTML Content:</strong> Header and body (supports HTML and Tailwind).</li>
+                                <li><strong class="text-gray-300">Always Show:</strong> Check to force the SOP block to remain visible.</li>
+                                <li><strong class="text-gray-300">Show If:</strong> Evaluates against form data dynamically.</li>
+                                <li><strong class="text-gray-300">Show After Phase ID:</strong> Safely hooks the SOP to a specific Phase so it only appears when the agent reaches that step.</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 class="font-bold text-gray-200">Note Template</h4>
+                            <p class="text-xs">The architectural blueprint for the final copy/paste Work Order note. Place field IDs in curly braces <code class="text-pink-300 bg-gray-800 px-1 rounded font-mono">{action_taken}</code> to inject answers dynamically. You can also inject Reusable Text block variables (e.g., <code class="text-pink-300 bg-gray-800 px-1 rounded font-mono">{monitor_advisement}</code>).</p>
+                        </div>
+
+                        <div>
+                            <h4 class="font-bold text-gray-200">Crystal WorkOrder Hooks</h4>
+                            <p class="text-xs">Preset the Admin UI dropdowns so when an agent hits your specific Alarm Profile, the dropdowns automatically snap to the correct Crystal WorkOrder paths.</p>
+                        </div>
+
+                        <div>
+                            <h4 class="font-bold text-gray-200">Timer Configuration</h4>
+                            <p class="text-xs">Sets up the SLA timer engine for emergency workflows.</p>
+                             <ul class="list-disc pl-5 mt-1 space-y-1 text-xs text-gray-400">
+                                <li><strong class="text-gray-300">Enabled & Widget Location:</strong> Turn on and set position (Floating, Header Next-to-Title, Header-Center).</li>
+                                <li><strong class="text-gray-300">Breakpoints:</strong> Add intervals and apply visual Colors (Widget Glows vs Full Browser Edge Glows).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Expression Builder -->
+                <div class="bg-gray-900 border border-gray-700 rounded-lg p-5">
+                    <h3 class="text-lg font-black text-purple-400 mb-4 border-b border-purple-900 pb-2">3. Expression Builder Guide (Visible If / Activate If)</h3>
+                    <p class="text-sm text-gray-300 mb-4 border-b border-gray-700 pb-4">The conditional logic inputs use an embedded Javascript evaluation engine to securely read answers. To reference a field's value, simply type the exact <code class="bg-gray-800 px-1 rounded text-pink-300 font-mono">ID</code> of the field you are reading.</p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-bold text-gray-200 text-sm mb-1">Strict Equality (<code class="text-pink-300 font-mono">===</code>) & Empty Checks (<code class="text-pink-300 font-mono">!== ""</code>)</h4>
+                            <p class="text-xs text-gray-400 mb-2">Always use triple equals or triple not-equals.</p>
+                            <pre class="bg-gray-950 p-3 rounded font-mono text-xs text-green-300"><span class="text-gray-500 block mb-1">// Show ONLY when rack is explicitly blank (not answered)</span>rack_status === ""<br><span class="text-gray-500 block mt-2 mb-1">// Show AS SOON AS the user types literally anything</span>rack_status !== ""<br><span class="text-gray-500 block mt-2 mb-1">// Show only if they picked exactly "Operational"</span>comp_status === "Operational"</pre>
+                        </div>
+
+                        <div>
+                            <h4 class="font-bold text-gray-200 text-sm mb-1">Advanced String Evaluations</h4>
+                            <p class="text-xs text-gray-400 mb-2">To trigger a rule if a user types a specific keyword anywhere in a sentence.</p>
+                            <pre class="bg-gray-950 p-3 rounded font-mono text-xs text-green-300"><span class="text-gray-500 block mb-1">// Triggers if the user types "leak" anywhere in the answer</span>custom_notes.includes("leak")<br><span class="text-gray-500 block mt-2 mb-1">// Convert to lower-case first to be perfectly safe (ignores Case-Sensitivity)</span>custom_notes.toLowerCase().includes("leak")<br><span class="text-gray-500 block mt-2 mb-1">// Triggers if the store number starts with "US-"</span>store_number.startsWith("US-")</pre>
+                        </div>
+
+                        <div>
+                            <h4 class="font-bold text-gray-200 text-sm mb-1">Numeric Evaluations (<code class="text-pink-300 font-mono">Number()</code>)</h4>
+                            <p class="text-xs text-gray-400 mb-2">If you want to evaluate numbers, convert the string to a number first using Number().</p>
+                            <pre class="bg-gray-950 p-3 rounded font-mono text-xs text-green-300"><span class="text-gray-500 block mb-1">// Triggers if greater than 50</span>Number(case_temps) > 50<br><span class="text-gray-500 block mt-2 mb-1">// Triggers if less than or equal to -10</span>Number(case_temps) <= -10</pre>
+                        </div>
+
+                        <div>
+                            <h4 class="font-bold text-gray-200 text-sm mb-1">Combining Multiple Conditions (<code class="text-pink-300 font-mono">&&</code> / <code class="text-pink-300 font-mono">||</code>)</h4>
+                            <pre class="bg-gray-950 p-3 rounded font-mono text-xs text-green-300"><span class="text-gray-500 block mb-1">// AND Operator: Both conditions must be TRUE</span>comp_status === "Failed" && case_temps === "Rising"<br><span class="text-gray-500 block mt-2 mb-1">// OR Operator: At least one condition must be TRUE</span>rack_status === "Down" || caller_status === "Panic"<br><span class="text-gray-500 block mt-2 mb-1">// Grouped Combinations (using Parentheses)</span>case_temps === "Rising" && (comp_status === "Failed" || comp_status === "Tripped")</pre>
+                        </div>
+
+                        <div>
+                            <h4 class="font-bold text-gray-200 text-sm mb-1">Advanced: Evaluating Current Phase</h4>
+                            <p class="text-xs text-gray-400 mb-2">If you are setting conditions on an <strong>SOP Section</strong>, do NOT try to hack the "Show If" box to track phases. Use the <strong>Show After Phase ID</strong> input box in the SOP Editor. Type the exact Phase ID (e.g., <code class="text-pink-300 font-mono">phase-1</code>). The SOP will automatically wait to render until the user clicks into that phase!</p>
+                            <pre class="bg-gray-950 p-3 rounded font-mono text-xs text-green-300"><span class="text-gray-500 block mb-1">// Fallback Form Workaround: Show this SOP ONLY when they answer Phase 1's last question</span>phase_1_final_question !== ""</pre>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+`;
+            return;
+        }
+
         if (fieldKey === 'MASTER') {
             editorArea.innerHTML = `
                 <div class="flex justify-between items-center mb-4">
