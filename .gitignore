@@ -1,0 +1,10 @@
+.copilot-instructions
+.copilot-instructions-goals
+.copilot-instructions-old
+dev-resources/
+patch_config.js
+temp.js
+search_fallback.js
+search_generic.js
+Master JSONs/
+*.bak

@@ -1,0 +1,720 @@
+const UI = {
+    formState: {},
+    currentProfile: null,
+    currentPhaseIndex: 0,
+    completedPhases: [],
+
+    init: function () {
+        this.cacheDOM();
+        this.bindEvents();
+    },
+
+    cacheDOM: function () {
+        this.adminModeBtn = document.getElementById('admin-mode-btn');
+        this.trainingModeToggle = document.getElementById('training-mode-toggle');
+        this.alertInput = document.getElementById('alert-input');
+        this.parseBtn = document.getElementById('parse-alert-btn');
+        this.parsedContainer = document.getElementById('parsed-data-container');
+        this.dynamicQuestions = document.getElementById('dynamic-questions-container');
+        this.sopContainer = document.getElementById('sop-container');
+        
+        this.crystalAttributesContainer = document.getElementById('crystal-attributes-container');
+        this.crystalAttributesList = document.getElementById('crystal-attributes-list');
+        this.generatedNote = document.getElementById('generated-note');
+        this.copyNoteBtn = document.getElementById('copy-note-btn');
+        this.clearNoteBtn = document.getElementById('clear-note-btn');
+    },
+
+    bindEvents: function () {
+        this.adminModeBtn.addEventListener('click', () => {
+            ConfigManager.openAdminModal();
+        });
+
+        if (this.trainingModeToggle) {
+            this.trainingModeToggle.addEventListener('change', () => {
+                if(this.currentProfile) {
+                    this.renderKnowledge(this.currentProfile);
+                    // Re-render form to show/hide training elements there too
+                    if(this.currentProfile.investigationPhases) {
+                        this.renderPhasedWorkflow();
+                    } else {
+                        this.evalDynamicVisibility();
+                    }
+                }
+            });
+        }
+
+        this.parseBtn.addEventListener('click', () => App.handleParseAlert(this.alertInput.value));
+        
+        this.copyNoteBtn.addEventListener('click', () => {
+             this.generatedNote.select();
+             document.execCommand('copy');
+             // Flash button state
+             const oldText = this.copyNoteBtn.innerText;
+             this.copyNoteBtn.innerText = "Copied!";
+             setTimeout(() => { this.copyNoteBtn.innerText = oldText; }, 2000);
+        });
+        
+        this.clearNoteBtn.addEventListener('click', () => {
+             this.alertInput.value = '';
+             this.parsedContainer.classList.add('hidden');
+             this.dynamicQuestions.innerHTML = '';
+             this.sopContainer.innerHTML = '<p class="text-gray-400 italic">Please parse an alert or select an alarm type to view SOPs.</p>';
+             this.crystalAttributesContainer.classList.add('hidden');
+             this.generatedNote.value = '';
+             this.formState = {};
+             this.currentProfile = null;
+             if (typeof TimerEngine !== 'undefined') { TimerEngine.reset(); }
+        });
+    },
+
+    renderParsedData: function (parsedData) {
+        this.parsedContainer.classList.remove('hidden');
+        
+        // Add EMS Context rendering
+        let emsContext = '';
+        if (parsedData.store_ems_primary) {
+             const emsLabel = parsedData.store_ems_primary.includes(',') ? 'Target EMS Systems' : 'Target EMS';
+             emsContext = `<li class="text-green-300 font-bold mt-2">${emsLabel}: ${parsedData.store_ems_primary}</li>`;
+             
+             if (parsedData.store_racks && Object.keys(parsedData.store_racks).length > 0) {
+                 const racksHtml = Object.keys(parsedData.store_racks).map(rackName => {
+                     const rackEMS = parsedData.store_racks[rackName].ems;
+                     return `<li><span class="text-gray-300 text-xs">- ${rackName}</span> <span class="text-gray-500 text-xs italic">(${rackEMS || 'Unknown'})</span></li>`;
+                 }).join('');
+                 
+                 emsContext += `<li><ul class="ml-2">${racksHtml}</ul></li>`;
+             } else {
+                 emsContext += `<li class="text-xs text-gray-400">Known Racks: Unknown</li>`;
+             }
+        }
+        
+        let remodelContext = '';
+        if (parsedData.is_remodel) {
+            remodelContext = `<div class="mt-2 p-2 border-2 border-orange-500 bg-orange-900 bg-opacity-20 text-orange-400 font-bold flex items-center gap-2 rounded-md">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+                STORE IN REMODEL
+            </div>`;
+        }
+
+        this.parsedContainer.innerHTML = `
+            ${remodelContext}
+            <div class="mt-2"><strong>Extracted Data:</strong></div>
+            <ul class="mt-1 list-disc pl-4 text-xs font-mono">
+                <li>Site: ${parsedData.site_number || 'N/A'}</li>
+                <li>Reported EMS Network: ${parsedData.ems || 'N/A'}</li>
+                <li>Alarm Type: <span class="bg-blue-900 px-1 rounded text-blue-300 font-bold">${parsedData.alarm_type || 'Unknown'}</span></li>
+                <li>Incident ID: ${parsedData.incident_id || 'N/A'}</li>
+                ${emsContext}
+            </ul>
+        `;
+    },
+
+    buildForm: function (profile, parsedData) {
+        this.currentProfile = profile;
+        this.currentPhaseIndex = 0;
+        this.completedPhases = [];
+
+        // Make sure parsed data defaults are captured or preserved if restoring
+        if(this.formState.alert_id !== parsedData._original_alert) { // newly triggered vs restored
+            this.formState = { alert_id: parsedData._original_alert };
+            profile.fields.forEach(f => {
+                let initialValue = f.default || "";
+                if (f.source === "parsed_site_number" && parsedData.site_number) {
+                    initialValue = parsedData.site_number;
+                }
+                this.formState[f.id] = initialValue;
+            });
+        }
+
+        if (profile.investigationPhases) {
+            this.renderPhasedWorkflow();
+        } else {
+            this.evalDynamicVisibility();
+        }
+        
+        this.triggerNoteRender();
+                     this._debouncedPhaseRender();
+    },
+
+    renderPhasedWorkflow: function() {
+        if (!this.currentProfile || !this.currentProfile.investigationPhases) return;
+
+        const activePhases = DecisionEngine.getActivePhases(this.currentProfile.investigationPhases, this.formState);
+        const currentPhase = activePhases[this.currentPhaseIndex];
+
+        if (!currentPhase) {
+            // Workflow complete
+            this.dynamicQuestions.innerHTML = '<div class="text-green-400 font-bold p-4 bg-gray-800 rounded">✅ Investigation Complete. Review generated note.</div>';
+            
+            // Add a Back button if possible
+            if (this.currentPhaseIndex > 0) {
+                const backBtn = document.createElement('button');
+                backBtn.className = "mt-4 bg-gray-600 hover:bg-gray-500 text-white font-bold py-1 px-3 rounded text-sm";
+                backBtn.innerText = "← Go Back";
+                backBtn.onclick = () => {
+                    this.currentPhaseIndex--;
+                    this.renderPhasedWorkflow();
+                };
+                this.dynamicQuestions.appendChild(backBtn);
+            }
+            return;
+        }
+
+        this.dynamicQuestions.innerHTML = '';
+
+        // Render Phase Indicator
+        const indicator = document.createElement('div');
+        indicator.className = "text-xs font-bold text-gray-400 mb-4 pb-2 border-b border-gray-700 tracking-wider flex justify-between";
+        indicator.innerHTML = `<span>STAGE ${this.currentPhaseIndex + 1} OF ${activePhases.length}: <span class="text-blue-400">${currentPhase.title.toUpperCase()}</span></span>`;
+        this.dynamicQuestions.appendChild(indicator);
+
+        if (currentPhase.description) {
+            const desc = document.createElement('p');
+            desc.className = "text-sm text-gray-400 mb-4 italic";
+            desc.innerText = currentPhase.description;
+            this.dynamicQuestions.appendChild(desc);
+        }
+
+        // Render Fields for Current Phase
+        const fieldsInPhase = this.currentProfile.fields.filter(f => f.phase === currentPhase.id);
+        
+        fieldsInPhase.forEach(field => {
+            if (field.visibleIf && !DecisionEngine.checkCondition(field.visibleIf, this.formState)) {
+                return;
+            }
+
+            const fieldDiv = document.createElement('div');
+            fieldDiv.className = "mb-3 rounded p-2 focus-within:bg-gray-700 transition";
+            
+            const label = document.createElement('label');
+            label.className = "block text-sm font-bold text-gray-300 mb-1";
+            label.innerText = field.label + (field.required ? " *" : "");
+            fieldDiv.appendChild(label);
+
+            const isTrainingMode = this.trainingModeToggle ? this.trainingModeToggle.checked : false;
+
+            if (isTrainingMode && field.trainingExplanation) {
+                const trainNote = document.createElement('div');
+                trainNote.className = "mb-2 bg-yellow-900 bg-opacity-40 border-l-2 border-yellow-500 text-yellow-300 p-1 pl-2 text-xs italic";
+                trainNote.innerHTML = `<strong>Why ask this?</strong> ${field.trainingExplanation}`;
+                fieldDiv.appendChild(trainNote);
+            }
+
+            let inputObj = null;
+            let currentValue = this.formState[field.id] || "";
+
+            if (field.type === 'radio') {
+                const radioGroup = document.createElement('div');
+                radioGroup.className = "flex space-x-4";
+                field.options.forEach(opt => {
+                     const labelEl = document.createElement('label');
+                     labelEl.className = "inline-flex items-center";
+                     const radioEl = document.createElement('input');
+                     radioEl.type = "radio";
+                     radioEl.name = field.id;
+                     radioEl.value = opt;
+                     if(currentValue === opt) radioEl.checked = true;
+                     radioEl.className = "form-radio h-4 w-4 text-blue-500 bg-gray-700 border-gray-600";
+                     radioEl.addEventListener('change', (e) => {
+                          this.formState[field.id] = e.target.value;
+                          this.renderKnowledge(this.currentProfile);
+                          this.triggerNoteRender();
+                     this._debouncedPhaseRender();
+                     });
+                     
+                     const span = document.createElement('span');
+                     span.className = "ml-2 text-sm text-gray-300";
+                     span.innerText = opt;
+                     
+                     labelEl.appendChild(radioEl);
+                     labelEl.appendChild(span);
+                     radioGroup.appendChild(labelEl);
+                });
+                inputObj = radioGroup;
+            } else if (field.type === 'select') {
+                inputObj = document.createElement('select');
+                inputObj.className = "block w-full border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                inputObj.id = `input-${field.id}`;
+                
+                const defaultOpt = document.createElement('option');
+                defaultOpt.value = "";
+                defaultOpt.innerText = "-- Select --";
+                inputObj.appendChild(defaultOpt);
+
+                (field.options || []).forEach(opt => {
+                     const optEl = document.createElement('option');
+                     optEl.value = opt;
+                     optEl.innerText = opt;
+                     if(currentValue === opt) optEl.selected = true;
+                     inputObj.appendChild(optEl);
+                });
+
+                inputObj.addEventListener('change', (e) => {
+                     this.formState[field.id] = e.target.value;
+                     this.renderKnowledge(this.currentProfile);
+                     this.triggerNoteRender();
+                     this._debouncedPhaseRender();
+                });
+            } else if (field.type === 'textarea') {
+                inputObj = document.createElement('textarea');
+                inputObj.className = "block w-full border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                inputObj.id = `input-${field.id}`;
+                inputObj.rows = 2;
+                if(field.placeholder) inputObj.placeholder = field.placeholder;
+                inputObj.value = currentValue;
+                inputObj.addEventListener('input', (e) => {
+                     this.formState[field.id] = e.target.value;
+                     this.triggerNoteRender();
+                     this._debouncedPhaseRender();
+                });
+            } else if (field.type === 'time') {
+                inputObj = document.createElement('div');
+                inputObj.className = "flex space-x-2";
+                
+                const hoursInput = document.createElement('input');
+                hoursInput.type = "number";
+                hoursInput.min = "0";
+                hoursInput.placeholder = "Hrs";
+                hoursInput.className = "w-20 border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                
+                const minsInput = document.createElement('input');
+                minsInput.type = "number";
+                minsInput.min = "0";
+                minsInput.max = "59";
+                minsInput.placeholder = "Mins";
+                minsInput.className = "w-20 border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                
+                // Parse existing "X hours, Y minutes" back into inputs if available
+                if (currentValue) {
+                    const hMatch = currentValue.match(/(\d+)\s*hour/);
+                    const mMatch = currentValue.match(/(\d+)\s*minute/);
+                    if (hMatch) hoursInput.value = hMatch[1];
+                    if (mMatch) minsInput.value = mMatch[1];
+                }
+
+                const updateTime = () => {
+                    const h = parseInt(hoursInput.value || 0);
+                    const m = parseInt(minsInput.value || 0);
+                    let result = "";
+                    if (h > 0) result += `${h} hour${h > 1 ? 's' : ''}`;
+                    if (h > 0 && m > 0) result += ", ";
+                    if (m > 0) result += `${m} minute${m > 1 ? 's' : ''}`;
+                    if (h === 0 && m === 0) result = ""; // Clear if empty
+                    
+                    this.formState[field.id] = result;
+                    this.renderKnowledge(this.currentProfile);
+                    this.triggerNoteRender();
+                     this._debouncedPhaseRender();
+                };
+
+                hoursInput.addEventListener('input', updateTime);
+                minsInput.addEventListener('input', updateTime);
+
+                const hLabel = document.createElement('span');
+                hLabel.className = "self-center text-gray-400 text-sm";
+                hLabel.innerText = "H";
+                
+                const mLabel = document.createElement('span');
+                mLabel.className = "self-center text-gray-400 text-sm";
+                mLabel.innerText = "M";
+
+                inputObj.appendChild(hoursInput);
+                inputObj.appendChild(hLabel);
+                inputObj.appendChild(minsInput);
+                inputObj.appendChild(mLabel);
+
+            } else {
+                inputObj = document.createElement('input');
+                inputObj.type = "text";
+                inputObj.className = "block w-full border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                inputObj.id = `input-${field.id}`;
+                if(field.placeholder) inputObj.placeholder = field.placeholder;
+                inputObj.value = currentValue;
+                inputObj.addEventListener('input', (e) => {
+                     this.formState[field.id] = e.target.value;
+                     this.renderKnowledge(this.currentProfile); // trigger updates for recommendations
+                     this.triggerNoteRender();
+                     this._debouncedPhaseRender();
+                });
+            }
+
+            fieldDiv.appendChild(inputObj);
+            this.dynamicQuestions.appendChild(fieldDiv);
+        });
+
+        // Navigation Buttons
+        const navContainer = document.createElement('div');
+        navContainer.className = "mt-6 pt-4 border-t border-gray-700 flex justify-end space-x-3";
+
+        if (this.currentPhaseIndex > 0) {
+            const backBtn = document.createElement('button');
+            backBtn.className = "bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded text-sm";
+            backBtn.innerText = "Back";
+            backBtn.onclick = () => {
+                this.currentPhaseIndex--;
+                this.renderPhasedWorkflow();
+            };
+            navContainer.appendChild(backBtn);
+        }
+
+        const nextBtn = document.createElement('button');
+        nextBtn.className = "bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded shadow text-sm";
+        nextBtn.innerText = this.currentPhaseIndex === activePhases.length - 1 ? "Finish" : "Next Step";
+        nextBtn.onclick = () => {
+            if (!this.completedPhases.includes(currentPhase.id)) {
+                this.completedPhases.push(currentPhase.id);
+            }
+            this.currentPhaseIndex++;
+            this.renderPhasedWorkflow();
+            this.renderKnowledge(this.currentProfile); // Update SOPs for new phase
+        };
+        navContainer.appendChild(nextBtn);
+        this.dynamicQuestions.appendChild(navContainer);
+
+        this.renderKnowledge(this.currentProfile);
+    },
+
+    evalDynamicVisibility: function() {
+        if(!this.currentProfile) return;
+
+        this.dynamicQuestions.innerHTML = '';
+        
+        this.currentProfile.fields.forEach(field => {
+            // Check if field should be visible
+            if (field.visibleIf && !DecisionEngine.checkCondition(field.visibleIf, this.formState)) {
+                return; // skip rendering
+            }
+
+            const fieldDiv = document.createElement('div');
+            fieldDiv.className = "mb-3 rounded p-2 focus-within:bg-gray-700 transition";
+            
+            const label = document.createElement('label');
+            label.className = "block text-sm font-bold text-gray-300 mb-1";
+            label.innerText = field.label + (field.required ? " *" : "");
+            fieldDiv.appendChild(label);
+
+            const isTrainingMode = this.trainingModeToggle ? this.trainingModeToggle.checked : false;
+
+            if (isTrainingMode && field.trainingExplanation) {
+                const trainNote = document.createElement('div');
+                trainNote.className = "mb-2 bg-yellow-900 bg-opacity-40 border-l-2 border-yellow-500 text-yellow-300 p-1 pl-2 text-xs italic";
+                trainNote.innerHTML = `<strong>Why ask this?</strong> ${field.trainingExplanation}`;
+                fieldDiv.appendChild(trainNote);
+            }
+
+            let inputObj = null;
+            let currentValue = this.formState[field.id] || "";
+
+            if (field.type === 'radio') {
+                const radioGroup = document.createElement('div');
+                radioGroup.className = "flex space-x-4";
+                field.options.forEach(opt => {
+                     const labelEl = document.createElement('label');
+                     labelEl.className = "inline-flex items-center";
+                     const radioEl = document.createElement('input');
+                     radioEl.type = "radio";
+                     radioEl.name = field.id;
+                     radioEl.value = opt;
+                     if(currentValue === opt) radioEl.checked = true;
+                     radioEl.className = "form-radio h-4 w-4 text-blue-500 bg-gray-700 border-gray-600";
+                     radioEl.addEventListener('change', (e) => {
+                          this.formState[field.id] = e.target.value;
+                          this.renderKnowledge(this.currentProfile);
+                          this.evalDynamicVisibility(); // Re-render tree on change
+                     });
+                     
+                     const span = document.createElement('span');
+                     span.className = "ml-2 text-sm text-gray-300";
+                     span.innerText = opt;
+                     
+                     labelEl.appendChild(radioEl);
+                     labelEl.appendChild(span);
+                     radioGroup.appendChild(labelEl);
+                });
+                inputObj = radioGroup;
+            } else if (field.type === 'select') {
+                inputObj = document.createElement('select');
+                inputObj.className = "block w-full border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                inputObj.id = `input-${field.id}`;
+                
+                const defaultOpt = document.createElement('option');
+                defaultOpt.value = "";
+                defaultOpt.innerText = "-- Select --";
+                inputObj.appendChild(defaultOpt);
+
+                (field.options || []).forEach(opt => {
+                     const optEl = document.createElement('option');
+                     optEl.value = opt;
+                     optEl.innerText = opt;
+                     if(currentValue === opt) optEl.selected = true;
+                     inputObj.appendChild(optEl);
+                });
+
+                inputObj.addEventListener('change', (e) => {
+                     this.formState[field.id] = e.target.value;
+                     this.renderKnowledge(this.currentProfile);
+                     this.evalDynamicVisibility();
+                });
+            } else if (field.type === 'textarea') {
+                inputObj = document.createElement('textarea');
+                inputObj.className = "block w-full border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                inputObj.id = `input-${field.id}`;
+                inputObj.rows = 2;
+                if(field.placeholder) inputObj.placeholder = field.placeholder;
+                inputObj.value = currentValue;
+                inputObj.addEventListener('input', (e) => {
+                     this.formState[field.id] = e.target.value;
+                     this.renderKnowledge(this.currentProfile);
+                     this.triggerNoteRender();
+                     this._debouncedPhaseRender(); // Just update note for text changes, no full re-render needed
+                });
+            } else if (field.type === 'time') {
+                inputObj = document.createElement('div');
+                inputObj.className = "flex space-x-2";
+                
+                const hoursInput = document.createElement('input');
+                hoursInput.type = "number";
+                hoursInput.min = "0";
+                hoursInput.placeholder = "Hrs";
+                hoursInput.className = "w-20 border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                
+                const minsInput = document.createElement('input');
+                minsInput.type = "number";
+                minsInput.min = "0";
+                minsInput.max = "59";
+                minsInput.placeholder = "Mins";
+                minsInput.className = "w-20 border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                
+                // Parse existing "X hours, Y minutes" back into inputs if available
+                if (currentValue) {
+                    const hMatch = currentValue.match(/(\d+)\s*hour/);
+                    const mMatch = currentValue.match(/(\d+)\s*minute/);
+                    if (hMatch) hoursInput.value = hMatch[1];
+                    if (mMatch) minsInput.value = mMatch[1];
+                }
+
+                const updateTime = () => {
+                    const h = parseInt(hoursInput.value || 0);
+                    const m = parseInt(minsInput.value || 0);
+                    let result = "";
+                    if (h > 0) result += `${h} hour${h > 1 ? 's' : ''}`;
+                    if (h > 0 && m > 0) result += ", ";
+                    if (m > 0) result += `${m} minute${m > 1 ? 's' : ''}`;
+                    if (h === 0 && m === 0) result = ""; // Clear if empty
+                    
+                    this.formState[field.id] = result;
+                    this.renderKnowledge(this.currentProfile);
+                    this.triggerNoteRender();
+                     this._debouncedPhaseRender();
+                };
+
+                hoursInput.addEventListener('input', updateTime);
+                minsInput.addEventListener('input', updateTime);
+
+                const hLabel = document.createElement('span');
+                hLabel.className = "self-center text-gray-400 text-sm";
+                hLabel.innerText = "H";
+                
+                const mLabel = document.createElement('span');
+                mLabel.className = "self-center text-gray-400 text-sm";
+                mLabel.innerText = "M";
+
+                inputObj.appendChild(hoursInput);
+                inputObj.appendChild(hLabel);
+                inputObj.appendChild(minsInput);
+                inputObj.appendChild(mLabel);
+
+            } else {
+                inputObj = document.createElement('input');
+                inputObj.type = "text";
+                inputObj.className = "block w-full border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                inputObj.id = `input-${field.id}`;
+                if(field.placeholder) inputObj.placeholder = field.placeholder;
+                inputObj.value = currentValue;
+                inputObj.addEventListener('input', (e) => {
+                     this.formState[field.id] = e.target.value;
+                     this.renderKnowledge(this.currentProfile);
+                     this.triggerNoteRender();
+                     this._debouncedPhaseRender();
+                });
+            }
+
+            fieldDiv.appendChild(inputObj);
+            this.dynamicQuestions.appendChild(fieldDiv);
+        });
+
+        this.renderKnowledge(this.currentProfile);
+        this.triggerNoteRender();
+                     this._debouncedPhaseRender();  // Regenerate note so hidden fields show up as blank or [tags]
+    },
+
+    evalSOPVisibility: function() {
+        if(!this.currentProfile) return;
+        
+        // Find all elements with data-show-if inside the SOP Container
+        const conditionalBlocks = this.sopContainer.querySelectorAll('[data-show-if]');
+        conditionalBlocks.forEach(block => {
+            const condition = block.getAttribute('data-show-if');
+            if(DecisionEngine.checkCondition(condition, this.formState)) {
+                block.classList.remove('hidden');
+            } else {
+                block.classList.add('hidden');
+            }
+        });
+    },
+
+    renderKnowledge: function (profile) {
+        if (!profile) return;
+
+        // If profile uses the new structured SOP sections
+        if (profile.sopSections) {
+            const lastCompletedPhaseObj = this.currentPhaseIndex > 0 && profile.investigationPhases 
+                ? profile.investigationPhases[this.currentPhaseIndex - 1] 
+                : null;
+            const lastCompletedPhaseId = lastCompletedPhaseObj ? lastCompletedPhaseObj.id : null;
+
+            const visibleSections = DecisionEngine.getVisibleSopSections(profile.sopSections, this.formState, lastCompletedPhaseId);
+            
+            let html = '';
+            
+            const isTrainingMode = this.trainingModeToggle ? this.trainingModeToggle.checked : false;
+
+            visibleSections.forEach(section => {
+                html += `<div class="mb-4">${section.content || ''}`;
+                
+                // Append training explanation if in training mode
+                if (isTrainingMode && section.trainingExplanation) {
+                    html += `
+                        <div class="mt-2 bg-yellow-900 border-l-4 border-yellow-500 text-yellow-200 p-2 text-xs rounded-r shadow-inner">
+                            <strong>🎓 Training Note:</strong> ${section.trainingExplanation}
+                        </div>
+                    `;
+                }
+
+                html += `</div>`;
+            });
+
+            // Evaluate recommendations if they exist
+            if (profile.recommendations) {
+                const recs = DecisionEngine.evaluateRecommendations(profile.recommendations, this.formState, App.config);
+                recs.forEach(rec => {
+                    if (rec.calculation !== null && rec.calculation !== undefined) {
+                        html += `
+                            <div class="bg-blue-900 border border-blue-500 rounded p-3 mb-2 shadow-lg animate-pulse">
+                                <h4 class="font-bold text-blue-200">💡 Calculation Recommendation</h4>
+                                <span class="text-sm text-blue-100">${rec.params.label || 'Value'}:</span>
+                                <span class="bg-black text-white px-2 py-1 rounded font-mono text-lg ml-2 border border-blue-600">${rec.calculation}</span>
+                            </div>
+                        `;
+                    }
+                });
+            }
+
+            this.sopContainer.innerHTML = html;
+        } 
+        // Fallback for profiles using the legacy monolithic html
+        else if (profile.sopText) {
+            this.sopContainer.innerHTML = profile.sopText;
+            this.evalSOPVisibility();
+        }
+    },
+
+    renderWorkOrderAttributes: function(profile) {
+        this.crystalAttributesList.innerHTML = '';
+        this.crystalAttributesContainer.classList.remove('hidden');
+        
+        const attrs = profile.crystalAttributes;
+        
+        // Dynamically override problemCode if an Asset Type dependent mapping exists and user manually selected a problem
+        let displayProblemCode = attrs.problemCode;
+        if(this.formState._problemCodeOverride) {
+            displayProblemCode = this.formState._problemCodeOverride;
+        }
+
+        const keys = [
+             {k: 'issueArea', l: 'Issue Area', v: attrs.issueArea},
+             {k: 'problemType', l: 'Problem Type', v: attrs.problemType},
+             {k: 'assetType', l: 'Asset Type', v: attrs.assetType},
+             {k: 'problemCode', l: 'Problem Code', v: displayProblemCode},
+             {k: 'priority', l: 'Priority', v: attrs.priority}
+        ];
+
+        keys.forEach(item => {
+            const wrapper = document.createElement('div');
+            wrapper.className = "flex flex-col mb-1";
+            
+            const label = document.createElement('span');
+            label.className = "text-xs font-bold text-gray-400 uppercase";
+            label.innerText = item.l;
+            
+            const val = document.createElement('span');
+            val.className = "text-sm text-gray-200";
+            val.innerText = item.v;
+
+            // If this is the Crystal Problem Code mapping, give them a dropdown to select it manually if we have mappings for the Asset Type
+            if (item.k === 'problemCode' && App.config.assetProblemMapping && App.config.assetProblemMapping[attrs.assetType]) {
+                 const select = document.createElement('select');
+                 select.className = "mt-1 w-full bg-gray-900 border border-gray-600 p-1 rounded text-red-300 text-xs font-bold cursor-pointer hover:border-blue-500";
+                 
+                 // Default config option
+                 const defOpt = document.createElement('option');
+                 defOpt.value = attrs.problemCode;
+                 defOpt.innerText = `${attrs.problemCode} (Default)`;
+                 select.appendChild(defOpt);
+
+                 App.config.assetProblemMapping[attrs.assetType].forEach(pc => {
+                     if(pc !== attrs.problemCode) {
+                         const opt = document.createElement('option');
+                         opt.value = pc;
+                         opt.innerText = pc;
+                         if(item.v === pc) opt.selected = true;
+                         select.appendChild(opt);
+                     }
+                 });
+
+                 select.addEventListener('change', (e) => {
+                      this.formState._problemCodeOverride = e.target.value;
+                      this.renderWorkOrderAttributes(profile); // re-render just this block
+                 });
+
+                 val.innerHTML = ''; // clear text
+                 val.appendChild(select);
+            }
+            
+            wrapper.appendChild(label);
+            wrapper.appendChild(val);
+            this.crystalAttributesList.appendChild(wrapper);
+        });
+    },
+
+    
+    _debouncedPhaseRender: function() {
+        if (this._renderTimeout) {
+            clearTimeout(this._renderTimeout);
+        }
+        this._renderTimeout = setTimeout(() => {
+            // Save currently focused element ID so we can restore it if it still exists
+            const focusedId = document.activeElement ? document.activeElement.id : null;
+            
+            // Re-render
+            this.renderPhasedWorkflow(this.currentPhaseIndex);
+            
+            // Restore focus
+            if (focusedId) {
+                const el = document.getElementById(focusedId);
+                if (el) el.focus();
+            }
+        }, 300);
+    },
+
+    triggerNoteRender: function() {
+        if (!this.currentProfile) return;
+        const config = App.config; // Pass master config to access reusable text
+        config.activeProfileFields = this.currentProfile.fields; // Pass current fields down so engine knows condition boundaries
+        const note = TemplateEngine.generateNote(this.currentProfile.noteTemplate, this.formState, config);
+        this.generatedNote.value = note;
+    }
+};

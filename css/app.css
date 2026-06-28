@@ -1,0 +1,93 @@
+/* application specific styles here */
+/* Tailwind handles most utility classes directly in HTML */
+textarea {
+    resize: none;
+}
+
+/* Timer glows */
+@keyframes glow-yellow {
+    0% { border-color: #fbbf24; box-shadow: 0 0 5px #fbbf24; }
+    50% { border-color: #f59e0b; box-shadow: 0 0 15px #f59e0b; }
+    100% { border-color: #fbbf24; box-shadow: 0 0 5px #fbbf24; }
+}
+@keyframes glow-orange {
+    0% { border-color: #f97316; box-shadow: 0 0 5px #f97316; }
+    50% { border-color: #ea580c; box-shadow: 0 0 15px #ea580c; }
+    100% { border-color: #f97316; box-shadow: 0 0 5px #f97316; }
+}
+@keyframes glow-red {
+    0% { border-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
+    50% { border-color: #dc2626; box-shadow: 0 0 20px #dc2626; }
+    100% { border-color: #ef4444; box-shadow: 0 0 5px #ef4444; }
+}
+
+.timer-glow-yellow {
+    animation: glow-yellow 2s infinite;
+}
+.timer-glow-orange {
+    animation: glow-orange 2s infinite;
+}
+.timer-glow-red {
+    animation: glow-red 1s infinite;
+}
+
+/* New Timer Glows */
+@keyframes glow-purple {
+    0% { border-color: #a855f7; box-shadow: 0 0 5px #a855f7; }
+    50% { border-color: #9333ea; box-shadow: 0 0 15px #9333ea; }
+    100% { border-color: #a855f7; box-shadow: 0 0 5px #a855f7; }
+}
+@keyframes glow-blue {
+    0% { border-color: #3b82f6; box-shadow: 0 0 5px #3b82f6; }
+    50% { border-color: #2563eb; box-shadow: 0 0 15px #2563eb; }
+    100% { border-color: #3b82f6; box-shadow: 0 0 5px #3b82f6; }
+}
+@keyframes glow-green {
+    0% { border-color: #22c55e; box-shadow: 0 0 5px #22c55e; }
+    50% { border-color: #16a34a; box-shadow: 0 0 15px #16a34a; }
+    100% { border-color: #22c55e; box-shadow: 0 0 5px #22c55e; }
+}
+
+.timer-glow-purple { animation: glow-purple 2s infinite; }
+.timer-glow-blue { animation: glow-blue 2s infinite; }
+.timer-glow-green { animation: glow-green 2s infinite; }
+
+/* Edge Glow UI Classes */
+/* Provides a soft, pulsating inner vignette rather than a hard glitchy border */
+@keyframes edge-glow-red {
+    0% { box-shadow: inset 0 0 40px 10px rgba(239, 68, 68, 0.4); }
+    50% { box-shadow: inset 0 0 120px 30px rgba(239, 68, 68, 0.8); }
+    100% { box-shadow: inset 0 0 40px 10px rgba(239, 68, 68, 0.4); }
+}
+@keyframes edge-glow-orange {
+    0% { box-shadow: inset 0 0 40px 10px rgba(249, 115, 22, 0.4); }
+    50% { box-shadow: inset 0 0 120px 30px rgba(249, 115, 22, 0.8); }
+    100% { box-shadow: inset 0 0 40px 10px rgba(249, 115, 22, 0.4); }
+}
+@keyframes edge-glow-yellow {
+    0% { box-shadow: inset 0 0 40px 10px rgba(251, 191, 36, 0.4); }
+    50% { box-shadow: inset 0 0 120px 30px rgba(251, 191, 36, 0.8); }
+    100% { box-shadow: inset 0 0 40px 10px rgba(251, 191, 36, 0.4); }
+}
+@keyframes edge-glow-purple {
+    0% { box-shadow: inset 0 0 40px 10px rgba(168, 85, 247, 0.4); }
+    50% { box-shadow: inset 0 0 120px 30px rgba(168, 85, 247, 0.8); }
+    100% { box-shadow: inset 0 0 40px 10px rgba(168, 85, 247, 0.4); }
+}
+@keyframes edge-glow-blue {
+    0% { box-shadow: inset 0 0 40px 10px rgba(59, 130, 246, 0.4); }
+    50% { box-shadow: inset 0 0 120px 30px rgba(59, 130, 246, 0.8); }
+    100% { box-shadow: inset 0 0 40px 10px rgba(59, 130, 246, 0.4); }
+}
+@keyframes edge-glow-green {
+    0% { box-shadow: inset 0 0 40px 10px rgba(34, 197, 94, 0.4); }
+    50% { box-shadow: inset 0 0 120px 30px rgba(34, 197, 94, 0.8); }
+    100% { box-shadow: inset 0 0 40px 10px rgba(34, 197, 94, 0.4); }
+}
+
+.edge-glow-red { animation: edge-glow-red 2s infinite ease-in-out; transition: box-shadow 0.3s; }
+.edge-glow-orange { animation: edge-glow-orange 2s infinite ease-in-out; transition: box-shadow 0.3s; }
+.edge-glow-yellow { animation: edge-glow-yellow 2s infinite ease-in-out; transition: box-shadow 0.3s; }
+.edge-glow-purple { animation: edge-glow-purple 2s infinite ease-in-out; transition: box-shadow 0.3s; }
+.edge-glow-blue { animation: edge-glow-blue 2s infinite ease-in-out; transition: box-shadow 0.3s; }
+.edge-glow-green { animation: edge-glow-green 2s infinite ease-in-out; transition: box-shadow 0.3s; }
