@@ -62,12 +62,17 @@ const DecisionEngine = {
     /**
      * Determines which SOP sections should render.
      */
-    getVisibleSopSections: function(sopSections, formData, lastCompletedPhase) {
+    getVisibleSopSections: function(sopSections, formData, lastCompletedPhase, currentPhaseId) {
         if (!sopSections || !Array.isArray(sopSections)) return [];
         return sopSections.filter(section => {
             // Always show required/intro sections
             if (section.alwaysShow) return true;
             
+            // Show ONLY on this specific phase, hide afterwards
+            if (section.showOnlyOnPhase) {
+                return (section.showOnlyOnPhase === currentPhaseId);
+            }
+
             // Show if specific condition matches
             if (section.showIf && this.checkCondition(section.showIf, formData)) return true;
             

@@ -46,6 +46,14 @@ const UI = {
 
         this.parseBtn.addEventListener('click', () => App.handleParseAlert(this.alertInput.value));
         
+        // Handle "Enter" key inside the alert input to parse automatically and prevent newlines
+        this.alertInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                App.handleParseAlert(this.alertInput.value);
+            }
+        });
+        
         this.copyNoteBtn.addEventListener('click', () => {
              this.generatedNote.select();
              document.execCommand('copy');
@@ -199,7 +207,8 @@ const UI = {
             if (isTrainingMode && field.trainingExplanation) {
                 const trainNote = document.createElement('div');
                 trainNote.className = "mb-2 bg-yellow-900 bg-opacity-40 border-l-2 border-yellow-500 text-yellow-300 p-1 pl-2 text-xs italic";
-                trainNote.innerHTML = `<strong>Why ask this?</strong> ${field.trainingExplanation}`;
+                let linkHtml = field.trainingLink ? ` <a href="${field.trainingLink}" target="_blank" class="underline text-blue-400 font-bold ml-1 hover:text-blue-300">Learn More</a>` : '';
+                trainNote.innerHTML = `<strong>Why ask this?</strong> ${field.trainingExplanation}${linkHtml}`;
                 fieldDiv.appendChild(trainNote);
             }
 
@@ -364,6 +373,38 @@ const UI = {
         nextBtn.className = "bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded shadow text-sm";
         nextBtn.innerText = this.currentPhaseIndex === activePhases.length - 1 ? "Finish" : "Next Step";
         nextBtn.onclick = () => {
+            
+            // --- NEW VALIDATION LOGIC ---
+            let missingFields = [];
+            
+            const fieldsInPhase = this.currentProfile.fields.filter(f => f.phase === currentPhase.id);
+            fieldsInPhase.forEach(field => {
+                // Skip if conditionally hidden
+                if (field.visibleIf && !DecisionEngine.checkCondition(field.visibleIf, this.formState)) {
+                    return; 
+                }
+                
+                // If the field is required but form state lacks a truthy value
+                const currentValue = this.formState[field.id];
+                if (field.required && (currentValue === undefined || currentValue === "")) {
+                     missingFields.push(field.label);                     
+                     const inputEl = document.getElementById(`input-${field.id}`);
+                     if (inputEl) {
+                         inputEl.classList.add('border-red-500', 'ring-1', 'ring-red-500');
+                         inputEl.addEventListener('input', function removeErr() {
+                             inputEl.classList.remove('border-red-500', 'ring-1', 'ring-red-500');
+                             inputEl.removeEventListener('input', removeErr);
+                         });
+                     }
+                }
+            });
+
+            if (missingFields.length > 0) {
+                alert(`Please complete the following required fields before proceeding:\n- ${missingFields.join('\n- ')}`);
+                return; // Block navigation
+            }
+            // --- END NEW VALIDATION LOGIC ---
+
             if (!this.completedPhases.includes(currentPhase.id)) {
                 this.completedPhases.push(currentPhase.id);
             }
@@ -401,7 +442,8 @@ const UI = {
             if (isTrainingMode && field.trainingExplanation) {
                 const trainNote = document.createElement('div');
                 trainNote.className = "mb-2 bg-yellow-900 bg-opacity-40 border-l-2 border-yellow-500 text-yellow-300 p-1 pl-2 text-xs italic";
-                trainNote.innerHTML = `<strong>Why ask this?</strong> ${field.trainingExplanation}`;
+                let linkHtml = field.trainingLink ? ` <a href="${field.trainingLink}" target="_blank" class="underline text-blue-400 font-bold ml-1 hover:text-blue-300">Learn More</a>` : '';
+                trainNote.innerHTML = `<strong>Why ask this?</strong> ${field.trainingExplanation}${linkHtml}`;
                 fieldDiv.appendChild(trainNote);
             }
 
@@ -576,7 +618,12 @@ const UI = {
                 : null;
             const lastCompletedPhaseId = lastCompletedPhaseObj ? lastCompletedPhaseObj.id : null;
 
-            const visibleSections = DecisionEngine.getVisibleSopSections(profile.sopSections, this.formState, lastCompletedPhaseId);
+            const currentPhaseObj = this.currentPhaseIndex >= 0 && profile.investigationPhases
+                ? profile.investigationPhases[this.currentPhaseIndex]
+                : null;
+            const currentPhaseId = currentPhaseObj ? currentPhaseObj.id : null;
+
+            const visibleSections = DecisionEngine.getVisibleSopSections(profile.sopSections, this.formState, lastCompletedPhaseId, currentPhaseId);
             
             let html = '';
             
@@ -587,9 +634,10 @@ const UI = {
                 
                 // Append training explanation if in training mode
                 if (isTrainingMode && section.trainingExplanation) {
+                    let sLinkHtml = section.trainingLink ? ` <a href="${section.trainingLink}" target="_blank" class="underline text-blue-400 font-bold ml-1 hover:text-blue-300">Learn More</a>` : '';
                     html += `
                         <div class="mt-2 bg-yellow-900 border-l-4 border-yellow-500 text-yellow-200 p-2 text-xs rounded-r shadow-inner">
-                            <strong>🎓 Training Note:</strong> ${section.trainingExplanation}
+                            <strong>🎓 Training Note:</strong> ${section.trainingExplanation}${sLinkHtml}
                         </div>
                     `;
                 }

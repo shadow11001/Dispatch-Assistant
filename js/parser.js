@@ -2,10 +2,10 @@ const Parser = {
     parseAlertString: function(alertString, config) {
         if (!alertString || typeof alertString !== 'string') return null;
 
-        // Clean up string, remove "Alert " prefix if it exists
-        const cleanedStr = alertString.replace(/^Alert\s+/i, '').trim();
+        // Clean up string, unconditionally strip the case-insensitive "Alert " prefix from the beginning
+        alertString = alertString.replace(/^Alert\s+/i, '').trim();
         
-        const parts = cleanedStr.split(config.parserRules.delimiter);
+        const parts = alertString.split(config.parserRules.delimiter);
         const schema = config.parserRules.schema;
         
         const parsedData = {};
@@ -49,9 +49,18 @@ const Parser = {
                     parsedData.store_ems_primary = null;
                 }
                 
-                if (storeData.isRemodel) {
+                // Allow EMS Mapping file OR the new Global Config list to flag a remodel
+                if (storeData.isRemodel || (config && config.remodels && config.remodels.includes(normalizedSite))) {
                     parsedData.is_remodel = true;
                 }
+            } else if (config && config.remodels && config.remodels.includes(normalizedSite)) {
+                // If it wasn't in EMS mapping, but IS in the remodels list
+                parsedData.is_remodel = true;
+            }
+        } else if (parsedData.site_number && config && config.remodels) {
+            const normalizedSite = parseInt(parsedData.site_number, 10).toString();
+            if (config.remodels.includes(normalizedSite)) {
+                parsedData.is_remodel = true;
             }
         }
 

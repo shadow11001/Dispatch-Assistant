@@ -1,4 +1,5 @@
 const AlarmAssistantConfig = {
+  "remodels": ["298", "483", "604", "670", "818", "991", "1174", "1620", "1638", "4648", "4990", "5363", "5771", "5845", "5872"],
   "version": "1.0.6",
   "lastUpdated": "2026-06-28",
   "author": "Andrew Toothman",

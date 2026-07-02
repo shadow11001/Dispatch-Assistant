@@ -123,7 +123,15 @@ const TimerEngine = {
     start: function() {
         if (!this.config || !this.config.enabled) return;
         console.log("TimerEngine start");
-        this.startTime = Date.now();
+        
+        // If we are resuming, subtract the properly paused elapsed time from NOW so it "picks up" where it left off safely.
+        if (this.pausedElapsed && this.pausedElapsed > 0) {
+            this.startTime = Date.now() - this.pausedElapsed;
+            this.pausedElapsed = 0; // Handled
+        } else {
+            this.startTime = Date.now();
+        }
+        
         this.isRunning = true;
         this.interval = setInterval(() => this.tick(), 1000);
         this.widget.classList.remove('opacity-50', 'hidden');
@@ -133,6 +141,10 @@ const TimerEngine = {
     
     stop: function() {
         console.log("TimerEngine stop");
+        if (this.isRunning && this.startTime) {
+            // Save exactly how long we ran before stopping
+            this.pausedElapsed = Date.now() - this.startTime;
+        }
         this.isRunning = false;
         clearInterval(this.interval);
         if (this.widget) this.widget.classList.add('opacity-50');
@@ -141,6 +153,8 @@ const TimerEngine = {
     reset: function() {
         console.log("TimerEngine reset");
         this.stop();
+        this.pausedElapsed = 0;
+        this.startTime = null;
         if (this.display) this.display.innerText = "00:00";
         if (this.widget) {
             // Hard completely hide component so it doesn't leave ghost wrappers

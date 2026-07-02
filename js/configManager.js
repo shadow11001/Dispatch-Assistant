@@ -382,6 +382,8 @@ const ConfigManager = {
                             <ul class="list-disc pl-5 mt-1 space-y-1 text-xs text-gray-400">
                                 <li><strong class="text-gray-300">ID (Ref):</strong> The variable name for the field (e.g., <code class="text-pink-300 font-mono">action_taken</code>). Do not use spaces.</li>
                                 <li><strong class="text-gray-300">Label (UI):</strong> The question shown to the user.</li>
+<li><strong class="text-gray-300">Required:</strong> Checking "Required" halts phase advancement safely until input.</li>
+<li><strong class="text-gray-300">Training Excl. & Links:</strong> Write training insights and paste specific URL paths into the Training Link (URL) field to automatically generate clickable hyperlinks during Training Mode.</li>
                                 <li><strong class="text-gray-300">Type:</strong> Text Input, Text Area, Radio Group, Select (Dropdown), or Time.</li>
                                 <li><strong class="text-gray-300">Source Default:</strong> Matches native Parser extracts (like <code class="text-pink-300 font-mono">parsed_high_case</code>) to auto-fill forms.</li>
                                 <li><strong class="text-gray-300">Visible If:</strong> Javascript condition to pop up the field conditionally. Leave blank to always show.</li>
@@ -397,7 +399,8 @@ const ConfigManager = {
                                 <li><strong class="text-gray-300">Title & HTML Content:</strong> Header and body (supports HTML and Tailwind).</li>
                                 <li><strong class="text-gray-300">Always Show:</strong> Check to force the SOP block to remain visible.</li>
                                 <li><strong class="text-gray-300">Show If:</strong> Evaluates against form data dynamically.</li>
-                                <li><strong class="text-gray-300">Show After Phase ID:</strong> Safely hooks the SOP to a specific Phase so it only appears when the agent reaches that step.</li>
+                                <li><strong class="text-gray-300">Show ONLY On Phase ID:</strong> Hook SOPs explicitly to an exact phase state. This securely drops documentation immediately after the user leaves that phase to greatly reduce clutter.</li>
+<li><strong class="text-gray-300">SOP Training Links:</strong> Just like Form Fields, you can provide dedicated Training URLs that map directly alongside the SOP explanations when Training Mode is enabled.</li>
                             </ul>
                         </div>
 
@@ -489,11 +492,21 @@ const ConfigManager = {
 
         // Global Settings Form
         if (fieldKey === 'global') {
+            ConfigManager._upRemodels = (val) => {
+                const stores = val.split(',').map(s => s.trim()).filter(Boolean);
+                this.activeConfig.remodels = stores;
+            };
+
             editorArea.innerHTML = `
                 <h3 class="text-xl font-bold text-blue-400 mb-4">Editing: ${prettyName}</h3>
                 <div class="space-y-3 max-w-lg text-gray-300 text-sm bg-gray-800 p-4 border border-gray-700 rounded shadow-md">
                     <div><label class="block mb-1 font-bold">App Version</label><input class="w-full bg-gray-900 border border-gray-600 p-2 rounded focus:border-blue-500" onchange="ConfigManager.activeConfig.version = this.value" value="${this.activeConfig.version || ''}"></div>
                     <div><label class="block mb-1 font-bold mt-2">Author</label><input class="w-full bg-gray-900 border border-gray-600 p-2 rounded focus:border-blue-500" onchange="ConfigManager.activeConfig.author = this.value" value="${this.activeConfig.author || ''}"></div>
+                    <div>
+                        <label class="block mb-1 font-bold mt-2">Stores in Remodel (Comma Separated)</label>
+                        <p class="text-xs text-gray-400 mb-1">List store numbers currently under remodel to highlight them automatically in the ribbon.</p>
+                        <textarea class="w-full bg-gray-900 border border-gray-600 p-2 rounded focus:border-blue-500 min-h-[100px]" onchange="ConfigManager._upRemodels(this.value)">${(this.activeConfig.remodels || []).join(', ')}</textarea>
+                    </div>
                 </div>
             `;
         } else if (fieldKey === 'reusableText') {
@@ -590,10 +603,11 @@ const ConfigManager = {
                       <input value="${s.title}" placeholder="SOP Title" onchange="ConfigManager._upSOP(${i}, 'title', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded mb-1">
                       <div class="grid grid-cols-2 gap-2 mb-1">
                           <input value="${s.showIf || ''}" placeholder="Show If (e.g. condition === 'X')" onchange="ConfigManager._upSOP(${i}, 'showIf', this.value)" title="Form Condition" class="w-full bg-gray-800 border-gray-600 p-1 rounded font-mono text-xs text-yellow-300">
-                          <input value="${s.showAfter || ''}" placeholder="Show After Phase ID (e.g. phase-1-diagnosis)" onchange="ConfigManager._upSOP(${i}, 'showAfter', this.value)" title="Phase Hook" class="w-full bg-gray-800 border-gray-600 p-1 rounded font-mono text-xs text-green-300">
+                          <input value="${s.showOnlyOnPhase || ''}" placeholder="Show Only On Phase ID (e.g. phase-1-diagnosis)" onchange="ConfigManager._upSOP(${i}, 'showOnlyOnPhase', this.value)" title="Phase Hook" class="w-full bg-gray-800 border-gray-600 p-1 rounded font-mono text-xs text-green-300">
                       </div>
                       <textarea placeholder="HTML Content" onchange="ConfigManager._upSOP(${i}, 'content', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded h-20 text-xs font-mono">${s.content}</textarea>
                       <textarea placeholder="Training Explanation" onchange="ConfigManager._upSOP(${i}, 'trainingExplanation', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded h-10 mt-1 text-xs text-yellow-200" title="Training Note">${s.trainingExplanation || ''}</textarea>
+                      <input type="url" placeholder="Training Link (URL)" onchange="ConfigManager._upSOP(${i}, 'trainingLink', this.value)" value="${s.trainingLink || ''}" class="w-full bg-gray-800 border-gray-600 p-1 rounded mt-1 text-xs text-gray-200" title="Training Link">
                   </div>
               `).join('');
           }
@@ -632,6 +646,10 @@ const ConfigManager = {
                         </select>
                     </div>
                     <div><label class="text-xs text-gray-400 font-bold block mb-1">Source Default</label><input value="${f.source || f.default || ''}" placeholder="e.g. parsed_site_number" onchange="ConfigManager._upField(${i}, 'source', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded text-sm text-gray-200"></div>
+                     <div class="col-span-2 flex items-center mb-1">
+                         <input type="checkbox" ${f.required ? 'checked' : ''} onchange="ConfigManager._upField(${i}, 'required', this.checked)" class="mr-2 h-4 w-4 rounded text-blue-500 bg-gray-800 border-gray-600 focus:ring-blue-500">
+                         <label class="text-xs text-gray-400 font-bold block">Required</label>
+                     </div>
                      <div class="col-span-2">
                          <label class="text-xs text-gray-400 font-bold block mb-1">Visible If (Condition)</label>
                          <input value="${f.visibleIf || ''}" placeholder="e.g. condition === 'True High Pressure'" onchange="ConfigManager._upField(${i}, 'visibleIf', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded text-sm text-gray-200 font-mono text-blue-300">
@@ -643,6 +661,10 @@ const ConfigManager = {
                      <div class="col-span-2">
                          <label class="text-xs text-gray-400 font-bold block mb-1">Training Explanation (Shown in Training Mode)</label>
                          <textarea onchange="ConfigManager._upField(${i}, 'trainingExplanation', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded text-sm text-gray-200 h-10">${f.trainingExplanation || ''}</textarea>
+                     </div>
+                     <div class="col-span-2">
+                         <label class="text-xs text-gray-400 font-bold block mb-1">Training Link (URL)</label>
+                         <input type="url" value="${f.trainingLink || ''}" placeholder="https://..." onchange="ConfigManager._upField(${i}, 'trainingLink', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded text-sm text-gray-200">
                      </div>
                      ${f.type === 'radio' || f.type === 'select' ? `
                          <div class="col-span-2">

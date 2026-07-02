@@ -314,8 +314,7 @@ window.EMS_MAPPING = {
                 "circuits": {},
                 "ems": "Novar ESS32"
             }
-        },
-        "isRemodel": true
+        }
     },
     "483": {
         "racks": {
@@ -431,8 +430,7 @@ window.EMS_MAPPING = {
                 "circuits": {},
                 "ems": "Opus Magnum"
             }
-        },
-        "isRemodel": true
+        }
     },
     "604": {
         "racks": {
@@ -492,8 +490,7 @@ window.EMS_MAPPING = {
                 "circuits": {},
                 "ems": "CPC UltraSite"
             }
-        },
-        "isRemodel": true
+        }
     },
     "670": {
         "racks": {
@@ -805,8 +802,7 @@ window.EMS_MAPPING = {
                 "circuits": {},
                 "ems": "Opus Architect"
             }
-        },
-        "isRemodel": true
+        }
     },
     "818": {
         "racks": {
@@ -1154,8 +1150,7 @@ window.EMS_MAPPING = {
                 "circuits": {},
                 "ems": "Novar ESS32"
             }
-        },
-        "isRemodel": true
+        }
     },
     "991": {
         "racks": {
@@ -1391,8 +1386,7 @@ window.EMS_MAPPING = {
                 "circuits": {},
                 "ems": "Opus Magnum"
             }
-        },
-        "isRemodel": true
+        }
     },
     "1174": {
         "racks": {
@@ -1956,8 +1950,7 @@ window.EMS_MAPPING = {
                 "circuits": {},
                 "ems": "Opus Magnum"
             }
-        },
-        "isRemodel": true
+        }
     },
     "1620": {
         "racks": {
@@ -1989,8 +1982,7 @@ window.EMS_MAPPING = {
                 "circuits": {},
                 "ems": "Opus Magnum"
             }
-        },
-        "isRemodel": true
+        }
     },
     "1638": {
         "racks": {
@@ -3227,8 +3219,7 @@ window.EMS_MAPPING = {
                 "circuits": {},
                 "ems": "CPC UltraSite"
             }
-        },
-        "isRemodel": true
+        }
     },
     "4648": {
         "racks": {
@@ -3456,8 +3447,7 @@ window.EMS_MAPPING = {
                 "circuits": {},
                 "ems": "Novar ESS32"
             }
-        },
-        "isRemodel": true
+        }
     },
     "4990": {
         "racks": {
@@ -3769,8 +3759,7 @@ window.EMS_MAPPING = {
                 "circuits": {},
                 "ems": "Danfoss Store View"
             }
-        },
-        "isRemodel": true
+        }
     },
     "5363": {
         "racks": {
@@ -3894,8 +3883,7 @@ window.EMS_MAPPING = {
                 "circuits": {},
                 "ems": "CPC UltraSite"
             }
-        },
-        "isRemodel": true
+        }
     },
     "5771": {
         "racks": {
@@ -3911,8 +3899,7 @@ window.EMS_MAPPING = {
                 "circuits": {},
                 "ems": "CPC UltraSite"
             }
-        },
-        "isRemodel": true
+        }
     },
     "5845": {
         "racks": {
@@ -3944,8 +3931,7 @@ window.EMS_MAPPING = {
                 "circuits": {},
                 "ems": "Connect+"
             }
-        },
-        "isRemodel": true
+        }
     },
     "5872": {
         "racks": {
@@ -4189,8 +4175,7 @@ window.EMS_MAPPING = {
                 "circuits": {},
                 "ems": "Novar ESS32"
             }
-        },
-        "isRemodel": true
+        }
     },
     "8120": {
         "racks": {
