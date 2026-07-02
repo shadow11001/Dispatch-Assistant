@@ -26,9 +26,11 @@ const UI = {
     },
 
     bindEvents: function () {
-        this.adminModeBtn.addEventListener('click', () => {
-            ConfigManager.openAdminModal();
-        });
+        if (this.adminModeBtn) {
+            this.adminModeBtn.addEventListener('click', () => {
+                ConfigManager.openAdminModal();
+            });
+        }
 
         if (this.trainingModeToggle) {
             this.trainingModeToggle.addEventListener('change', () => {
@@ -44,36 +46,48 @@ const UI = {
             });
         }
 
-        this.parseBtn.addEventListener('click', () => App.handleParseAlert(this.alertInput.value));
+        if (this.parseBtn && this.alertInput) {
+            this.parseBtn.addEventListener('click', () => {
+                App.handleParseAlert(this.alertInput.value || '');
+            });
+            
+            this.alertInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    App.handleParseAlert(this.alertInput.value || '');
+                }
+            });
+        }
         
-        // Handle "Enter" key inside the alert input to parse automatically and prevent newlines
-        this.alertInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                App.handleParseAlert(this.alertInput.value);
-            }
-        });
+        if (this.copyNoteBtn && this.generatedNote) {
+            this.copyNoteBtn.addEventListener('click', () => {
+                 this.generatedNote.select();
+                 document.execCommand('copy');
+                 const oldText = this.copyNoteBtn.innerText;
+                 this.copyNoteBtn.innerText = "Copied!";
+                 setTimeout(() => { this.copyNoteBtn.innerText = oldText; }, 2000);
+            });
+        }
         
-        this.copyNoteBtn.addEventListener('click', () => {
-             this.generatedNote.select();
-             document.execCommand('copy');
-             // Flash button state
-             const oldText = this.copyNoteBtn.innerText;
-             this.copyNoteBtn.innerText = "Copied!";
-             setTimeout(() => { this.copyNoteBtn.innerText = oldText; }, 2000);
-        });
-        
-        this.clearNoteBtn.addEventListener('click', () => {
-             this.alertInput.value = '';
-             this.parsedContainer.classList.add('hidden');
-             this.dynamicQuestions.innerHTML = '';
-             this.sopContainer.innerHTML = '<p class="text-gray-400 italic">Please parse an alert or select an alarm type to view SOPs.</p>';
-             this.crystalAttributesContainer.classList.add('hidden');
-             this.generatedNote.value = '';
-             this.formState = {};
-             this.currentProfile = null;
-             if (typeof TimerEngine !== 'undefined') { TimerEngine.reset(); }
-        });
+        if (this.clearNoteBtn) {
+            this.clearNoteBtn.addEventListener('click', () => {
+                 // Clear pending debounce timeout before clearing state
+                 if (this._renderTimeout) {
+                     clearTimeout(this._renderTimeout);
+                     this._renderTimeout = null;
+                 }
+                 
+                 if (this.alertInput) this.alertInput.value = '';
+                 if (this.parsedContainer) this.parsedContainer.classList.add('hidden');
+                 if (this.dynamicQuestions) this.dynamicQuestions.innerHTML = '';
+                 if (this.sopContainer) this.sopContainer.innerHTML = '<p class="text-gray-400 italic">Please parse an alert or select an alarm type to view SOPs.</p>';
+                 if (this.crystalAttributesContainer) this.crystalAttributesContainer.classList.add('hidden');
+                 if (this.generatedNote) this.generatedNote.value = '';
+                 this.formState = {};
+                 this.currentProfile = null;
+                 if (typeof TimerEngine !== 'undefined') { TimerEngine.reset(); }
+            });
+        }
     },
 
     renderParsedData: function (parsedData) {
@@ -121,6 +135,7 @@ const UI = {
     },
 
     buildForm: function (profile, parsedData) {
+        if(typeof this._clearPendingDebounce === 'function') this._clearPendingDebounce();
         this.currentProfile = profile;
         this.currentPhaseIndex = 0;
         this.completedPhases = [];
@@ -300,13 +315,13 @@ const UI = {
                 if (currentValue) {
                     const hMatch = currentValue.match(/(\d+)\s*hour/);
                     const mMatch = currentValue.match(/(\d+)\s*minute/);
-                    if (hMatch) hoursInput.value = hMatch[1];
-                    if (mMatch) minsInput.value = mMatch[1];
+                    if (hMatch && hoursInput) hoursInput.value = hMatch[1];
+                    if (mMatch && minsInput) minsInput.value = mMatch[1];
                 }
 
                 const updateTime = () => {
-                    const h = parseInt(hoursInput.value || 0);
-                    const m = parseInt(minsInput.value || 0);
+                    const h = hoursInput ? parseInt(hoursInput.value || 0) : 0;
+                    const m = minsInput ? parseInt(minsInput.value || 0) : 0;
                     let result = "";
                     if (h > 0) result += `${h} hour${h > 1 ? 's' : ''}`;
                     if (h > 0 && m > 0) result += ", ";
@@ -319,8 +334,8 @@ const UI = {
                      this._debouncedPhaseRender();
                 };
 
-                hoursInput.addEventListener('input', updateTime);
-                minsInput.addEventListener('input', updateTime);
+                if (hoursInput) hoursInput.addEventListener('input', updateTime);
+                if (minsInput) minsInput.addEventListener('input', updateTime);
 
                 const hLabel = document.createElement('span');
                 hLabel.className = "self-center text-gray-400 text-sm";
@@ -534,13 +549,13 @@ const UI = {
                 if (currentValue) {
                     const hMatch = currentValue.match(/(\d+)\s*hour/);
                     const mMatch = currentValue.match(/(\d+)\s*minute/);
-                    if (hMatch) hoursInput.value = hMatch[1];
-                    if (mMatch) minsInput.value = mMatch[1];
+                    if (hMatch && hoursInput) hoursInput.value = hMatch[1];
+                    if (mMatch && minsInput) minsInput.value = mMatch[1];
                 }
 
                 const updateTime = () => {
-                    const h = parseInt(hoursInput.value || 0);
-                    const m = parseInt(minsInput.value || 0);
+                    const h = hoursInput ? parseInt(hoursInput.value || 0) : 0;
+                    const m = minsInput ? parseInt(minsInput.value || 0) : 0;
                     let result = "";
                     if (h > 0) result += `${h} hour${h > 1 ? 's' : ''}`;
                     if (h > 0 && m > 0) result += ", ";
@@ -553,8 +568,8 @@ const UI = {
                      this._debouncedPhaseRender();
                 };
 
-                hoursInput.addEventListener('input', updateTime);
-                minsInput.addEventListener('input', updateTime);
+                if (hoursInput) hoursInput.addEventListener('input', updateTime);
+                if (minsInput) minsInput.addEventListener('input', updateTime);
 
                 const hLabel = document.createElement('span');
                 hLabel.className = "self-center text-gray-400 text-sm";
@@ -744,23 +759,42 @@ const UI = {
             clearTimeout(this._renderTimeout);
         }
         this._renderTimeout = setTimeout(() => {
-            // Save currently focused element ID so we can restore it if it still exists
-            const focusedId = document.activeElement ? document.activeElement.id : null;
-            
-            // Re-render
-            this.renderPhasedWorkflow(this.currentPhaseIndex);
-            
-            // Restore focus
-            if (focusedId) {
-                const el = document.getElementById(focusedId);
-                if (el) el.focus();
+            try {
+                // Verify UI state still exists before rendering
+                if (!this.currentProfile || !this.dynamicQuestions) {
+                    return;
+                }
+
+                // Save currently focused element ID so we can restore it if it still exists
+                const focusedId = document.activeElement ? document.activeElement.id : null;
+                
+                // Re-render
+                this.renderPhasedWorkflow(this.currentPhaseIndex);
+                
+                // Restore focus
+                if (focusedId) {
+                    const el = document.getElementById(focusedId);
+                    if (el && el.offsetParent !== null) { // Check if element is still in DOM
+                        el.focus();
+                    }
+                }
+            } finally {
+                this._renderTimeout = null; // Clear reference after execution
             }
         }, 300);
     },
 
+    _clearPendingDebounce: function() {
+        if (this._renderTimeout) {
+            clearTimeout(this._renderTimeout);
+            this._renderTimeout = null;
+        }
+    },
+
     triggerNoteRender: function() {
-        if (!this.currentProfile) return;
+        if (!this.currentProfile || !this.generatedNote) return;
         const config = App.config; // Pass master config to access reusable text
+        if (!config) return;
         config.activeProfileFields = this.currentProfile.fields; // Pass current fields down so engine knows condition boundaries
         const note = TemplateEngine.generateNote(this.currentProfile.noteTemplate, this.formState, config);
         this.generatedNote.value = note;

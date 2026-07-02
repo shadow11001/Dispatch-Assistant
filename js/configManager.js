@@ -578,15 +578,36 @@ const ConfigManager = {
         ConfigManager._addField = () => { profile.fields.push({id: "new_field", label: "New Label", type: "text"}); this.editProfile(this.editingProfileId); };
         ConfigManager._rmField = (idx) => { profile.fields.splice(idx, 1); this.editProfile(this.editingProfileId); };
         ConfigManager._upField = (idx, k, v) => { profile.fields[idx][k] = v; };
+        ConfigManager._moveField = (idx, dir) => {
+            if (idx + dir < 0 || idx + dir >= profile.fields.length) return;
+            const temp = profile.fields[idx];
+            profile.fields[idx] = profile.fields[idx + dir];
+            profile.fields[idx + dir] = temp;
+            this.editProfile(this.editingProfileId);
+        };
                   // Phase Management
           ConfigManager._addPha = () => { if(!profile.investigationPhases) profile.investigationPhases = []; profile.investigationPhases.push({id: "new-phase", title: "New Phase", sequence: profile.investigationPhases.length + 1}); this.editProfile(this.editingProfileId); };
           ConfigManager._rmPha = (idx) => { profile.investigationPhases.splice(idx, 1); this.editProfile(this.editingProfileId); };
           ConfigManager._upPha = (idx, k, v) => { profile.investigationPhases[idx][k] = v; };
+          ConfigManager._movePha = (idx, dir) => {
+              if (idx + dir < 0 || idx + dir >= profile.investigationPhases.length) return;
+              const temp = profile.investigationPhases[idx];
+              profile.investigationPhases[idx] = profile.investigationPhases[idx + dir];
+              profile.investigationPhases[idx + dir] = temp;
+              this.editProfile(this.editingProfileId);
+          };
 
           // SOP Sections Management
           ConfigManager._addSOP = () => { if(!profile.sopSections) profile.sopSections = []; profile.sopSections.push({id: "new-sop", title: "New SOP Section", content: "<p>Instructions</p>"}); this.editProfile(this.editingProfileId); };
           ConfigManager._rmSOP = (idx) => { profile.sopSections.splice(idx, 1); if(profile.sopSections.length === 0) delete profile.sopSections; this.editProfile(this.editingProfileId); };
           ConfigManager._upSOP = (idx, k, v) => { profile.sopSections[idx][k] = v; };
+          ConfigManager._moveSOP = (idx, dir) => {
+              if (idx + dir < 0 || idx + dir >= profile.sopSections.length) return;
+              const temp = profile.sopSections[idx];
+              profile.sopSections[idx] = profile.sopSections[idx + dir];
+              profile.sopSections[idx + dir] = temp;
+              this.editProfile(this.editingProfileId);
+          };
 
           let sopHtml = '';
           if(profile.sopSections) {
@@ -598,6 +619,8 @@ const ConfigManager = {
                               <input type="checkbox" ${s.alwaysShow ? 'checked' : ''} onchange="ConfigManager._upSOP(${i}, 'alwaysShow', this.checked)">
                               <label class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Always Show</label>
                           </div>
+                          <button class="text-gray-400 hover:text-white mr-2" onclick="ConfigManager._moveSOP(${i}, -1)" title="Move Up">↑</button>
+                          <button class="text-gray-400 hover:text-white mr-2" onclick="ConfigManager._moveSOP(${i}, 1)" title="Move Down">↓</button>
                           <button class="text-red-500 hover:text-red-400" onclick="ConfigManager._rmSOP(${i})">X</button>
                       </div>
                       <input value="${s.title}" placeholder="SOP Title" onchange="ConfigManager._upSOP(${i}, 'title', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded mb-1">
@@ -618,6 +641,8 @@ const ConfigManager = {
                   <div class="bg-gray-900 border border-gray-700 p-2 rounded mb-2 text-sm">
                       <div class="flex justify-between items-center mb-1">
                           <input value="${p.id}" onchange="ConfigManager._upPha(${i}, 'id', this.value)" class="bg-gray-800 border-gray-600 p-1 rounded font-bold w-1/3 text-blue-300">
+                          <button class="text-gray-400 hover:text-white mr-2" onclick="ConfigManager._movePha(${i}, -1)" title="Move Up">↑</button>
+                          <button class="text-gray-400 hover:text-white mr-2" onclick="ConfigManager._movePha(${i}, 1)" title="Move Down">↓</button>
                           <button class="text-red-500 hover:text-red-400" onclick="ConfigManager._rmPha(${i})">X</button>
                       </div>
                       <div class="grid grid-cols-2 gap-2">
@@ -673,7 +698,11 @@ const ConfigManager = {
                          </div>
                      ` : ''}
                 </div>
-                <button class="text-red-500 border border-gray-600 hover:text-red-400 px-3 py-2 rounded font-bold" onclick="ConfigManager._rmField(${i})">X</button>
+                <div class="flex flex-col ml-2">
+                    <button class="text-gray-400 hover:text-white bg-gray-800 border border-gray-600 px-3 py-1 rounded font-bold mb-1" onclick="ConfigManager._moveField(${i}, -1)" title="Move Up">↑</button>
+                    <button class="text-gray-400 hover:text-white bg-gray-800 border border-gray-600 px-3 py-1 rounded font-bold mb-1" onclick="ConfigManager._moveField(${i}, 1)" title="Move Down">↓</button>
+                    <button class="text-red-500 border border-gray-600 hover:text-red-400 px-3 py-2 rounded font-bold mt-auto" onclick="ConfigManager._rmField(${i})">X</button>
+                </div>
             </div>
         `).join('');
 
