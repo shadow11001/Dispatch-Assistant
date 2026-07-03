@@ -150,9 +150,17 @@
                     })
                 });
 
-                if (!res.ok) throw new Error("HTTP " + res.status);
+                // Some APIs return 404 or 204 when the queue is completely empty
+                if (!res.ok) {
+                    if (res.status === 404) return { result: [] };
+                    throw new Error("HTTP " + res.status);
+                }
 
-                return await res.json();
+                const text = await res.text();
+                // If response is physically empty, treat as no alerts
+                if (!text || text.trim() === "") return { result: [] };
+
+                return JSON.parse(text);
             } catch (err) {
                 if (CONFIG.debug) console.error("[CrystalWatcher] Fetch error:", err);
                 return null;
@@ -244,7 +252,11 @@ Latest Count: ${count ?? "-"}
             if (data) {
                 process(data);
 
-                updatePanel("CONNECTED", data.result?.length || 0);
+                if (data.result && data.result.length > 0) {
+                    updatePanel("ALERTS FOUND", data.result.length);
+                } else {
+                    updatePanel("WAITING...", 0);
+                }
 
                 // optional auto-refresh behavior (your "Assign" button)
                 if (CONFIG.autoClickAssign && data.result?.length > 0) {
