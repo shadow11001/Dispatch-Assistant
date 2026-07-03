@@ -33,6 +33,8 @@
         soundType: "speech", // Options: "beep", "speech", "custom"
         speechText: "You got mail!", // Used if soundType is "speech"
         customSoundUrl: "", // URL to mp3/wav file if soundType is "custom"
+
+        panelPosition: "bottom-right", // Options: "bottom-right", "bottom-left", "top-right", "top-left"
         
         desktopNotification: true,
         flashTitle: true,
@@ -189,11 +191,16 @@
         /**********************
      * STATUS PANEL
      **********************/
+
+        let positionStyles = "bottom: 10px; right: 10px;";
+        if (CONFIG.panelPosition === "bottom-left") positionStyles = "bottom: 10px; left: 10px;";
+        else if (CONFIG.panelPosition === "top-right") positionStyles = "top: 10px; right: 10px;";
+        else if (CONFIG.panelPosition === "top-left") positionStyles = "top: 10px; left: 10px;";
+
         GM_addStyle(`
         #cw-panel {
             position: fixed;
-            bottom: 10px;
-            right: 10px;
+            ${positionStyles}
             background: rgba(0,0,0,0.85);
             color: #00ff88;
             padding: 10px;
@@ -202,6 +209,7 @@
             font-family: monospace;
             border-radius: 6px;
             min-width: 220px;
+            white-space: pre-wrap;
         }
     `);
 
