@@ -428,6 +428,29 @@ const ConfigManager = {
                 <!-- 3. Expression Builder -->
                 <div class="bg-gray-900 border border-gray-700 rounded-lg p-5">
                     <h3 class="text-lg font-black text-purple-400 mb-4 border-b border-purple-900 pb-2">3. Expression Builder Guide (Visible If / Activate If)</h3>
+                    
+                    <!-- DYNAMIC INTERPOLATION GUIDE -->
+                    <div class="mb-5">
+                        <h4 class="font-bold text-gray-200 mb-2 font-mono">Dynamic Template Interpolation (Math & Variables)</h4>
+                        <p class="text-sm text-gray-400 mb-2">You can directly embed live mathematical calculations and variable parsing structurally inside <strong>Radio/Select Options</strong> or <strong>SOP Content</strong>!</p>
+                        <p class="text-sm text-gray-400 mb-2">Simply wrap your mathematical logic or script in curly braces <code class="bg-gray-800 text-pink-400 px-1 rounded">{}</code>. It will evaluate live against the user's keystrokes.</p>
+                        
+                        <p class="text-sm text-gray-300 font-bold mb-1">Available Global Pointers:</p>
+                        <ul class="list-disc pl-5 text-sm text-gray-400 mb-3">
+                           <li><code class="bg-gray-800 text-pink-400 px-1 rounded">data</code>: Contains local parameters natively. (e.g. data.suct_psi_setpoint)</li>
+                           <li><code class="bg-gray-800 text-pink-400 px-1 rounded">thresholds</code>: Pulls parameters globally out of SystemThresholds. (e.g. thresholds.suction_psi.targetVariance.above)</li>
+                        </ul>
+
+                        <div class="bg-gray-900 p-3 rounded border border-gray-700 font-mono text-xs mb-2">
+                           <span class="text-green-400">// Example (Inside an SOP Block):</span><br>
+                           <span class="text-blue-300">&lt;p&gt;You should force it to exactly: {parseFloat(data.suct_psi) + thresholds.suction_psi.targetVariance.above} PSI.&lt;/p&gt;</span>
+                        </div>
+                        <div class="bg-gray-900 p-3 rounded border border-gray-700 font-mono text-xs">
+                           <span class="text-green-400">// Example (Inside a Radio Button Option):</span><br>
+                           <span class="text-gray-300">If your Radio option is literally named: <code class="text-blue-300">"{parseFloat(data.suct_psi) + 15}"</code></span><br>
+                           <span class="text-gray-300">The engine will instantly re-render it as "37" when suct_psi reads 22.</span>
+                        </div>
+                    </div>
                     <p class="text-sm text-gray-300 mb-4 border-b border-gray-700 pb-4">The conditional logic inputs use an embedded Javascript evaluation engine to securely read answers. To reference a field's value, simply type the exact <code class="bg-gray-800 px-1 rounded text-pink-300 font-mono">ID</code> of the field you are reading.</p>
                     
                     <div class="space-y-4">

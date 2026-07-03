@@ -233,7 +233,16 @@ const UI = {
             if (field.type === 'radio') {
                 const radioGroup = document.createElement('div');
                 radioGroup.className = "flex space-x-4";
-                field.options.forEach(opt => {
+                field.options.forEach(rawOpt => {
+                     // Dynamic math/variable interpolation inside options!
+                     let opt = rawOpt;
+                     if (opt.includes('{') && opt.includes('}')) {
+                         opt = opt.replace(/\{([^}]+)\}/g, (match, expression) => {
+                             let res = DecisionEngine.calculateRecommendation(expression, this.formState, App.config);
+                             return res !== null && res !== undefined && !isNaN(res) ? res : match;
+                         });
+                     }
+
                      const labelEl = document.createElement('label');
                      labelEl.className = "inline-flex items-center";
                      const radioEl = document.createElement('input');
@@ -468,7 +477,16 @@ const UI = {
             if (field.type === 'radio') {
                 const radioGroup = document.createElement('div');
                 radioGroup.className = "flex space-x-4";
-                field.options.forEach(opt => {
+                field.options.forEach(rawOpt => {
+                     // Dynamic math/variable interpolation inside options!
+                     let opt = rawOpt;
+                     if (opt.includes('{') && opt.includes('}')) {
+                         opt = opt.replace(/\{([^}]+)\}/g, (match, expression) => {
+                             let res = DecisionEngine.calculateRecommendation(expression, this.formState, App.config);
+                             return res !== null && res !== undefined && !isNaN(res) ? res : match;
+                         });
+                     }
+
                      const labelEl = document.createElement('label');
                      labelEl.className = "inline-flex items-center";
                      const radioEl = document.createElement('input');
@@ -645,7 +663,16 @@ const UI = {
             const isTrainingMode = this.trainingModeToggle ? this.trainingModeToggle.checked : false;
 
             visibleSections.forEach(section => {
-                html += `<div class="mb-4">${section.content || ''}`;
+                let contentText = section.content || '';
+                // Dynamic math/variable interpolation inside SOP content!
+                if (contentText.includes('{') && contentText.includes('}')) {
+                    contentText = contentText.replace(/\{([^}]+)\}/g, (match, expression) => {
+                        let res = DecisionEngine.calculateRecommendation(expression, this.formState, App.config);
+                        return res !== null && res !== undefined && !isNaN(res) ? res : match;
+                    });
+                }
+                
+                html += `<div class="mb-4">${contentText}`;
                 
                 // Append training explanation if in training mode
                 if (isTrainingMode && section.trainingExplanation) {

@@ -1040,6 +1040,13 @@ window.AlarmAssistantConfig = {
           "title": "Phase 3 - Outbound Call",
           "content": "<div class=\"space-y-4 max-w-full text-sm\">\n    <!-- Mandatory Requirements Block -->\n    <div class=\"bg-red-900 bg-opacity-20 border border-red-700 rounded p-3 shadow-sm\">\n        <h4 class=\"font-bold text-red-400 mb-2 flex items-center\">\n            <span class=\"mr-2\">💚</span> DO NOT MISS THESE REQUIREMENTS\n        </h4>\n        <ul class=\"text-gray-300 space-y-1 list-disc list-inside pl-5\">\n            <li><strong class=\"text-gray-200\">Do Not Ask the Store if They Want a Work Order:</strong> The alarm condition determines when a WO is created.</li>\n            <li><strong>ALWAYS use the Scripted Closing:</strong> <em class=\"text-blue-300\">\"Please monitor product and follow refrigeration failure guidelines that can be found on The Wire.\"</em></li>\n            <li>If a Manager Asks \"When is the tech going to arrive?\": <em class=\"text-yellow-300\">\"A technician will be onsite as soon as possible based on technician assignment.\"</em></li>\n        </ul>\n    </div>\n\n    <!-- Collapsible Scenario 1: Manager Answers -->\n    <details class=\"bg-gray-800 border border-gray-700 rounded shadow-sm group\">\n        <summary class=\"font-bold text-blue-400 cursor-pointer p-3 outline-none hover:bg-gray-700 transition\">\n            🎬 Scenario 1: Manager Answers\n        </summary>\n        <div class=\"p-3 border-t border-gray-700 space-y-3 bg-gray-900 border-l-4 border-l-blue-500\">\n            <div class=\"space-y-2 text-gray-300\">\n                <p><span class=\"font-bold text-purple-400 text-xs uppercase tracking-wider\">Agent</span></p>\n                <p class=\"italic\">\"Hello, my name is [FirstName], calling from Upstream Facility Services about a refrigeration issue at your store. For documentation, could I please get your first name, last name, and position?\"</p>\n                \n                <p class=\"italic\">\"The issue I’m calling about is [CaseOrRack] in alarm for [Issue Type]. It has been in alarm for about [Time], currently running at [CurrentReading] with a setpoint of [SetPoint].\"</p>\n                \n                <p class=\"italic\">\"We have created an emergency response work order and a technician will be onsite ASAP. Do you have any questions for me at this time?\"</p>\n\n                <p><span class=\"font-bold text-green-400 text-xs uppercase tracking-wider\">Manager</span></p>\n                <p class=\"italic\">\"[Asks Question] or No thank you.\"</p>\n\n                <p><span class=\"font-bold text-purple-400 text-xs uppercase tracking-wider\">Agent Closing</span></p>\n                <p class=\"italic font-bold text-blue-300\">\"All right, thank you for your time today. Please monitor product and follow refrigeration failure guidelines as found on The Wire and have a great day.\"</p>\n            </div>\n        </div>\n    </details>\n\n    <!-- Collapsible Scenario 2: No Answer (Voicemail) -->\n    <details class=\"bg-gray-800 border border-gray-700 rounded shadow-sm group\">\n        <summary class=\"font-bold text-yellow-400 cursor-pointer p-3 outline-none hover:bg-gray-700 transition\">\n            🎬 Scenario 2: No Answer (Leave Voicemail)\n        </summary>\n        <div class=\"p-3 border-t border-gray-700 space-y-3 bg-gray-900 border-l-4 border-l-yellow-500\">\n            <p><span class=\"font-bold text-purple-400 text-xs uppercase tracking-wider\">Agent Voicemail Script</span></p>\n            <p class=\"text-gray-300 italic mb-4\">\"Good [Morning/Afternoon/Evening], my name is [FirstName]. I’m calling from Upstream Facility Services regarding [CaseorRack] in alarm for [IssueType]. It has been in alarm for about [Time], currently running at [TempOrRackReading] with a setpoint of [SetPoint]. We have created an emergency response work order and a technician will be onsite ASAP.\"</p>\n            \n            <p class=\"text-blue-300 italic mb-4 font-bold\">\"Please monitor product and follow refrigeration failure guidelines as found on The Wire. Thank you.\"</p>\n\n            <div class=\"bg-gray-800 p-2 rounded mt-2\">\n                <span class=\"font-bold text-gray-400 text-xs uppercase block mb-1\">Required Action After Voicemail:</span>\n                <ul class=\"list-disc pl-4 text-xs text-gray-400 space-y-1\">\n                    <li>Document the attempted contact, who was called, and that a VM was left.</li>\n                    <li>Continue to the next manager contact on the approved list if required.</li>\n                </ul>\n            </div>\n        </div>\n    </details>\n\n    <!-- Call Procedure Recap -->\n    <div class=\"bg-gray-800 border border-gray-700 p-3 rounded\">\n        <h4 class=\"font-bold text-gray-300 mb-2 border-b border-gray-700 pb-1 text-xs uppercase tracking-wider\">🧠 CI Project Recap Checklist</h4>\n        <div class=\"grid grid-cols-1 gap-1 text-xs text-gray-400\">\n            <p>✅ Main store line attempted first</p>\n            <p>✅ Approved manager contact list attempted before declaring no answer</p>\n            <p>✅ Voicemail left where available</p>\n            <p>✅ Full manager information documented when contact is made</p>\n            <p>✅ Professional closing executed</p>\n        </div>\n    </div>\n</div>",
           "showAfter": "phase-2-dispatch"
+        },
+        {
+          "id": "force-instruction",
+          "title": "Override Instruction",
+          "phase": "phase-1-investigate",
+          "showIf": "suct_psi !== ''",
+          "content": "\n        <div class=\"bg-gray-800 p-2 rounded mb-2 border-l-4 border-yellow-500\">\n            <h4 class=\"font-bold text-yellow-400\">Override Procedure:</h4>\n            <p class=\"text-xs text-gray-300\">Take the baseline Suction Setpoint and place a force in EMS +15 PSI higher so it tracks aggressively but safely if isolated.</p>\n            <p class=\"text-xs text-yellow-200 mt-1 font-bold\">You should force it to exactly: <span class=\"bg-yellow-900 text-yellow-100 px-1 rounded\">{parseFloat(data.suct_psi) + thresholds.suction_psi.targetVariance.above} PSI</span></p>\n        </div>"
         }
       ],
       "crystalAttributes": {
@@ -1081,6 +1088,23 @@ window.AlarmAssistantConfig = {
             "Unknown"
           ],
           "phase": "phase-1-investigate"
+        },
+        {
+          "id": "suct_psi",
+          "label": "Suction PSI Setpoint",
+          "type": "text",
+          "phase": "phase-1-investigate"
+        },
+        {
+          "id": "forced_suct",
+          "label": "Transducer Override",
+          "type": "radio",
+          "options": [
+            "Did not force suct psi",
+            "Forced suct psi to ({parseFloat(data.suct_psi) + thresholds.suction_psi.targetVariance.above})"
+          ],
+          "phase": "phase-1-investigate",
+          "visibleIf": "suct_psi !== ''"
         },
         {
           "id": "time_in_alarm",
