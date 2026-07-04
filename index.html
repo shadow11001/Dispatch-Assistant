@@ -5,31 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alarm Alert Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['var(--theme-font-family)'],
+                        mono: ['monospace'],
+                    },
+                    colors: {
+                        theme: {
+                            bg: 'var(--theme-bg-main)',
+                            panel1: 'var(--theme-bg-panel1)',
+                            panel2: 'var(--theme-bg-panel2)',
+                            panel3: 'var(--theme-bg-panel3)',
+                            input: 'var(--theme-bg-input)',
+                            border: 'var(--theme-border-main)',
+                            borderdark: 'var(--theme-border-dark)',
+                            primary: 'var(--theme-primary)',
+                            primaryhover: 'var(--theme-primary-hover)',
+                            accent: 'var(--theme-accent)',
+                            accentsec: 'var(--theme-accent-secondary)',
+                            text: 'var(--theme-text-main)',
+                            textmuted: 'var(--theme-text-muted)',
+                            headerbg: 'var(--theme-header-bg)',
+                            headertext: 'var(--theme-header-text)',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="stylesheet" href="css/app.css">
 </head>
-<body class="bg-gray-900 h-screen flex flex-col font-sans text-gray-200">
-    <header class="bg-gray-800 border-b border-theme-borderdark text-white p-4 shadow-md flex justify-between items-center z-10">
-        <h1 class="text-xl font-bold">Alarm Alert Assistant</h1>
+<body class="theme-walmart bg-theme-bg h-screen flex flex-col font-sans text-theme-text">
+    <header class="bg-theme-headerbg border-b border-theme-borderdark text-white p-4 shadow-md flex justify-between items-center z-10">
+        <div class="flex items-center space-x-3 walmart-logo-container">
+            <img src="branding-assets/WMT-Spark/Vector/SVG/WMT-Spark-SparkYellow-RGB.svg" alt="Walmart Spark" class="h-8 w-8">
+            <img src="branding-assets/WMT-Wordmark/Standard/Vector/SVG/WMT-Wordmark-Standard-White-RGB.svg" alt="Walmart" class="h-6 object-contain hidden sm:block">
+            <h1 class="text-xl font-bold text-theme-headertext border-l-2 border-theme-borderdark pl-3">Alarm Alert Assistant</h1>
+        </div>
+        <h1 class="text-xl font-bold text-theme-headertext classic-title" style="display: none;">Alarm Alert Assistant</h1>
         <div class="flex items-center space-x-4">
             <label class="inline-flex relative items-center cursor-pointer group">
                 <input type="checkbox" id="training-mode-toggle" class="sr-only peer" checked>
-                <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                <span class="ml-3 text-sm font-medium text-theme-textmuted group-hover:text-white">Training Mode</span>
+                <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-theme-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-theme-primary                <span class="ml-3 text-sm font-medium text-theme-textmuted group-hover:text-white">Training Mode</span>
             </label>
-            <button id="admin-mode-btn" class="bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded text-sm transition">Admin Mode</button>
+            <button id="admin-mode-btn" class="bg-theme-primary hover:bg-theme-primaryhover px-3 py-1 rounded text-sm transition">Admin Mode</button>
         </div>
     </header>
     
     <main class="flex-1 flex overflow-hidden">
         <!-- Panel 1: Alert Info & Guided Workflow -->
-        <section id="panel-workflow" class="w-1/3 bg-gray-800 border-r border-theme-borderdark p-4 flex flex-col overflow-y-auto shadow-inner">
-            <h2 class="font-bold text-lg border-b border-theme-border pb-2 mb-4 text-blue-400">1. Guided Workflow</h2>
+        <section id="panel-workflow" class="w-1/3 bg-theme-panel1 border-r border-theme-borderdark p-4 flex flex-col overflow-y-auto shadow-inner">
+            <h2 class="font-bold text-lg border-b border-theme-border pb-2 mb-4 text-theme-accent">1. Guided Workflow</h2>
             <div class="mb-4">
-                <label for="alert-input" class="block text-sm font-medium text-gray-300">Paste Alert ID</label>
-                <input type="text" id="alert-input" class="mt-1 block w-full border border-theme-border bg-gray-700 text-gray-200 rounded shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-mono" placeholder="e.g. US|54|C|100001|MODBUS|...">
-                <button id="parse-alert-btn" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-500 w-full font-medium transition">Parse Alert</button>
+                <label for="alert-input" class="block text-sm font-medium text-theme-textmuted">Paste Alert ID</label>
+                <input type="text" id="alert-input" class="mt-1 block w-full border border-theme-border bg-theme-input text-theme-text rounded shadow-sm p-2 focus:ring-theme-primary focus:border-theme-primary text-sm font-mono" placeholder="e.g. US|54|C|100001|MODBUS|...">
+                <button id="parse-alert-btn" class="mt-2 bg-theme-primary text-white px-4 py-2 rounded shadow hover:bg-theme-primaryhover w-full font-medium transition">Parse Alert</button>
             </div>
-            <div id="parsed-data-container" class="mb-4 bg-gray-700 p-3 rounded border border-theme-border text-sm hidden">
+            <div id="parsed-data-container" class="mb-4 bg-theme-input p-3 rounded border border-theme-border text-sm hidden">
                 <!-- Parsed alert data will go here -->
             </div>
             <div id="dynamic-questions-container" class="flex-1">
@@ -38,28 +73,28 @@
         </section>
 
         <!-- Panel 2: Standardized Knowledge & SOPs -->
-        <section id="panel-knowledge" class="w-1/3 bg-gray-900 border-r border-theme-borderdark p-4 flex flex-col overflow-y-auto">
-            <h2 class="font-bold text-lg border-b border-theme-borderdark pb-2 mb-4 text-blue-400">2. Knowledge & Rules</h2>
-            <div id="sop-container" class="prose text-sm text-gray-200 bg-gray-800 p-4 rounded border border-theme-borderdark shadow-sm h-full">
+        <section id="panel-knowledge" class="w-1/3 bg-theme-bg border-r border-theme-borderdark p-4 flex flex-col overflow-y-auto">
+            <h2 class="font-bold text-lg border-b border-theme-borderdark pb-2 mb-4 text-theme-accent">2. Knowledge & Rules</h2>
+            <div id="sop-container" class="prose text-sm text-theme-text bg-theme-panel1 p-4 rounded border border-theme-borderdark shadow-sm h-full">
                 <p class="text-theme-textmuted italic">Please parse an alert or select an alarm type to view SOPs.</p>
             </div>
         </section>
 
         <!-- Panel 3: Work Order Generation -->
-        <section id="panel-workorder" class="w-1/3 bg-gray-800 p-4 flex flex-col overflow-y-auto shadow-inner">
-            <h2 class="font-bold text-lg border-b border-theme-border pb-2 mb-4 text-blue-400">3. Work Order Note</h2>
+        <section id="panel-workorder" class="w-1/3 bg-theme-panel1 p-4 flex flex-col overflow-y-auto shadow-inner">
+            <h2 class="font-bold text-lg border-b border-theme-border pb-2 mb-4 text-theme-accent">3. Work Order Note</h2>
             <div class="flex-1 flex flex-col h-full">
-                <div id="crystal-attributes-container" class="bg-gray-700 border border-theme-border p-3 rounded mb-4 text-sm hidden">
-                     <h3 class="font-bold text-gray-200 mb-2 border-b border-theme-border pb-1">Crystal WorkOrder Attributes</h3>
+                <div id="crystal-attributes-container" class="bg-theme-input border border-theme-border p-3 rounded mb-4 text-sm hidden">
+                     <h3 class="font-bold text-theme-text mb-2 border-b border-theme-border pb-1">Crystal WorkOrder Attributes</h3>
                      <div id="crystal-attributes-list" class="grid grid-cols-2 gap-2"></div>
                 </div>
                 
-                <h3 class="block text-sm font-medium text-gray-300 mb-2">Generated Note:</h3>
-                <textarea id="generated-note" class="flex-1 block w-full border border-theme-border bg-gray-900 text-gray-200 rounded shadow-sm p-3 font-mono text-sm focus:ring-blue-500 focus:border-blue-500" readonly></textarea>
+                <h3 class="block text-sm font-medium text-theme-textmuted mb-2">Generated Note:</h3>
+                <textarea id="generated-note" class="flex-1 block w-full border border-theme-border bg-theme-bg text-theme-text rounded shadow-sm p-3 font-mono text-sm focus:ring-theme-primary focus:border-theme-primary" readonly></textarea>
                 
                 <div class="mt-4 flex space-x-2">
-                    <button id="copy-note-btn" class="flex-1 bg-green-700 text-white px-4 py-2 rounded shadow hover:bg-green-600 font-medium transition">Copy Note</button>
-                    <button id="clear-note-btn" class="flex-1 bg-gray-700 text-gray-200 px-4 py-2 rounded shadow hover:bg-gray-600 font-medium border border-gray-500 transition">Clear</button>
+                    <button id="copy-note-btn" class="flex-1 bg-[#16A34A] text-white px-4 py-2 rounded shadow hover:bg-[#15803d] font-medium transition">Copy Note</button>
+                    <button id="clear-note-btn" class="flex-1 bg-theme-input text-theme-text px-4 py-2 rounded shadow hover:bg-gray-600 font-medium border border-gray-500 transition">Clear</button>
                 </div>
             </div>
         </section>
@@ -67,13 +102,13 @@
 
     <!-- Admin Modal Overlay -->
     <div id="admin-modal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden flex justify-center items-center outline-none">
-        <div class="bg-gray-800 w-11/12 h-5/6 rounded-lg shadow-xl flex flex-col border border-theme-border">
+        <div class="bg-theme-panel1 w-11/12 h-5/6 rounded-lg shadow-xl flex flex-col border border-theme-border">
             <!-- Modal Header -->
             <div class="flex justify-between items-center p-4 border-b border-theme-border">
                 <h2 class="text-xl font-bold text-white">⚙️ Configuration Editor (Admin Mode)</h2>
                 <div class="space-x-2 flex items-center">
                     <input type="file" id="admin-import-file" accept=".json" class="hidden">
-                    <button id="admin-import-btn" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded text-sm transition">Import JSON</button>
+                    <button id="admin-import-btn" class="bg-theme-primary hover:bg-theme-primaryhover text-white px-3 py-1 rounded text-sm transition">Import JSON</button>
                     <button id="admin-export-btn" class="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded text-sm transition">Export JSON</button>
                     <button id="admin-close-btn" class="text-theme-textmuted hover:text-white px-3 py-1 text-3xl leading-none transition">&times;</button>
                 </div>
@@ -81,29 +116,29 @@
             <!-- Modal Body -->
             <div class="flex-1 flex overflow-hidden">
                 <!-- Sidebar: Navigation -->
-                <div class="w-1/4 border-r border-theme-border p-4 flex flex-col overflow-y-auto bg-gray-800">
+                <div class="w-1/4 border-r border-theme-border p-4 flex flex-col overflow-y-auto bg-theme-panel1">
                     <h3 class="text-theme-textmuted text-xs font-bold uppercase mb-2">Configuration</h3>
                     <ul class="space-y-1 mb-4">
-                        <li id="nav-global-settings" class="cursor-pointer p-2 rounded hover:bg-gray-700 text-gray-200 transition">Global Settings</li>
-                        <li id="nav-reusable-text" class="cursor-pointer p-2 rounded hover:bg-gray-700 text-gray-200 transition">Reusable Texts (JSON)</li>
-                        <li id="nav-parser-rules" class="cursor-pointer p-2 rounded hover:bg-gray-700 text-gray-200 transition">Parser Rules (JSON)</li>
-                        <li id="nav-help-guide" class="cursor-pointer p-2 rounded hover:bg-gray-700 text-purple-300 font-bold border border-theme-borderdark mt-2 transition">📖 Help Guide</li>
-                        <li id="nav-master-json" class="cursor-pointer p-2 rounded hover:bg-gray-700 text-purple-300 font-bold border border-theme-borderdark mt-2 transition">Master Raw JSON</li>
+                        <li id="nav-global-settings" class="cursor-pointer p-2 rounded hover:bg-theme-input text-theme-text transition">Global Settings</li>
+                        <li id="nav-reusable-text" class="cursor-pointer p-2 rounded hover:bg-theme-input text-theme-text transition">Reusable Texts (JSON)</li>
+                        <li id="nav-parser-rules" class="cursor-pointer p-2 rounded hover:bg-theme-input text-theme-text transition">Parser Rules (JSON)</li>
+                        <li id="nav-help-guide" class="cursor-pointer p-2 rounded hover:bg-theme-input text-theme-accent font-bold border border-theme-borderdark mt-2 transition">📖 Help Guide</li>
+                        <li id="nav-master-json" class="cursor-pointer p-2 rounded hover:bg-theme-input text-theme-accent font-bold border border-theme-borderdark mt-2 transition">Master Raw JSON</li>
                     </ul>
                     <div class="flex justify-between items-center mb-2 mt-4 border-t border-theme-borderdark pt-4">
                         <h3 class="text-theme-textmuted text-xs font-bold uppercase">Alarm Profiles</h3>
-                        <button id="admin-add-profile-btn" title="Add New Profile" class="text-blue-400 hover:text-blue-300 text-lg leading-none font-bold py-0 px-2 rounded hover:bg-gray-700 transition">+</button>
+                        <button id="admin-add-profile-btn" title="Add New Profile" class="text-theme-accent hover:text-theme-accentsec text-lg leading-none font-bold py-0 px-2 rounded hover:bg-theme-input transition">+</button>
                     </div>
                     <ul id="admin-profiles-list" class="space-y-1 flex-1"></ul>
                 </div>
                 <!-- Main Editor Area -->
-                <div class="flex-1 p-4 overflow-y-auto bg-gray-900 flex flex-col" id="admin-editor-area">
-                    <p class="text-gray-500 italic">Select an option from the sidebar to edit.</p>
+                <div class="flex-1 p-4 overflow-y-auto bg-theme-bg flex flex-col" id="admin-editor-area">
+                    <p class="text-theme-textmuted italic">Select an option from the sidebar to edit.</p>
                 </div>
             </div>
             <!-- Modal Footer -->
             <div class="p-4 border-t border-theme-border flex justify-end space-x-3">
-                <button id="admin-save-btn" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded font-bold transition">Save Configuration</button>
+                <button id="admin-save-btn" class="bg-theme-primary hover:bg-theme-primaryhover text-white px-6 py-2 rounded font-bold transition">Save Configuration</button>
             </div>
         </div>
     </div>

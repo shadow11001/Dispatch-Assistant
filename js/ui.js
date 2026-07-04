@@ -79,7 +79,7 @@ const UI = {
                  if (this.alertInput) this.alertInput.value = '';
                  if (this.parsedContainer) this.parsedContainer.classList.add('hidden');
                  if (this.dynamicQuestions) this.dynamicQuestions.innerHTML = '';
-                 if (this.sopContainer) this.sopContainer.innerHTML = '<p class="text-gray-400 italic">Please parse an alert or select an alarm type to view SOPs.</p>';
+                 if (this.sopContainer) this.sopContainer.innerHTML = '<p class="text-theme-textmuted italic">Please parse an alert or select an alarm type to view SOPs.</p>';
                  if (this.crystalAttributesContainer) this.crystalAttributesContainer.classList.add('hidden');
                  if (this.generatedNote) this.generatedNote.value = '';
                  this.formState = {};
@@ -102,12 +102,12 @@ const UI = {
              if (parsedData.store_racks && Object.keys(parsedData.store_racks).length > 0) {
                  const racksHtml = Object.keys(parsedData.store_racks).map(rackName => {
                      const rackEMS = parsedData.store_racks[rackName].ems;
-                     return `<li><span class="text-gray-300 text-xs">- ${rackName}</span> <span class="text-gray-500 text-xs italic">(${rackEMS || 'Unknown'})</span></li>`;
+                     return `<li><span class="text-theme-text text-xs">- ${rackName}</span> <span class="text-theme-textmuted text-xs italic">(${rackEMS || 'Unknown'})</span></li>`;
                  }).join('');
                  
                  emsContext += `<li><ul class="ml-2">${racksHtml}</ul></li>`;
              } else {
-                 emsContext += `<li class="text-xs text-gray-400">Known Racks: Unknown</li>`;
+                 emsContext += `<li class="text-xs text-theme-textmuted">Known Racks: Unknown</li>`;
              }
         }
         
@@ -127,7 +127,7 @@ const UI = {
             <ul class="mt-1 list-disc pl-4 text-xs font-mono">
                 <li>Site: ${parsedData.site_number || 'N/A'}</li>
                 <li>Reported EMS Network: ${parsedData.ems || 'N/A'}</li>
-                <li>Alarm Type: <span class="bg-blue-900 px-1 rounded text-blue-300 font-bold">${parsedData.alarm_type || 'Unknown'}</span></li>
+                <li>Alarm Type: <span class="bg-theme-primary px-1 rounded text-theme-accentsec font-bold">${parsedData.alarm_type || 'Unknown'}</span></li>
                 <li>Incident ID: ${parsedData.incident_id || 'N/A'}</li>
                 ${emsContext}
             </ul>
@@ -169,7 +169,7 @@ const UI = {
 
         if (!currentPhase) {
             // Workflow complete
-            this.dynamicQuestions.innerHTML = '<div class="text-green-400 font-bold p-4 bg-gray-800 rounded">✅ Investigation Complete. Review generated note.</div>';
+            this.dynamicQuestions.innerHTML = '<div class="text-green-400 font-bold p-4 bg-theme-panel1 rounded">✅ Investigation Complete. Review generated note.</div>';
             
             // Add a Back button if possible
             if (this.currentPhaseIndex > 0) {
@@ -189,13 +189,13 @@ const UI = {
 
         // Render Phase Indicator
         const indicator = document.createElement('div');
-        indicator.className = "text-xs font-bold text-gray-400 mb-4 pb-2 border-b border-gray-700 tracking-wider flex justify-between";
-        indicator.innerHTML = `<span>STAGE ${this.currentPhaseIndex + 1} OF ${activePhases.length}: <span class="text-blue-400">${currentPhase.title.toUpperCase()}</span></span>`;
+        indicator.className = "text-xs font-bold text-theme-textmuted mb-4 pb-2 border-b border-theme-borderdark tracking-wider flex justify-between";
+        indicator.innerHTML = `<span>STAGE ${this.currentPhaseIndex + 1} OF ${activePhases.length}: <span class="text-theme-accentsec">${currentPhase.title.toUpperCase()}</span></span>`;
         this.dynamicQuestions.appendChild(indicator);
 
         if (currentPhase.description) {
             const desc = document.createElement('p');
-            desc.className = "text-sm text-gray-400 mb-4 italic";
+            desc.className = "text-sm text-theme-textmuted mb-4 italic";
             desc.innerText = currentPhase.description;
             this.dynamicQuestions.appendChild(desc);
         }
@@ -209,10 +209,10 @@ const UI = {
             }
 
             const fieldDiv = document.createElement('div');
-            fieldDiv.className = "mb-3 rounded p-2 focus-within:bg-gray-700 transition";
+            fieldDiv.className = "mb-3 rounded p-2 focus-within:bg-theme-input transition";
             
             const label = document.createElement('label');
-            label.className = "block text-sm font-bold text-gray-300 mb-1";
+            label.className = "block text-sm font-bold text-theme-text mb-1";
             label.innerText = field.label + (field.required ? " *" : "");
             fieldDiv.appendChild(label);
 
@@ -221,7 +221,7 @@ const UI = {
             if (isTrainingMode && field.trainingExplanation) {
                 const trainNote = document.createElement('div');
                 trainNote.className = "mb-2 bg-yellow-900 bg-opacity-40 border-l-2 border-yellow-500 text-yellow-300 p-1 pl-2 text-xs italic";
-                let linkHtml = field.trainingLink ? ` <a href="${field.trainingLink}" target="_blank" class="underline text-blue-400 font-bold ml-1 hover:text-blue-300">Learn More</a>` : '';
+                let linkHtml = field.trainingLink ? ` <a href="${field.trainingLink}" target="_blank" class="underline text-theme-accentsec font-bold ml-1 hover:text-theme-accentsec">Learn More</a>` : '';
                 trainNote.innerHTML = `<strong>Why ask this?</strong> ${field.trainingExplanation}${linkHtml}`;
                 fieldDiv.appendChild(trainNote);
             }
@@ -249,14 +249,14 @@ const UI = {
                      radioEl.name = field.id;
                      radioEl.value = opt;
                      if(currentValue === opt) radioEl.checked = true;
-                     radioEl.className = "form-radio h-4 w-4 text-blue-500 bg-gray-700 border-gray-600";
+                     radioEl.className = "form-radio h-4 w-4 text-theme-accentsec bg-theme-input border-theme-border";
                      radioEl.addEventListener('change', (e) => {
                           this.formState[field.id] = e.target.value;
                           this._debouncedPhaseRender();
                      });
                      
                      const span = document.createElement('span');
-                     span.className = "ml-2 text-sm text-gray-300";
+                     span.className = "ml-2 text-sm text-theme-text";
                      span.innerText = opt;
                      
                      labelEl.appendChild(radioEl);
@@ -266,7 +266,7 @@ const UI = {
                 inputObj = radioGroup;
             } else if (field.type === 'select') {
                 inputObj = document.createElement('select');
-                inputObj.className = "block w-full border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                inputObj.className = "block w-full border border-theme-border bg-theme-input text-theme-text rounded shadow-sm p-2 text-sm focus:ring-theme-primary focus:border-theme-primary";
                 inputObj.id = `input-${field.id}`;
                 
                 const defaultOpt = document.createElement('option');
@@ -288,7 +288,7 @@ const UI = {
                 });
             } else if (field.type === 'textarea') {
                 inputObj = document.createElement('textarea');
-                inputObj.className = "block w-full border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                inputObj.className = "block w-full border border-theme-border bg-theme-input text-theme-text rounded shadow-sm p-2 text-sm focus:ring-theme-primary focus:border-theme-primary";
                 inputObj.id = `input-${field.id}`;
                 inputObj.rows = 2;
                 if(field.placeholder) inputObj.placeholder = field.placeholder;
@@ -305,14 +305,14 @@ const UI = {
                 hoursInput.type = "number";
                 hoursInput.min = "0";
                 hoursInput.placeholder = "Hrs";
-                hoursInput.className = "w-20 border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                hoursInput.className = "w-20 border border-theme-border bg-theme-input text-theme-text rounded shadow-sm p-2 text-sm focus:ring-theme-primary focus:border-theme-primary";
                 
                 const minsInput = document.createElement('input');
                 minsInput.type = "number";
                 minsInput.min = "0";
                 minsInput.max = "59";
                 minsInput.placeholder = "Mins";
-                minsInput.className = "w-20 border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                minsInput.className = "w-20 border border-theme-border bg-theme-input text-theme-text rounded shadow-sm p-2 text-sm focus:ring-theme-primary focus:border-theme-primary";
                 
                 // Parse existing "X hours, Y minutes" back into inputs if available
                 if (currentValue) {
@@ -339,11 +339,11 @@ const UI = {
                 if (minsInput) minsInput.addEventListener('input', updateTime);
 
                 const hLabel = document.createElement('span');
-                hLabel.className = "self-center text-gray-400 text-sm";
+                hLabel.className = "self-center text-theme-textmuted text-sm";
                 hLabel.innerText = "H";
                 
                 const mLabel = document.createElement('span');
-                mLabel.className = "self-center text-gray-400 text-sm";
+                mLabel.className = "self-center text-theme-textmuted text-sm";
                 mLabel.innerText = "M";
 
                 inputObj.appendChild(hoursInput);
@@ -354,7 +354,7 @@ const UI = {
             } else {
                 inputObj = document.createElement('input');
                 inputObj.type = "text";
-                inputObj.className = "block w-full border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                inputObj.className = "block w-full border border-theme-border bg-theme-input text-theme-text rounded shadow-sm p-2 text-sm focus:ring-theme-primary focus:border-theme-primary";
                 inputObj.id = `input-${field.id}`;
                 if(field.placeholder) inputObj.placeholder = field.placeholder;
                 inputObj.value = currentValue;
@@ -370,7 +370,7 @@ const UI = {
 
         // Navigation Buttons
         const navContainer = document.createElement('div');
-        navContainer.className = "mt-6 pt-4 border-t border-gray-700 flex justify-end space-x-3";
+        navContainer.className = "mt-6 pt-4 border-t border-theme-borderdark flex justify-end space-x-3";
 
         if (this.currentPhaseIndex > 0) {
             const backBtn = document.createElement('button');
@@ -384,7 +384,7 @@ const UI = {
         }
 
         const nextBtn = document.createElement('button');
-        nextBtn.className = "bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded shadow text-sm";
+        nextBtn.className = "bg-theme-primary hover:bg-theme-primaryhover text-white font-bold py-2 px-4 rounded shadow text-sm";
         nextBtn.innerText = this.currentPhaseIndex === activePhases.length - 1 ? "Finish" : "Next Step";
         nextBtn.onclick = () => {
             
@@ -442,10 +442,10 @@ const UI = {
             }
 
             const fieldDiv = document.createElement('div');
-            fieldDiv.className = "mb-3 rounded p-2 focus-within:bg-gray-700 transition";
+            fieldDiv.className = "mb-3 rounded p-2 focus-within:bg-theme-input transition";
             
             const label = document.createElement('label');
-            label.className = "block text-sm font-bold text-gray-300 mb-1";
+            label.className = "block text-sm font-bold text-theme-text mb-1";
             label.innerText = field.label + (field.required ? " *" : "");
             fieldDiv.appendChild(label);
 
@@ -454,7 +454,7 @@ const UI = {
             if (isTrainingMode && field.trainingExplanation) {
                 const trainNote = document.createElement('div');
                 trainNote.className = "mb-2 bg-yellow-900 bg-opacity-40 border-l-2 border-yellow-500 text-yellow-300 p-1 pl-2 text-xs italic";
-                let linkHtml = field.trainingLink ? ` <a href="${field.trainingLink}" target="_blank" class="underline text-blue-400 font-bold ml-1 hover:text-blue-300">Learn More</a>` : '';
+                let linkHtml = field.trainingLink ? ` <a href="${field.trainingLink}" target="_blank" class="underline text-theme-accentsec font-bold ml-1 hover:text-theme-accentsec">Learn More</a>` : '';
                 trainNote.innerHTML = `<strong>Why ask this?</strong> ${field.trainingExplanation}${linkHtml}`;
                 fieldDiv.appendChild(trainNote);
             }
@@ -482,14 +482,14 @@ const UI = {
                      radioEl.name = field.id;
                      radioEl.value = opt;
                      if(currentValue === opt) radioEl.checked = true;
-                     radioEl.className = "form-radio h-4 w-4 text-blue-500 bg-gray-700 border-gray-600";
+                     radioEl.className = "form-radio h-4 w-4 text-theme-accentsec bg-theme-input border-theme-border";
                      radioEl.addEventListener('change', (e) => {
                           this.formState[field.id] = e.target.value;
                           this.evalDynamicVisibility(); // Re-render tree on change
                      });
                      
                      const span = document.createElement('span');
-                     span.className = "ml-2 text-sm text-gray-300";
+                     span.className = "ml-2 text-sm text-theme-text";
                      span.innerText = opt;
                      
                      labelEl.appendChild(radioEl);
@@ -499,7 +499,7 @@ const UI = {
                 inputObj = radioGroup;
             } else if (field.type === 'select') {
                 inputObj = document.createElement('select');
-                inputObj.className = "block w-full border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                inputObj.className = "block w-full border border-theme-border bg-theme-input text-theme-text rounded shadow-sm p-2 text-sm focus:ring-theme-primary focus:border-theme-primary";
                 inputObj.id = `input-${field.id}`;
                 
                 const defaultOpt = document.createElement('option');
@@ -521,7 +521,7 @@ const UI = {
                 });
             } else if (field.type === 'textarea') {
                 inputObj = document.createElement('textarea');
-                inputObj.className = "block w-full border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                inputObj.className = "block w-full border border-theme-border bg-theme-input text-theme-text rounded shadow-sm p-2 text-sm focus:ring-theme-primary focus:border-theme-primary";
                 inputObj.id = `input-${field.id}`;
                 inputObj.rows = 2;
                 if(field.placeholder) inputObj.placeholder = field.placeholder;
@@ -538,14 +538,14 @@ const UI = {
                 hoursInput.type = "number";
                 hoursInput.min = "0";
                 hoursInput.placeholder = "Hrs";
-                hoursInput.className = "w-20 border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                hoursInput.className = "w-20 border border-theme-border bg-theme-input text-theme-text rounded shadow-sm p-2 text-sm focus:ring-theme-primary focus:border-theme-primary";
                 
                 const minsInput = document.createElement('input');
                 minsInput.type = "number";
                 minsInput.min = "0";
                 minsInput.max = "59";
                 minsInput.placeholder = "Mins";
-                minsInput.className = "w-20 border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                minsInput.className = "w-20 border border-theme-border bg-theme-input text-theme-text rounded shadow-sm p-2 text-sm focus:ring-theme-primary focus:border-theme-primary";
                 
                 // Parse existing "X hours, Y minutes" back into inputs if available
                 if (currentValue) {
@@ -572,11 +572,11 @@ const UI = {
                 if (minsInput) minsInput.addEventListener('input', updateTime);
 
                 const hLabel = document.createElement('span');
-                hLabel.className = "self-center text-gray-400 text-sm";
+                hLabel.className = "self-center text-theme-textmuted text-sm";
                 hLabel.innerText = "H";
                 
                 const mLabel = document.createElement('span');
-                mLabel.className = "self-center text-gray-400 text-sm";
+                mLabel.className = "self-center text-theme-textmuted text-sm";
                 mLabel.innerText = "M";
 
                 inputObj.appendChild(hoursInput);
@@ -587,7 +587,7 @@ const UI = {
             } else {
                 inputObj = document.createElement('input');
                 inputObj.type = "text";
-                inputObj.className = "block w-full border border-gray-600 bg-gray-700 text-gray-200 rounded shadow-sm p-2 text-sm focus:ring-blue-500 focus:border-blue-500";
+                inputObj.className = "block w-full border border-theme-border bg-theme-input text-theme-text rounded shadow-sm p-2 text-sm focus:ring-theme-primary focus:border-theme-primary";
                 inputObj.id = `input-${field.id}`;
                 if(field.placeholder) inputObj.placeholder = field.placeholder;
                 inputObj.value = currentValue;
@@ -654,7 +654,7 @@ const UI = {
                 
                 // Append training explanation if in training mode
                 if (isTrainingMode && section.trainingExplanation) {
-                    let sLinkHtml = section.trainingLink ? ` <a href="${section.trainingLink}" target="_blank" class="underline text-blue-400 font-bold ml-1 hover:text-blue-300">Learn More</a>` : '';
+                    let sLinkHtml = section.trainingLink ? ` <a href="${section.trainingLink}" target="_blank" class="underline text-theme-accentsec font-bold ml-1 hover:text-theme-accentsec">Learn More</a>` : '';
                     html += `
                         <div class="mt-2 bg-yellow-900 border-l-4 border-yellow-500 text-yellow-200 p-2 text-xs rounded-r shadow-inner">
                             <strong>🎓 Training Note:</strong> ${section.trainingExplanation}${sLinkHtml}
@@ -671,10 +671,10 @@ const UI = {
                 recs.forEach(rec => {
                     if (rec.calculation !== null && rec.calculation !== undefined) {
                         html += `
-                            <div class="bg-blue-900 border border-blue-500 rounded p-3 mb-2 shadow-lg animate-pulse">
-                                <h4 class="font-bold text-blue-200">💡 Calculation Recommendation</h4>
-                                <span class="text-sm text-blue-100">${rec.params.label || 'Value'}:</span>
-                                <span class="bg-black text-white px-2 py-1 rounded font-mono text-lg ml-2 border border-blue-600">${rec.calculation}</span>
+                            <div class="bg-theme-primary border border-theme-primary rounded p-3 mb-2 shadow-lg animate-pulse">
+                                <h4 class="font-bold text-theme-accentsec">💡 Calculation Recommendation</h4>
+                                <span class="text-sm text-theme-accentsec">${rec.params.label || 'Value'}:</span>
+                                <span class="bg-black text-white px-2 py-1 rounded font-mono text-lg ml-2 border border-theme-primary">${rec.calculation}</span>
                             </div>
                         `;
                     }
@@ -715,17 +715,17 @@ const UI = {
             wrapper.className = "flex flex-col mb-1";
             
             const label = document.createElement('span');
-            label.className = "text-xs font-bold text-gray-400 uppercase";
+            label.className = "text-xs font-bold text-theme-textmuted uppercase";
             label.innerText = item.l;
             
             const val = document.createElement('span');
-            val.className = "text-sm text-gray-200";
+            val.className = "text-sm text-theme-text";
             val.innerText = item.v;
 
             // If this is the Crystal Problem Code mapping, give them a dropdown to select it manually if we have mappings for the Asset Type
             if (item.k === 'problemCode' && App.config.assetProblemMapping && App.config.assetProblemMapping[attrs.assetType]) {
                  const select = document.createElement('select');
-                 select.className = "mt-1 w-full bg-gray-900 border border-gray-600 p-1 rounded text-red-300 text-xs font-bold cursor-pointer hover:border-blue-500";
+                 select.className = "mt-1 w-full bg-theme-bg border border-theme-border p-1 rounded text-red-300 text-xs font-bold cursor-pointer hover:border-theme-primary";
                  
                  // Default config option
                  const defOpt = document.createElement('option');

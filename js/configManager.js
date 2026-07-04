@@ -2,7 +2,7 @@ const ConfigManager = {
 
     _renderTimerBreakpoints: function(profile) {
         if (!profile.timerConfig || !profile.timerConfig.breakpoints || profile.timerConfig.breakpoints.length === 0) {
-            return '<div class="text-xs text-gray-500 italic text-center py-2">No breakpoints defined.</div>';
+            return '<div class="text-xs text-theme-textmuted italic text-center py-2">No breakpoints defined.</div>';
         }
         
         const colors = [
@@ -25,28 +25,28 @@ const ConfigManager = {
             let colorOpts = colors.map(c => `<option value="${c.val}" ${bp.colorClass === c.val ? 'selected' : ''}>${c.label}</option>`).join('');
             
             return `
-            <div class="bg-gray-900 border border-gray-700 p-2 rounded relative">
+            <div class="bg-theme-bg border border-theme-borderdark p-2 rounded relative">
                 <button class="absolute top-1 right-1 text-red-500 hover:text-red-400 text-xs" onclick="ConfigManager._rmTimerBreakpoint(${i})">X</button>
                 <div class="grid grid-cols-2 gap-2 mb-2">
                     <div>
-                        <label class="text-[10px] text-gray-500">Start (Min)</label>
-                        <input type="number" class="w-full bg-gray-800 border-gray-700 p-1 rounded text-xs" value="${bp.minuteStart}" onchange="ConfigManager._upTcb(${i}, 'minuteStart', parseInt(this.value))">
+                        <label class="text-[10px] text-theme-textmuted">Start (Min)</label>
+                        <input type="number" class="w-full bg-theme-panel1 border-theme-borderdark p-1 rounded text-xs" value="${bp.minuteStart}" onchange="ConfigManager._upTcb(${i}, 'minuteStart', parseInt(this.value))">
                     </div>
                     <div>
-                        <label class="text-[10px] text-gray-500">End (Min)</label>
-                        <input type="number" class="w-full bg-gray-800 border-gray-700 p-1 rounded text-xs" value="${bp.minuteEnd}" onchange="ConfigManager._upTcb(${i}, 'minuteEnd', parseInt(this.value))">
+                        <label class="text-[10px] text-theme-textmuted">End (Min)</label>
+                        <input type="number" class="w-full bg-theme-panel1 border-theme-borderdark p-1 rounded text-xs" value="${bp.minuteEnd}" onchange="ConfigManager._upTcb(${i}, 'minuteEnd', parseInt(this.value))">
                     </div>
                 </div>
                 <div class="mb-2">
-                    <label class="text-[10px] text-gray-500">Color</label>
-                    <select class="w-full bg-gray-800 border-gray-700 p-1 rounded text-xs" onchange="ConfigManager._upTcb(${i}, 'colorClass', this.value)">
+                    <label class="text-[10px] text-theme-textmuted">Color</label>
+                    <select class="w-full bg-theme-panel1 border-theme-borderdark p-1 rounded text-xs" onchange="ConfigManager._upTcb(${i}, 'colorClass', this.value)">
                         <option value="">None</option>
                         ${colorOpts}
                     </select>
                 </div>
                 <div>
-                    <label class="text-[10px] text-gray-500">Tooltip Text</label>
-                    <input type="text" class="w-full bg-gray-800 border-gray-700 p-1 rounded text-xs" value="${bp.tooltip || ''}" placeholder="Show this message..." onchange="ConfigManager._upTcb(${i}, 'tooltip', this.value)">
+                    <label class="text-[10px] text-theme-textmuted">Tooltip Text</label>
+                    <input type="text" class="w-full bg-theme-panel1 border-theme-borderdark p-1 rounded text-xs" value="${bp.tooltip || ''}" placeholder="Show this message..." onchange="ConfigManager._upTcb(${i}, 'tooltip', this.value)">
                 </div>
             </div>
             `;
@@ -116,32 +116,32 @@ const ConfigManager = {
         let priorityOptions = priorities.map(p => `<option value="${p}" ${profile.crystalAttributes.priority === p ? 'selected' : ''}>${p}</option>`).join('');
         
         return `
-            <div><label class="block mb-1 text-xs text-gray-400">Issue Area</label>
-                 <select class="w-full bg-gray-900 border border-gray-600 p-2 rounded" onchange="ConfigManager._upCA('issueArea', this.value)">
+            <div><label class="block mb-1 text-xs text-theme-textmuted">Issue Area</label>
+                 <select class="w-full bg-theme-bg border border-theme-border p-2 rounded" onchange="ConfigManager._upCA('issueArea', this.value)">
                     <option value="">-- Select --</option>
                     ${issueAreaOptions}
                  </select>
             </div>
-            <div><label class="block mb-1 text-xs text-gray-400">Problem Type</label>
-                 <select class="w-full bg-gray-900 border border-gray-600 p-2 rounded" onchange="ConfigManager._upCA('problemType', this.value)">
+            <div><label class="block mb-1 text-xs text-theme-textmuted">Problem Type</label>
+                 <select class="w-full bg-theme-bg border border-theme-border p-2 rounded" onchange="ConfigManager._upCA('problemType', this.value)">
                     <option value="">-- Select --</option>
                     ${problemTypeOptions}
                  </select>
             </div>
-            <div><label class="block mb-1 text-xs text-gray-400">Asset Type</label>
-                 <select class="w-full bg-gray-900 border border-gray-600 p-2 rounded" onchange="ConfigManager._upAssetType(this.value)">
+            <div><label class="block mb-1 text-xs text-theme-textmuted">Asset Type</label>
+                 <select class="w-full bg-theme-bg border border-theme-border p-2 rounded" onchange="ConfigManager._upAssetType(this.value)">
                     <option value="">-- Select --</option>
                     ${assetOptions}
                  </select>
             </div>
-            <div><label class="block mb-1 text-xs text-gray-400">Problem Code</label>
-                 <select class="w-full bg-gray-900 border border-gray-600 p-2 rounded" onchange="ConfigManager._upCA('problemCode', this.value)" id="admin-problem-code-select">
+            <div><label class="block mb-1 text-xs text-theme-textmuted">Problem Code</label>
+                 <select class="w-full bg-theme-bg border border-theme-border p-2 rounded" onchange="ConfigManager._upCA('problemCode', this.value)" id="admin-problem-code-select">
                     <option value="">-- Select --</option>
                     ${problemCodeOptions}
                  </select>
             </div>
-            <div class="col-span-2"><label class="block mb-1 text-xs text-gray-400">Priority</label>
-                 <select class="w-full bg-gray-900 border border-gray-600 p-2 rounded" onchange="ConfigManager._upCA('priority', this.value)">
+            <div class="col-span-2"><label class="block mb-1 text-xs text-theme-textmuted">Priority</label>
+                 <select class="w-full bg-theme-bg border border-theme-border p-2 rounded" onchange="ConfigManager._upCA('priority', this.value)">
                     <option value="">-- Select --</option>
                     ${priorityOptions}
                  </select>
@@ -296,14 +296,14 @@ const ConfigManager = {
         
         const highlightSelected = (items, selectedLi) => {
             Array.from(document.querySelectorAll('#admin-modal li')).forEach(nav => {
-                 nav.classList.remove('bg-gray-700', 'border-l-4', 'border-blue-500');
+                 nav.classList.remove('bg-theme-input', 'border-l-4', 'border-theme-primary');
             });
-            if(selectedLi) selectedLi.classList.add('bg-gray-700', 'border-l-4', 'border-blue-500');
+            if(selectedLi) selectedLi.classList.add('bg-theme-input', 'border-l-4', 'border-theme-primary');
         };
 
         // Add Generic profile at top
         const genericLi = document.createElement('li');
-        genericLi.className = "cursor-pointer p-2 rounded hover:bg-gray-700 text-gray-200 text-sm transition";
+        genericLi.className = "cursor-pointer p-2 rounded hover:bg-theme-input text-theme-text text-sm transition";
         genericLi.innerText = "Generic Fallback";
         genericLi.addEventListener('click', (e) => {
              this.editProfile('GENERIC');
@@ -316,7 +316,7 @@ const ConfigManager = {
             Object.keys(this.activeConfig.profiles).forEach(key => {
                 const profile = this.activeConfig.profiles[key];
                 const li = document.createElement('li');
-                li.className = "cursor-pointer p-2 rounded hover:bg-gray-700 text-gray-200 mt-1 text-sm transition";
+                li.className = "cursor-pointer p-2 rounded hover:bg-theme-input text-theme-text mt-1 text-sm transition";
                 li.innerText = `${profile.id} - ${profile.name}`;
                 li.addEventListener('click', (e) => {
                      this.editProfile(key);
@@ -337,150 +337,150 @@ const ConfigManager = {
             <div class="h-full overflow-y-auto pr-2 pb-10 max-w-4xl mx-auto space-y-6">
                 
                 <!-- Main Header -->
-                <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 shadow-md">
+                <div class="bg-theme-panel1 p-6 rounded-lg border border-theme-borderdark shadow-md">
                     <h2 class="text-2xl font-black text-green-400 mb-2">Alarm Alert Assistant - Complete Admin & Configuration Guide</h2>
-                    <p class="text-gray-300 text-sm">Welcome to the <strong>Alarm Alert Assistant</strong>. This guide explains how to use <strong>Admin Mode</strong> to build, modify, and customize Alarm Profiles natively. This covers creating a profile, understanding its features, and using the built-in Expression Builder to make your forms and SOPs dynamic.</p>
+                    <p class="text-theme-text text-sm">Welcome to the <strong>Alarm Alert Assistant</strong>. This guide explains how to use <strong>Admin Mode</strong> to build, modify, and customize Alarm Profiles natively. This covers creating a profile, understanding its features, and using the built-in Expression Builder to make your forms and SOPs dynamic.</p>
                 </div>
 
                 <!-- 1. Entering Admin Mode -->
-                <div class="bg-gray-900 border border-gray-700 rounded-lg p-5">
+                <div class="bg-theme-bg border border-theme-borderdark rounded-lg p-5">
                     <h3 class="text-lg font-black text-yellow-400 mb-4 border-b border-yellow-900 pb-2">1. Entering Admin Mode & Creating a Profile</h3>
-                    <ul class="list-disc pl-5 space-y-2 text-sm text-gray-300">
-                        <li><strong>To access Admin Mode:</strong> Click the blue <code class="bg-blue-900 text-blue-200 px-1 rounded">Admin Mode</code> button in the top-right corner of the main screen.</li>
-                        <li><strong>To create a new Profile:</strong> Look at the left sidebar under "Alarm Profiles" and click the <code class="bg-gray-800 px-1 rounded font-mono">+</code> button.</li>
+                    <ul class="list-disc pl-5 space-y-2 text-sm text-theme-text">
+                        <li><strong>To access Admin Mode:</strong> Click the blue <code class="bg-theme-primary text-theme-accentsec px-1 rounded">Admin Mode</code> button in the top-right corner of the main screen.</li>
+                        <li><strong>To create a new Profile:</strong> Look at the left sidebar under "Alarm Profiles" and click the <code class="bg-theme-panel1 px-1 rounded font-mono">+</code> button.</li>
                         <li>You will be prompted for an <strong>Alarm Code (ID)</strong> (e.g., <code class="text-pink-300 font-mono">RPL</code> or <code class="text-pink-300 font-mono">SCL</code>). This ID <em>must</em> match the parsed Alarm Type exactly so the system knows which profile to load when an alert is pasted.</li>
                     </ul>
                 </div>
 
                 <!-- 2. Profile Config -->
-                <div class="bg-gray-900 border border-gray-700 rounded-lg p-5">
-                    <h3 class="text-lg font-black text-blue-400 mb-4 border-b border-blue-900 pb-2">2. Profile Configuration Breakdown</h3>
-                    <p class="text-sm text-gray-300 mb-4">Each Profile dictates exactly how the UI behaves when that specific Alarm is parsed.</p>
+                <div class="bg-theme-bg border border-theme-borderdark rounded-lg p-5">
+                    <h3 class="text-lg font-black text-theme-accentsec mb-4 border-b border-theme-primary pb-2">2. Profile Configuration Breakdown</h3>
+                    <p class="text-sm text-theme-text mb-4">Each Profile dictates exactly how the UI behaves when that specific Alarm is parsed.</p>
                     
-                    <div class="space-y-4 text-sm text-gray-300">
+                    <div class="space-y-4 text-sm text-theme-text">
                         <div>
-                            <h4 class="font-bold text-gray-200">Identity</h4>
-                            <ul class="list-disc pl-5 mt-1 space-y-1 text-xs text-gray-400">
-                                <li><strong class="text-gray-300">Alarm Code (ID):</strong> The exact tag parsed from the raw alert string (e.g., <code class="text-pink-300 font-mono">GSP</code>).</li>
-                                <li><strong class="text-gray-300">Profile Name:</strong> The human-readable name of the alarm (e.g., General Suction Pressure).</li>
+                            <h4 class="font-bold text-theme-text">Identity</h4>
+                            <ul class="list-disc pl-5 mt-1 space-y-1 text-xs text-theme-textmuted">
+                                <li><strong class="text-theme-text">Alarm Code (ID):</strong> The exact tag parsed from the raw alert string (e.g., <code class="text-pink-300 font-mono">GSP</code>).</li>
+                                <li><strong class="text-theme-text">Profile Name:</strong> The human-readable name of the alarm (e.g., General Suction Pressure).</li>
                             </ul>
                         </div>
 
                         <div>
-                            <h4 class="font-bold text-gray-200">Investigation Phases</h4>
+                            <h4 class="font-bold text-theme-text">Investigation Phases</h4>
                             <p class="text-xs">Phases break down your workflow into chronological steps (e.g., Phase 1: Diagnosis, Phase 2: Action).</p>
-                            <ul class="list-disc pl-5 mt-1 space-y-1 text-xs text-gray-400">
-                                <li><strong class="text-gray-300">ID & Title:</strong> Internal reference name and UI Display Name.</li>
-                                <li><strong class="text-gray-300">Sequence:</strong> The numbered order of the phase (1, 2, 3).</li>
-                                <li><strong class="text-gray-300">Activate If:</strong> A Javascript condition that determines when this phase unlocks (e.g., <code class="text-pink-300 font-mono">store_contact !== ""</code>).</li>
+                            <ul class="list-disc pl-5 mt-1 space-y-1 text-xs text-theme-textmuted">
+                                <li><strong class="text-theme-text">ID & Title:</strong> Internal reference name and UI Display Name.</li>
+                                <li><strong class="text-theme-text">Sequence:</strong> The numbered order of the phase (1, 2, 3).</li>
+                                <li><strong class="text-theme-text">Activate If:</strong> A Javascript condition that determines when this phase unlocks (e.g., <code class="text-pink-300 font-mono">store_contact !== ""</code>).</li>
                             </ul>
                         </div>
                         
                         <div>
-                            <h4 class="font-bold text-gray-200">Generated Form Fields</h4>
+                            <h4 class="font-bold text-theme-text">Generated Form Fields</h4>
                             <p class="text-xs">This block generates the actual interactive questions the agent must answer.</p>
-                            <ul class="list-disc pl-5 mt-1 space-y-1 text-xs text-gray-400">
-                                <li><strong class="text-gray-300">ID (Ref):</strong> The variable name for the field (e.g., <code class="text-pink-300 font-mono">action_taken</code>). Do not use spaces.</li>
-                                <li><strong class="text-gray-300">Label (UI):</strong> The question shown to the user.</li>
-<li><strong class="text-gray-300">Required:</strong> Checking "Required" halts phase advancement safely until input.</li>
-<li><strong class="text-gray-300">Training Excl. & Links:</strong> Write training insights and paste specific URL paths into the Training Link (URL) field to automatically generate clickable hyperlinks during Training Mode.</li>
-                                <li><strong class="text-gray-300">Type:</strong> Text Input, Text Area, Radio Group, Select (Dropdown), or Time.</li>
-                                <li><strong class="text-gray-300">Source Default:</strong> Matches native Parser extracts (like <code class="text-pink-300 font-mono">parsed_high_case</code>) to auto-fill forms.</li>
-                                <li><strong class="text-gray-300">Visible If:</strong> Javascript condition to pop up the field conditionally. Leave blank to always show.</li>
-                                <li><strong class="text-gray-300">Phase Assignment:</strong> The ID of the Phase this question belongs to.</li>
-                                <li><strong class="text-gray-300">Options:</strong> Comma-separated choices for Radio/Select.</li>
+                            <ul class="list-disc pl-5 mt-1 space-y-1 text-xs text-theme-textmuted">
+                                <li><strong class="text-theme-text">ID (Ref):</strong> The variable name for the field (e.g., <code class="text-pink-300 font-mono">action_taken</code>). Do not use spaces.</li>
+                                <li><strong class="text-theme-text">Label (UI):</strong> The question shown to the user.</li>
+<li><strong class="text-theme-text">Required:</strong> Checking "Required" halts phase advancement safely until input.</li>
+<li><strong class="text-theme-text">Training Excl. & Links:</strong> Write training insights and paste specific URL paths into the Training Link (URL) field to automatically generate clickable hyperlinks during Training Mode.</li>
+                                <li><strong class="text-theme-text">Type:</strong> Text Input, Text Area, Radio Group, Select (Dropdown), or Time.</li>
+                                <li><strong class="text-theme-text">Source Default:</strong> Matches native Parser extracts (like <code class="text-pink-300 font-mono">parsed_high_case</code>) to auto-fill forms.</li>
+                                <li><strong class="text-theme-text">Visible If:</strong> Javascript condition to pop up the field conditionally. Leave blank to always show.</li>
+                                <li><strong class="text-theme-text">Phase Assignment:</strong> The ID of the Phase this question belongs to.</li>
+                                <li><strong class="text-theme-text">Options:</strong> Comma-separated choices for Radio/Select.</li>
                             </ul>
                         </div>
 
                         <div>
-                            <h4 class="font-bold text-gray-200">SOP Structure (Knowledge View)</h4>
+                            <h4 class="font-bold text-theme-text">SOP Structure (Knowledge View)</h4>
                             <p class="text-xs">SOP sections display your Wiki guides to the agent.</p>
-                            <ul class="list-disc pl-5 mt-1 space-y-1 text-xs text-gray-400">
-                                <li><strong class="text-gray-300">Title & HTML Content:</strong> Header and body (supports HTML and Tailwind).</li>
-                                <li><strong class="text-gray-300">Always Show:</strong> Check to force the SOP block to remain visible.</li>
-                                <li><strong class="text-gray-300">Show If:</strong> Evaluates against form data dynamically.</li>
-                                <li><strong class="text-gray-300">Show ONLY On Phase ID:</strong> Hook SOPs explicitly to an exact phase state. This securely drops documentation immediately after the user leaves that phase to greatly reduce clutter.</li>
-<li><strong class="text-gray-300">SOP Training Links:</strong> Just like Form Fields, you can provide dedicated Training URLs that map directly alongside the SOP explanations when Training Mode is enabled.</li>
+                            <ul class="list-disc pl-5 mt-1 space-y-1 text-xs text-theme-textmuted">
+                                <li><strong class="text-theme-text">Title & HTML Content:</strong> Header and body (supports HTML and Tailwind).</li>
+                                <li><strong class="text-theme-text">Always Show:</strong> Check to force the SOP block to remain visible.</li>
+                                <li><strong class="text-theme-text">Show If:</strong> Evaluates against form data dynamically.</li>
+                                <li><strong class="text-theme-text">Show ONLY On Phase ID:</strong> Hook SOPs explicitly to an exact phase state. This securely drops documentation immediately after the user leaves that phase to greatly reduce clutter.</li>
+<li><strong class="text-theme-text">SOP Training Links:</strong> Just like Form Fields, you can provide dedicated Training URLs that map directly alongside the SOP explanations when Training Mode is enabled.</li>
                             </ul>
                         </div>
 
                         <div>
-                            <h4 class="font-bold text-gray-200">Note Template</h4>
-                            <p class="text-xs">The architectural blueprint for the final copy/paste Work Order note. Place field IDs in curly braces <code class="text-pink-300 bg-gray-800 px-1 rounded font-mono">{action_taken}</code> to inject answers dynamically. You can also inject Reusable Text block variables (e.g., <code class="text-pink-300 bg-gray-800 px-1 rounded font-mono">{monitor_advisement}</code>).</p>
+                            <h4 class="font-bold text-theme-text">Note Template</h4>
+                            <p class="text-xs">The architectural blueprint for the final copy/paste Work Order note. Place field IDs in curly braces <code class="text-pink-300 bg-theme-panel1 px-1 rounded font-mono">{action_taken}</code> to inject answers dynamically. You can also inject Reusable Text block variables (e.g., <code class="text-pink-300 bg-theme-panel1 px-1 rounded font-mono">{monitor_advisement}</code>).</p>
                         </div>
 
                         <div>
-                            <h4 class="font-bold text-gray-200">Crystal WorkOrder Hooks</h4>
+                            <h4 class="font-bold text-theme-text">Crystal WorkOrder Hooks</h4>
                             <p class="text-xs">Preset the Admin UI dropdowns so when an agent hits your specific Alarm Profile, the dropdowns automatically snap to the correct Crystal WorkOrder paths.</p>
                         </div>
 
                         <div>
-                            <h4 class="font-bold text-gray-200">Timer Configuration</h4>
+                            <h4 class="font-bold text-theme-text">Timer Configuration</h4>
                             <p class="text-xs">Sets up the SLA timer engine for emergency workflows.</p>
-                             <ul class="list-disc pl-5 mt-1 space-y-1 text-xs text-gray-400">
-                                <li><strong class="text-gray-300">Enabled & Widget Location:</strong> Turn on and set position (Floating, Header Next-to-Title, Header-Center).</li>
-                                <li><strong class="text-gray-300">Breakpoints:</strong> Add intervals and apply visual Colors (Widget Glows vs Full Browser Edge Glows).</li>
+                             <ul class="list-disc pl-5 mt-1 space-y-1 text-xs text-theme-textmuted">
+                                <li><strong class="text-theme-text">Enabled & Widget Location:</strong> Turn on and set position (Floating, Header Next-to-Title, Header-Center).</li>
+                                <li><strong class="text-theme-text">Breakpoints:</strong> Add intervals and apply visual Colors (Widget Glows vs Full Browser Edge Glows).</li>
                             </ul>
                         </div>
                     </div>
                 </div>
 
                 <!-- 3. Expression Builder -->
-                <div class="bg-gray-900 border border-gray-700 rounded-lg p-5">
+                <div class="bg-theme-bg border border-theme-borderdark rounded-lg p-5">
                     <h3 class="text-lg font-black text-purple-400 mb-4 border-b border-purple-900 pb-2">3. Expression Builder Guide (Visible If / Activate If)</h3>
                     
                     <!-- DYNAMIC INTERPOLATION GUIDE -->
                     <div class="mb-5">
-                        <h4 class="font-bold text-gray-200 mb-2 font-mono">Dynamic Template Interpolation (Math & Variables)</h4>
-                        <p class="text-sm text-gray-400 mb-2">You can directly embed live mathematical calculations and variable parsing structurally inside <strong>Radio/Select Options</strong> or <strong>SOP Content</strong>!</p>
-                        <p class="text-sm text-gray-400 mb-2">Simply wrap your mathematical logic or script in curly braces <code class="bg-gray-800 text-pink-400 px-1 rounded">{}</code>. It will evaluate live against the user's keystrokes.</p>
+                        <h4 class="font-bold text-theme-text mb-2 font-mono">Dynamic Template Interpolation (Math & Variables)</h4>
+                        <p class="text-sm text-theme-textmuted mb-2">You can directly embed live mathematical calculations and variable parsing structurally inside <strong>Radio/Select Options</strong> or <strong>SOP Content</strong>!</p>
+                        <p class="text-sm text-theme-textmuted mb-2">Simply wrap your mathematical logic or script in curly braces <code class="bg-theme-panel1 text-pink-400 px-1 rounded">{}</code>. It will evaluate live against the user's keystrokes.</p>
                         
-                        <p class="text-sm text-gray-300 font-bold mb-1">Available Global Pointers:</p>
-                        <ul class="list-disc pl-5 text-sm text-gray-400 mb-3">
-                           <li><code class="bg-gray-800 text-pink-400 px-1 rounded">data</code>: Contains local parameters natively. (e.g. data.suct_psi_setpoint)</li>
-                           <li><code class="bg-gray-800 text-pink-400 px-1 rounded">thresholds</code>: Pulls parameters globally out of SystemThresholds. (e.g. thresholds.suction_psi.targetVariance.above)</li>
+                        <p class="text-sm text-theme-text font-bold mb-1">Available Global Pointers:</p>
+                        <ul class="list-disc pl-5 text-sm text-theme-textmuted mb-3">
+                           <li><code class="bg-theme-panel1 text-pink-400 px-1 rounded">data</code>: Contains local parameters natively. (e.g. data.suct_psi_setpoint)</li>
+                           <li><code class="bg-theme-panel1 text-pink-400 px-1 rounded">thresholds</code>: Pulls parameters globally out of SystemThresholds. (e.g. thresholds.suction_psi.targetVariance.above)</li>
                         </ul>
 
-                        <div class="bg-gray-900 p-3 rounded border border-gray-700 font-mono text-xs mb-2">
+                        <div class="bg-theme-bg p-3 rounded border border-theme-borderdark font-mono text-xs mb-2">
                            <span class="text-green-400">// Example (Inside an SOP Block):</span><br>
-                           <span class="text-blue-300">&lt;p&gt;You should force it to exactly: {parseFloat(data.suct_psi) + thresholds.suction_psi.targetVariance.above} PSI.&lt;/p&gt;</span>
+                           <span class="text-theme-accentsec">&lt;p&gt;You should force it to exactly: {parseFloat(data.suct_psi) + thresholds.suction_psi.targetVariance.above} PSI.&lt;/p&gt;</span>
                         </div>
-                        <div class="bg-gray-900 p-3 rounded border border-gray-700 font-mono text-xs">
+                        <div class="bg-theme-bg p-3 rounded border border-theme-borderdark font-mono text-xs">
                            <span class="text-green-400">// Example (Inside a Radio Button Option):</span><br>
-                           <span class="text-gray-300">If your Radio option is literally named: <code class="text-blue-300">"{parseFloat(data.suct_psi) + 15}"</code></span><br>
-                           <span class="text-gray-300">The engine will instantly re-render it as "37" when suct_psi reads 22.</span>
+                           <span class="text-theme-text">If your Radio option is literally named: <code class="text-theme-accentsec">"{parseFloat(data.suct_psi) + 15}"</code></span><br>
+                           <span class="text-theme-text">The engine will instantly re-render it as "37" when suct_psi reads 22.</span>
                         </div>
                     </div>
-                    <p class="text-sm text-gray-300 mb-4 border-b border-gray-700 pb-4">The conditional logic inputs use an embedded Javascript evaluation engine to securely read answers. To reference a field's value, simply type the exact <code class="bg-gray-800 px-1 rounded text-pink-300 font-mono">ID</code> of the field you are reading.</p>
+                    <p class="text-sm text-theme-text mb-4 border-b border-theme-borderdark pb-4">The conditional logic inputs use an embedded Javascript evaluation engine to securely read answers. To reference a field's value, simply type the exact <code class="bg-theme-panel1 px-1 rounded text-pink-300 font-mono">ID</code> of the field you are reading.</p>
                     
                     <div class="space-y-4">
                         <div>
-                            <h4 class="font-bold text-gray-200 text-sm mb-1">Strict Equality (<code class="text-pink-300 font-mono">===</code>) & Empty Checks (<code class="text-pink-300 font-mono">!== ""</code>)</h4>
-                            <p class="text-xs text-gray-400 mb-2">Always use triple equals or triple not-equals.</p>
-                            <pre class="bg-gray-950 p-3 rounded font-mono text-xs text-green-300"><span class="text-gray-500 block mb-1">// Show ONLY when rack is explicitly blank (not answered)</span>rack_status === ""<br><span class="text-gray-500 block mt-2 mb-1">// Show AS SOON AS the user types literally anything</span>rack_status !== ""<br><span class="text-gray-500 block mt-2 mb-1">// Show only if they picked exactly "Operational"</span>comp_status === "Operational"</pre>
+                            <h4 class="font-bold text-theme-text text-sm mb-1">Strict Equality (<code class="text-pink-300 font-mono">===</code>) & Empty Checks (<code class="text-pink-300 font-mono">!== ""</code>)</h4>
+                            <p class="text-xs text-theme-textmuted mb-2">Always use triple equals or triple not-equals.</p>
+                            <pre class="bg-theme-bg p-3 rounded font-mono text-xs text-green-300"><span class="text-theme-textmuted block mb-1">// Show ONLY when rack is explicitly blank (not answered)</span>rack_status === ""<br><span class="text-theme-textmuted block mt-2 mb-1">// Show AS SOON AS the user types literally anything</span>rack_status !== ""<br><span class="text-theme-textmuted block mt-2 mb-1">// Show only if they picked exactly "Operational"</span>comp_status === "Operational"</pre>
                         </div>
 
                         <div>
-                            <h4 class="font-bold text-gray-200 text-sm mb-1">Advanced String Evaluations</h4>
-                            <p class="text-xs text-gray-400 mb-2">To trigger a rule if a user types a specific keyword anywhere in a sentence.</p>
-                            <pre class="bg-gray-950 p-3 rounded font-mono text-xs text-green-300"><span class="text-gray-500 block mb-1">// Triggers if the user types "leak" anywhere in the answer</span>custom_notes.includes("leak")<br><span class="text-gray-500 block mt-2 mb-1">// Convert to lower-case first to be perfectly safe (ignores Case-Sensitivity)</span>custom_notes.toLowerCase().includes("leak")<br><span class="text-gray-500 block mt-2 mb-1">// Triggers if the store number starts with "US-"</span>store_number.startsWith("US-")</pre>
+                            <h4 class="font-bold text-theme-text text-sm mb-1">Advanced String Evaluations</h4>
+                            <p class="text-xs text-theme-textmuted mb-2">To trigger a rule if a user types a specific keyword anywhere in a sentence.</p>
+                            <pre class="bg-theme-bg p-3 rounded font-mono text-xs text-green-300"><span class="text-theme-textmuted block mb-1">// Triggers if the user types "leak" anywhere in the answer</span>custom_notes.includes("leak")<br><span class="text-theme-textmuted block mt-2 mb-1">// Convert to lower-case first to be perfectly safe (ignores Case-Sensitivity)</span>custom_notes.toLowerCase().includes("leak")<br><span class="text-theme-textmuted block mt-2 mb-1">// Triggers if the store number starts with "US-"</span>store_number.startsWith("US-")</pre>
                         </div>
 
                         <div>
-                            <h4 class="font-bold text-gray-200 text-sm mb-1">Numeric Evaluations (<code class="text-pink-300 font-mono">Number()</code>)</h4>
-                            <p class="text-xs text-gray-400 mb-2">If you want to evaluate numbers, convert the string to a number first using Number().</p>
-                            <pre class="bg-gray-950 p-3 rounded font-mono text-xs text-green-300"><span class="text-gray-500 block mb-1">// Triggers if greater than 50</span>Number(case_temps) > 50<br><span class="text-gray-500 block mt-2 mb-1">// Triggers if less than or equal to -10</span>Number(case_temps) <= -10</pre>
+                            <h4 class="font-bold text-theme-text text-sm mb-1">Numeric Evaluations (<code class="text-pink-300 font-mono">Number()</code>)</h4>
+                            <p class="text-xs text-theme-textmuted mb-2">If you want to evaluate numbers, convert the string to a number first using Number().</p>
+                            <pre class="bg-theme-bg p-3 rounded font-mono text-xs text-green-300"><span class="text-theme-textmuted block mb-1">// Triggers if greater than 50</span>Number(case_temps) > 50<br><span class="text-theme-textmuted block mt-2 mb-1">// Triggers if less than or equal to -10</span>Number(case_temps) <= -10</pre>
                         </div>
 
                         <div>
-                            <h4 class="font-bold text-gray-200 text-sm mb-1">Combining Multiple Conditions (<code class="text-pink-300 font-mono">&&</code> / <code class="text-pink-300 font-mono">||</code>)</h4>
-                            <pre class="bg-gray-950 p-3 rounded font-mono text-xs text-green-300"><span class="text-gray-500 block mb-1">// AND Operator: Both conditions must be TRUE</span>comp_status === "Failed" && case_temps === "Rising"<br><span class="text-gray-500 block mt-2 mb-1">// OR Operator: At least one condition must be TRUE</span>rack_status === "Down" || caller_status === "Panic"<br><span class="text-gray-500 block mt-2 mb-1">// Grouped Combinations (using Parentheses)</span>case_temps === "Rising" && (comp_status === "Failed" || comp_status === "Tripped")</pre>
+                            <h4 class="font-bold text-theme-text text-sm mb-1">Combining Multiple Conditions (<code class="text-pink-300 font-mono">&&</code> / <code class="text-pink-300 font-mono">||</code>)</h4>
+                            <pre class="bg-theme-bg p-3 rounded font-mono text-xs text-green-300"><span class="text-theme-textmuted block mb-1">// AND Operator: Both conditions must be TRUE</span>comp_status === "Failed" && case_temps === "Rising"<br><span class="text-theme-textmuted block mt-2 mb-1">// OR Operator: At least one condition must be TRUE</span>rack_status === "Down" || caller_status === "Panic"<br><span class="text-theme-textmuted block mt-2 mb-1">// Grouped Combinations (using Parentheses)</span>case_temps === "Rising" && (comp_status === "Failed" || comp_status === "Tripped")</pre>
                         </div>
 
                         <div>
-                            <h4 class="font-bold text-gray-200 text-sm mb-1">Advanced: Evaluating Current Phase</h4>
-                            <p class="text-xs text-gray-400 mb-2">If you are setting conditions on an <strong>SOP Section</strong>, do NOT try to hack the "Show If" box to track phases. Use the <strong>Show After Phase ID</strong> input box in the SOP Editor. Type the exact Phase ID (e.g., <code class="text-pink-300 font-mono">phase-1</code>). The SOP will automatically wait to render until the user clicks into that phase!</p>
-                            <pre class="bg-gray-950 p-3 rounded font-mono text-xs text-green-300"><span class="text-gray-500 block mb-1">// Fallback Form Workaround: Show this SOP ONLY when they answer Phase 1's last question</span>phase_1_final_question !== ""</pre>
+                            <h4 class="font-bold text-theme-text text-sm mb-1">Advanced: Evaluating Current Phase</h4>
+                            <p class="text-xs text-theme-textmuted mb-2">If you are setting conditions on an <strong>SOP Section</strong>, do NOT try to hack the "Show If" box to track phases. Use the <strong>Show After Phase ID</strong> input box in the SOP Editor. Type the exact Phase ID (e.g., <code class="text-pink-300 font-mono">phase-1</code>). The SOP will automatically wait to render until the user clicks into that phase!</p>
+                            <pre class="bg-theme-bg p-3 rounded font-mono text-xs text-green-300"><span class="text-theme-textmuted block mb-1">// Fallback Form Workaround: Show this SOP ONLY when they answer Phase 1's last question</span>phase_1_final_question !== ""</pre>
                         </div>
                     </div>
                 </div>
@@ -495,8 +495,8 @@ const ConfigManager = {
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-bold text-purple-400">Editing: ${prettyName}</h3>
                 </div>
-                <p class="text-gray-400 text-sm mb-2">Advanced raw JSON editor.</p>
-                <textarea id="admin-json-editor" class="flex-1 w-full bg-gray-950 text-green-400 font-mono text-sm p-4 border border-gray-700 rounded focus:outline-none focus:border-blue-500" spellcheck="false"></textarea>
+                <p class="text-theme-textmuted text-sm mb-2">Advanced raw JSON editor.</p>
+                <textarea id="admin-json-editor" class="flex-1 w-full bg-theme-bg text-green-400 font-mono text-sm p-4 border border-theme-borderdark rounded focus:outline-none focus:border-theme-primary" spellcheck="false"></textarea>
             `;
             const textarea = document.getElementById('admin-json-editor');
             textarea.value = JSON.stringify(targetData, null, 4);
@@ -521,9 +521,9 @@ const ConfigManager = {
             };
 
             editorArea.innerHTML = `
-                <h3 class="text-xl font-bold text-blue-400 mb-4">Editing: ${prettyName}</h3>
-                <div class="space-y-3 max-w-lg text-gray-300 text-sm bg-gray-800 p-4 border border-gray-700 rounded shadow-md">
-                    <div><label class="block mb-1 font-bold">App Version</label><input class="w-full bg-gray-900 border border-gray-600 p-2 rounded focus:border-blue-500" onchange="ConfigManager.activeConfig.version = this.value" value="${this.activeConfig.version || ''}"></div>
+                <h3 class="text-xl font-bold text-theme-accentsec mb-4">Editing: ${prettyName}</h3>
+                <div class="space-y-3 max-w-lg text-theme-text text-sm bg-theme-panel1 p-4 border border-theme-borderdark rounded shadow-md">
+                    <div><label class="block mb-1 font-bold">App Version</label><input class="w-full bg-theme-bg border border-theme-border p-2 rounded focus:border-theme-primary" onchange="ConfigManager.activeConfig.version = this.value" value="${this.activeConfig.version || ''}"></div>
                     
                     <div>
                         <label class="block mb-1 font-bold mt-2">App Theme</label>
@@ -533,11 +533,11 @@ const ConfigManager = {
                             <option value="theme-classic" ${this.activeConfig.theme === 'theme-classic' || !this.activeConfig.theme ? 'selected' : ''}>Classic (Dark)</option>
                         </select>
                     </div>
-<div><label class="block mb-1 font-bold mt-2">Author</label><input class="w-full bg-gray-900 border border-gray-600 p-2 rounded focus:border-blue-500" onchange="ConfigManager.activeConfig.author = this.value" value="${this.activeConfig.author || ''}"></div>
+<div><label class="block mb-1 font-bold mt-2">Author</label><input class="w-full bg-theme-bg border border-theme-border p-2 rounded focus:border-theme-primary" onchange="ConfigManager.activeConfig.author = this.value" value="${this.activeConfig.author || ''}"></div>
                     <div>
                         <label class="block mb-1 font-bold mt-2">Stores in Remodel (Comma Separated)</label>
-                        <p class="text-xs text-gray-400 mb-1">List store numbers currently under remodel to highlight them automatically in the ribbon.</p>
-                        <textarea class="w-full bg-gray-900 border border-gray-600 p-2 rounded focus:border-blue-500 min-h-[100px]" onchange="ConfigManager._upRemodels(this.value)">${(this.activeConfig.remodels || []).join(', ')}</textarea>
+                        <p class="text-xs text-theme-textmuted mb-1">List store numbers currently under remodel to highlight them automatically in the ribbon.</p>
+                        <textarea class="w-full bg-theme-bg border border-theme-border p-2 rounded focus:border-theme-primary min-h-[100px]" onchange="ConfigManager._upRemodels(this.value)">${(this.activeConfig.remodels || []).join(', ')}</textarea>
                     </div>
                 </div>
             `;
@@ -547,21 +547,21 @@ const ConfigManager = {
             ConfigManager._upRT = (oldK, newK, val) => { if(oldK !== newK) delete this.activeConfig.reusableText[oldK]; this.activeConfig.reusableText[newK] = val; };
 
             let rows = Object.keys(targetData).map(k => `
-                <div class="flex space-x-2 mb-2 items-start bg-gray-800 p-3 rounded border border-gray-700 shadow-sm">
+                <div class="flex space-x-2 mb-2 items-start bg-theme-panel1 p-3 rounded border border-theme-borderdark shadow-sm">
                     <div class="w-1/3">
-                        <label class="text-xs text-gray-400 font-bold mb-1 block">Key ({reusable_KEY})</label>
-                        <input class="w-full bg-gray-900 border border-gray-600 p-2 rounded text-sm text-gray-200" value="${k}" onchange="ConfigManager._upRT('${k}', this.value, this.parentElement.nextElementSibling.querySelector('textarea').value)">
+                        <label class="text-xs text-theme-textmuted font-bold mb-1 block">Key ({reusable_KEY})</label>
+                        <input class="w-full bg-theme-bg border border-theme-border p-2 rounded text-sm text-theme-text" value="${k}" onchange="ConfigManager._upRT('${k}', this.value, this.parentElement.nextElementSibling.querySelector('textarea').value)">
                     </div>
                     <div class="w-2/3">
-                        <label class="text-xs text-gray-400 font-bold mb-1 block">Output Text</label>
-                        <textarea class="w-full bg-gray-900 border border-gray-600 p-2 rounded text-sm text-gray-200 h-16" onchange="ConfigManager._upRT('${k}', this.parentElement.previousElementSibling.querySelector('input').value, this.value)">${targetData[k]}</textarea>
+                        <label class="text-xs text-theme-textmuted font-bold mb-1 block">Output Text</label>
+                        <textarea class="w-full bg-theme-bg border border-theme-border p-2 rounded text-sm text-theme-text h-16" onchange="ConfigManager._upRT('${k}', this.parentElement.previousElementSibling.querySelector('input').value, this.value)">${targetData[k]}</textarea>
                     </div>
-                    <button class="text-red-500 bg-gray-900 border border-gray-600 hover:text-red-400 px-3 py-5 rounded font-bold mt-5" onclick="ConfigManager._remRT('${k}')">X</button>
+                    <button class="text-red-500 bg-theme-bg border border-theme-border hover:text-red-400 px-3 py-5 rounded font-bold mt-5" onclick="ConfigManager._remRT('${k}')">X</button>
                 </div>
             `).join('');
             editorArea.innerHTML = `
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-bold text-blue-400">Editing: ${prettyName}</h3>
+                    <h3 class="text-xl font-bold text-theme-accentsec">Editing: ${prettyName}</h3>
                     <button class="bg-green-700 hover:bg-green-600 transition px-3 py-1 rounded text-sm text-white font-bold shadow" onclick="ConfigManager._addRT()">+ Add Text Block</button>
                 </div>
                 <div>${rows}</div>
@@ -569,16 +569,16 @@ const ConfigManager = {
         } else if (fieldKey === 'parserRules') {
             ConfigManager._upPS = (v) => { this.activeConfig.parserRules.schema = v.split(',').map(s=>s.trim()); };
             editorArea.innerHTML = `
-                <h3 class="text-xl font-bold text-blue-400 mb-4">Editing: ${prettyName}</h3>
-                <div class="space-y-4 max-w-xl text-gray-300 text-sm bg-gray-800 p-4 border border-gray-700 rounded shadow-md">
+                <h3 class="text-xl font-bold text-theme-accentsec mb-4">Editing: ${prettyName}</h3>
+                <div class="space-y-4 max-w-xl text-theme-text text-sm bg-theme-panel1 p-4 border border-theme-borderdark rounded shadow-md">
                     <div>
                         <label class="block mb-1 font-bold">Delimiter Token</label>
-                        <input class="w-full bg-gray-900 border border-gray-600 p-2 rounded font-mono focus:border-blue-500" onchange="ConfigManager.activeConfig.parserRules.delimiter = this.value" value="${targetData.delimiter || '|'}">
+                        <input class="w-full bg-theme-bg border border-theme-border p-2 rounded font-mono focus:border-theme-primary" onchange="ConfigManager.activeConfig.parserRules.delimiter = this.value" value="${targetData.delimiter || '|'}">
                     </div>
                     <div>
                         <label class="block mb-1 font-bold">Schema Keys (Comma Separated)</label>
-                        <p class="text-xs text-gray-500 mb-2">Defines the order of properties extracted from the split string.</p>
-                        <textarea class="w-full bg-gray-900 border border-gray-600 p-2 rounded h-32 font-mono leading-relaxed" onchange="ConfigManager._upPS(this.value)">${(targetData.schema || []).join(',\n')}</textarea>
+                        <p class="text-xs text-theme-textmuted mb-2">Defines the order of properties extracted from the split string.</p>
+                        <textarea class="w-full bg-theme-bg border border-theme-border p-2 rounded h-32 font-mono leading-relaxed" onchange="ConfigManager._upPS(this.value)">${(targetData.schema || []).join(',\n')}</textarea>
                     </div>
                 </div>
             `;
@@ -644,25 +644,25 @@ const ConfigManager = {
           let sopHtml = '';
           if(profile.sopSections) {
               sopHtml = profile.sopSections.map((s, i) => `
-                  <div class="bg-gray-900 border border-gray-700 p-2 rounded mb-2 text-sm">
+                  <div class="bg-theme-bg border border-theme-borderdark p-2 rounded mb-2 text-sm">
                       <div class="flex justify-between items-center mb-1">
-                          <input value="${s.id}" onchange="ConfigManager._upSOP(${i}, 'id', this.value)" class="bg-gray-800 border-gray-600 p-1 rounded font-bold w-1/3 text-blue-300">
+                          <input value="${s.id}" onchange="ConfigManager._upSOP(${i}, 'id', this.value)" class="bg-theme-panel1 border-theme-border p-1 rounded font-bold w-1/3 text-theme-accentsec">
                           <div class="flex items-center space-x-2">
                               <input type="checkbox" ${s.alwaysShow ? 'checked' : ''} onchange="ConfigManager._upSOP(${i}, 'alwaysShow', this.checked)">
-                              <label class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Always Show</label>
+                              <label class="text-[10px] text-theme-textmuted font-bold uppercase tracking-wider">Always Show</label>
                           </div>
-                          <button class="text-gray-400 hover:text-white mr-2" onclick="ConfigManager._moveSOP(${i}, -1)" title="Move Up">↑</button>
-                          <button class="text-gray-400 hover:text-white mr-2" onclick="ConfigManager._moveSOP(${i}, 1)" title="Move Down">↓</button>
+                          <button class="text-theme-textmuted hover:text-white mr-2" onclick="ConfigManager._moveSOP(${i}, -1)" title="Move Up">↑</button>
+                          <button class="text-theme-textmuted hover:text-white mr-2" onclick="ConfigManager._moveSOP(${i}, 1)" title="Move Down">↓</button>
                           <button class="text-red-500 hover:text-red-400" onclick="ConfigManager._rmSOP(${i})">X</button>
                       </div>
-                      <input value="${s.title}" placeholder="SOP Title" onchange="ConfigManager._upSOP(${i}, 'title', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded mb-1">
+                      <input value="${s.title}" placeholder="SOP Title" onchange="ConfigManager._upSOP(${i}, 'title', this.value)" class="w-full bg-theme-panel1 border-theme-border p-1 rounded mb-1">
                       <div class="grid grid-cols-2 gap-2 mb-1">
-                          <input value="${s.showIf || ''}" placeholder="Show If (e.g. condition === 'X')" onchange="ConfigManager._upSOP(${i}, 'showIf', this.value)" title="Form Condition" class="w-full bg-gray-800 border-gray-600 p-1 rounded font-mono text-xs text-yellow-300">
-                          <input value="${s.showOnlyOnPhase || ''}" placeholder="Show Only On Phase ID (e.g. phase-1-diagnosis)" onchange="ConfigManager._upSOP(${i}, 'showOnlyOnPhase', this.value)" title="Phase Hook" class="w-full bg-gray-800 border-gray-600 p-1 rounded font-mono text-xs text-green-300">
+                          <input value="${s.showIf || ''}" placeholder="Show If (e.g. condition === 'X')" onchange="ConfigManager._upSOP(${i}, 'showIf', this.value)" title="Form Condition" class="w-full bg-theme-panel1 border-theme-border p-1 rounded font-mono text-xs text-yellow-300">
+                          <input value="${s.showOnlyOnPhase || ''}" placeholder="Show Only On Phase ID (e.g. phase-1-diagnosis)" onchange="ConfigManager._upSOP(${i}, 'showOnlyOnPhase', this.value)" title="Phase Hook" class="w-full bg-theme-panel1 border-theme-border p-1 rounded font-mono text-xs text-green-300">
                       </div>
-                      <textarea placeholder="HTML Content" onchange="ConfigManager._upSOP(${i}, 'content', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded h-20 text-xs font-mono">${s.content}</textarea>
-                      <textarea placeholder="Training Explanation" onchange="ConfigManager._upSOP(${i}, 'trainingExplanation', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded h-10 mt-1 text-xs text-yellow-200" title="Training Note">${s.trainingExplanation || ''}</textarea>
-                      <input type="url" placeholder="Training Link (URL)" onchange="ConfigManager._upSOP(${i}, 'trainingLink', this.value)" value="${s.trainingLink || ''}" class="w-full bg-gray-800 border-gray-600 p-1 rounded mt-1 text-xs text-gray-200" title="Training Link">
+                      <textarea placeholder="HTML Content" onchange="ConfigManager._upSOP(${i}, 'content', this.value)" class="w-full bg-theme-panel1 border-theme-border p-1 rounded h-20 text-xs font-mono">${s.content}</textarea>
+                      <textarea placeholder="Training Explanation" onchange="ConfigManager._upSOP(${i}, 'trainingExplanation', this.value)" class="w-full bg-theme-panel1 border-theme-border p-1 rounded h-10 mt-1 text-xs text-yellow-200" title="Training Note">${s.trainingExplanation || ''}</textarea>
+                      <input type="url" placeholder="Training Link (URL)" onchange="ConfigManager._upSOP(${i}, 'trainingLink', this.value)" value="${s.trainingLink || ''}" class="w-full bg-theme-panel1 border-theme-border p-1 rounded mt-1 text-xs text-theme-text" title="Training Link">
                   </div>
               `).join('');
           }
@@ -670,31 +670,31 @@ const ConfigManager = {
           let phaseHtml = '';
           if(profile.investigationPhases) {
               phaseHtml = profile.investigationPhases.map((p, i) => `
-                  <div class="bg-gray-900 border border-gray-700 p-2 rounded mb-2 text-sm">
+                  <div class="bg-theme-bg border border-theme-borderdark p-2 rounded mb-2 text-sm">
                       <div class="flex justify-between items-center mb-1">
-                          <input value="${p.id}" onchange="ConfigManager._upPha(${i}, 'id', this.value)" class="bg-gray-800 border-gray-600 p-1 rounded font-bold w-1/3 text-blue-300">
-                          <button class="text-gray-400 hover:text-white mr-2" onclick="ConfigManager._movePha(${i}, -1)" title="Move Up">↑</button>
-                          <button class="text-gray-400 hover:text-white mr-2" onclick="ConfigManager._movePha(${i}, 1)" title="Move Down">↓</button>
+                          <input value="${p.id}" onchange="ConfigManager._upPha(${i}, 'id', this.value)" class="bg-theme-panel1 border-theme-border p-1 rounded font-bold w-1/3 text-theme-accentsec">
+                          <button class="text-theme-textmuted hover:text-white mr-2" onclick="ConfigManager._movePha(${i}, -1)" title="Move Up">↑</button>
+                          <button class="text-theme-textmuted hover:text-white mr-2" onclick="ConfigManager._movePha(${i}, 1)" title="Move Down">↓</button>
                           <button class="text-red-500 hover:text-red-400" onclick="ConfigManager._rmPha(${i})">X</button>
                       </div>
                       <div class="grid grid-cols-2 gap-2">
-                           <input value="${p.title}" placeholder="Title" onchange="ConfigManager._upPha(${i}, 'title', this.value)" class="bg-gray-800 border-gray-600 p-1 rounded">
-                           <input value="${p.sequence}" type="number" placeholder="Sequence" onchange="ConfigManager._upPha(${i}, 'sequence', this.value)" class="bg-gray-800 border-gray-600 p-1 rounded">
+                           <input value="${p.title}" placeholder="Title" onchange="ConfigManager._upPha(${i}, 'title', this.value)" class="bg-theme-panel1 border-theme-border p-1 rounded">
+                           <input value="${p.sequence}" type="number" placeholder="Sequence" onchange="ConfigManager._upPha(${i}, 'sequence', this.value)" class="bg-theme-panel1 border-theme-border p-1 rounded">
                       </div>
-                      <input value="${p.activateIf || ''}" placeholder="Activate If (e.g. condition === 'X')" onchange="ConfigManager._upPha(${i}, 'activateIf', this.value)" class="w-full mt-1 bg-gray-800 border-gray-600 p-1 rounded font-mono text-xs text-yellow-300">
-                      <input value="${p.description || ''}" placeholder="Description" onchange="ConfigManager._upPha(${i}, 'description', this.value)" class="w-full mt-1 bg-gray-800 border-gray-600 p-1 rounded text-xs">
+                      <input value="${p.activateIf || ''}" placeholder="Activate If (e.g. condition === 'X')" onchange="ConfigManager._upPha(${i}, 'activateIf', this.value)" class="w-full mt-1 bg-theme-panel1 border-theme-border p-1 rounded font-mono text-xs text-yellow-300">
+                      <input value="${p.description || ''}" placeholder="Description" onchange="ConfigManager._upPha(${i}, 'description', this.value)" class="w-full mt-1 bg-theme-panel1 border-theme-border p-1 rounded text-xs">
                   </div>
               `).join('');
           }
         let fieldsHtml = profile.fields.map((f, i) => `
-            <div class="bg-gray-900 border border-gray-700 p-3 rounded mb-3 flex items-start space-x-3 shadow-inner">
-                <span class="text-xs font-bold text-gray-500 pt-2">${i+1}.</span>
+            <div class="bg-theme-bg border border-theme-borderdark p-3 rounded mb-3 flex items-start space-x-3 shadow-inner">
+                <span class="text-xs font-bold text-theme-textmuted pt-2">${i+1}.</span>
                 <div class="flex-1 grid grid-cols-2 gap-2">
-                    <div><label class="text-xs text-gray-400 font-bold block mb-1">ID (Ref)</label><input value="${f.id}" onchange="ConfigManager._upField(${i}, 'id', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded text-sm text-gray-200"></div>
-                    <div><label class="text-xs text-gray-400 font-bold block mb-1">Label (UI)</label><input value="${f.label}" onchange="ConfigManager._upField(${i}, 'label', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded text-sm text-gray-200"></div>
+                    <div><label class="text-xs text-theme-textmuted font-bold block mb-1">ID (Ref)</label><input value="${f.id}" onchange="ConfigManager._upField(${i}, 'id', this.value)" class="w-full bg-theme-panel1 border-theme-border p-1 rounded text-sm text-theme-text"></div>
+                    <div><label class="text-xs text-theme-textmuted font-bold block mb-1">Label (UI)</label><input value="${f.label}" onchange="ConfigManager._upField(${i}, 'label', this.value)" class="w-full bg-theme-panel1 border-theme-border p-1 rounded text-sm text-theme-text"></div>
                     <div>
-                        <label class="text-xs text-gray-400 font-bold block mb-1">Type</label>
-                        <select onchange="ConfigManager._upField(${i}, 'type', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded text-sm text-gray-200">
+                        <label class="text-xs text-theme-textmuted font-bold block mb-1">Type</label>
+                        <select onchange="ConfigManager._upField(${i}, 'type', this.value)" class="w-full bg-theme-panel1 border-theme-border p-1 rounded text-sm text-theme-text">
                             <option value="text" ${f.type === 'text'?'selected':''}>Text Input (Single Line)</option>
                             <option value="textarea" ${f.type === 'textarea'?'selected':''}>Text Area (Multi-line)</option>
                             <option value="radio" ${f.type === 'radio'?'selected':''}>Radio Group</option>
@@ -702,38 +702,38 @@ const ConfigManager = {
                             <option value="time" ${f.type === 'time'?'selected':''}>Time (Hrs/Mins)</option>
                         </select>
                     </div>
-                    <div><label class="text-xs text-gray-400 font-bold block mb-1">Source Default</label><input value="${f.source || f.default || ''}" placeholder="e.g. parsed_site_number" onchange="ConfigManager._upField(${i}, 'source', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded text-sm text-gray-200"></div>
+                    <div><label class="text-xs text-theme-textmuted font-bold block mb-1">Source Default</label><input value="${f.source || f.default || ''}" placeholder="e.g. parsed_site_number" onchange="ConfigManager._upField(${i}, 'source', this.value)" class="w-full bg-theme-panel1 border-theme-border p-1 rounded text-sm text-theme-text"></div>
                      <div class="col-span-2 flex items-center mb-1">
-                         <input type="checkbox" ${f.required ? 'checked' : ''} onchange="ConfigManager._upField(${i}, 'required', this.checked)" class="mr-2 h-4 w-4 rounded text-blue-500 bg-gray-800 border-gray-600 focus:ring-blue-500">
-                         <label class="text-xs text-gray-400 font-bold block">Required</label>
+                         <input type="checkbox" ${f.required ? 'checked' : ''} onchange="ConfigManager._upField(${i}, 'required', this.checked)" class="mr-2 h-4 w-4 rounded text-theme-accentsec bg-theme-panel1 border-theme-border focus:ring-theme-primary">
+                         <label class="text-xs text-theme-textmuted font-bold block">Required</label>
                      </div>
                      <div class="col-span-2">
-                         <label class="text-xs text-gray-400 font-bold block mb-1">Visible If (Condition)</label>
-                         <input value="${f.visibleIf || ''}" placeholder="e.g. condition === 'True High Pressure'" onchange="ConfigManager._upField(${i}, 'visibleIf', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded text-sm text-gray-200 font-mono text-blue-300">
+                         <label class="text-xs text-theme-textmuted font-bold block mb-1">Visible If (Condition)</label>
+                         <input value="${f.visibleIf || ''}" placeholder="e.g. condition === 'True High Pressure'" onchange="ConfigManager._upField(${i}, 'visibleIf', this.value)" class="w-full bg-theme-panel1 border-theme-border p-1 rounded text-sm text-theme-text font-mono text-theme-accentsec">
                      </div>
                      <div class="col-span-2">
-                         <label class="text-xs text-gray-400 font-bold block mb-1">Phase Assignment</label>
-                         <input value="${f.phase || ''}" placeholder="e.g. phase-1-diagnosis" onchange="ConfigManager._upField(${i}, 'phase', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded text-sm text-gray-200">
+                         <label class="text-xs text-theme-textmuted font-bold block mb-1">Phase Assignment</label>
+                         <input value="${f.phase || ''}" placeholder="e.g. phase-1-diagnosis" onchange="ConfigManager._upField(${i}, 'phase', this.value)" class="w-full bg-theme-panel1 border-theme-border p-1 rounded text-sm text-theme-text">
                      </div>
                      <div class="col-span-2">
-                         <label class="text-xs text-gray-400 font-bold block mb-1">Training Explanation (Shown in Training Mode)</label>
-                         <textarea onchange="ConfigManager._upField(${i}, 'trainingExplanation', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded text-sm text-gray-200 h-10">${f.trainingExplanation || ''}</textarea>
+                         <label class="text-xs text-theme-textmuted font-bold block mb-1">Training Explanation (Shown in Training Mode)</label>
+                         <textarea onchange="ConfigManager._upField(${i}, 'trainingExplanation', this.value)" class="w-full bg-theme-panel1 border-theme-border p-1 rounded text-sm text-theme-text h-10">${f.trainingExplanation || ''}</textarea>
                      </div>
                      <div class="col-span-2">
-                         <label class="text-xs text-gray-400 font-bold block mb-1">Training Link (URL)</label>
-                         <input type="url" value="${f.trainingLink || ''}" placeholder="https://..." onchange="ConfigManager._upField(${i}, 'trainingLink', this.value)" class="w-full bg-gray-800 border-gray-600 p-1 rounded text-sm text-gray-200">
+                         <label class="text-xs text-theme-textmuted font-bold block mb-1">Training Link (URL)</label>
+                         <input type="url" value="${f.trainingLink || ''}" placeholder="https://..." onchange="ConfigManager._upField(${i}, 'trainingLink', this.value)" class="w-full bg-theme-panel1 border-theme-border p-1 rounded text-sm text-theme-text">
                      </div>
                      ${f.type === 'radio' || f.type === 'select' ? `
                          <div class="col-span-2">
-                            <label class="text-xs text-gray-400 font-bold block mb-1">Options (Comma separated)</label>
-                            <input value="${(f.options||[]).join(', ')}" onchange="ConfigManager._upField(${i}, 'options', this.value.split(',').map(s=>s.trim()))" class="w-full bg-gray-800 border-gray-600 p-1 rounded text-sm text-gray-200">
+                            <label class="text-xs text-theme-textmuted font-bold block mb-1">Options (Comma separated)</label>
+                            <input value="${(f.options||[]).join(', ')}" onchange="ConfigManager._upField(${i}, 'options', this.value.split(',').map(s=>s.trim()))" class="w-full bg-theme-panel1 border-theme-border p-1 rounded text-sm text-theme-text">
                          </div>
                      ` : ''}
                 </div>
                 <div class="flex flex-col ml-2">
-                    <button class="text-gray-400 hover:text-white bg-gray-800 border border-gray-600 px-3 py-1 rounded font-bold mb-1" onclick="ConfigManager._moveField(${i}, -1)" title="Move Up">↑</button>
-                    <button class="text-gray-400 hover:text-white bg-gray-800 border border-gray-600 px-3 py-1 rounded font-bold mb-1" onclick="ConfigManager._moveField(${i}, 1)" title="Move Down">↓</button>
-                    <button class="text-red-500 border border-gray-600 hover:text-red-400 px-3 py-2 rounded font-bold mt-auto" onclick="ConfigManager._rmField(${i})">X</button>
+                    <button class="text-theme-textmuted hover:text-white bg-theme-panel1 border border-theme-border px-3 py-1 rounded font-bold mb-1" onclick="ConfigManager._moveField(${i}, -1)" title="Move Up">↑</button>
+                    <button class="text-theme-textmuted hover:text-white bg-theme-panel1 border border-theme-border px-3 py-1 rounded font-bold mb-1" onclick="ConfigManager._moveField(${i}, 1)" title="Move Down">↓</button>
+                    <button class="text-red-500 border border-theme-border hover:text-red-400 px-3 py-2 rounded font-bold mt-auto" onclick="ConfigManager._rmField(${i})">X</button>
                 </div>
             </div>
         `).join('');
@@ -747,17 +747,17 @@ const ConfigManager = {
             <div class="flex space-x-6 h-full overflow-y-auto pr-2 pb-10">
                 <!-- Data & Settings Col -->
                 <div class="w-1/2 space-y-4">
-                    <div class="bg-gray-800 p-4 border border-gray-700 rounded shadow-md">
-                        <h4 class="font-bold text-gray-300 border-b border-gray-700 pb-1 mb-3">Identity</h4>
-                        <div class="mb-3"><label class="block mb-1 text-xs text-gray-400">Alarm Code (ID)</label><input class="w-full bg-gray-900 border border-gray-600 p-2 rounded focus:border-blue-500 text-sm" ${profileId==='GENERIC'?'disabled':''} value="${profile.id}" onchange="ConfigManager._upP('id', this.value)"></div>
-                        <div class="mb-3"><label class="block mb-1 text-xs text-gray-400">Profile Name</label><input class="w-full bg-gray-900 border border-gray-600 p-2 rounded focus:border-blue-500 text-sm" value="${profile.name}" onchange="ConfigManager._upP('name', this.value)"></div>
+                    <div class="bg-theme-panel1 p-4 border border-theme-borderdark rounded shadow-md">
+                        <h4 class="font-bold text-theme-text border-b border-theme-borderdark pb-1 mb-3">Identity</h4>
+                        <div class="mb-3"><label class="block mb-1 text-xs text-theme-textmuted">Alarm Code (ID)</label><input class="w-full bg-theme-bg border border-theme-border p-2 rounded focus:border-theme-primary text-sm" ${profileId==='GENERIC'?'disabled':''} value="${profile.id}" onchange="ConfigManager._upP('id', this.value)"></div>
+                        <div class="mb-3"><label class="block mb-1 text-xs text-theme-textmuted">Profile Name</label><input class="w-full bg-theme-bg border border-theme-border p-2 rounded focus:border-theme-primary text-sm" value="${profile.name}" onchange="ConfigManager._upP('name', this.value)"></div>
                     </div>
 
-                    <div class="bg-gray-800 p-4 border border-gray-700 rounded shadow-md h-96 flex flex-col">
-                        <div class="flex justify-between items-center border-b border-gray-700 pb-2 mb-3">
-                            <h4 class="font-bold text-gray-300">SOP Structure</h4>
+                    <div class="bg-theme-panel1 p-4 border border-theme-borderdark rounded shadow-md h-96 flex flex-col">
+                        <div class="flex justify-between items-center border-b border-theme-borderdark pb-2 mb-3">
+                            <h4 class="font-bold text-theme-text">SOP Structure</h4>
                             <div>
-                                <button class="bg-blue-700 hover:bg-blue-600 py-1 px-3 rounded text-xs text-white shadow font-bold" onclick="ConfigManager._addSOP()">+ Add SOP Section</button>
+                                <button class="bg-theme-primary hover:bg-theme-primary py-1 px-3 rounded text-xs text-white shadow font-bold" onclick="ConfigManager._addSOP()">+ Add SOP Section</button>
                             </div>
                         </div>
                         ${profile.sopSections ? `
@@ -765,37 +765,37 @@ const ConfigManager = {
                                 ${sopHtml}
                             </div>
                         ` : `
-                            <div class="mb-3"><label class="block mb-1 text-xs text-gray-400">Legacy Knowledge Block (HTML)</label><textarea class="w-full bg-gray-900 border border-gray-600 p-2 font-mono rounded h-32 focus:border-blue-500 text-xs" onchange="ConfigManager._upP('sopText', this.value)">${profile.sopText || ''}</textarea></div>
+                            <div class="mb-3"><label class="block mb-1 text-xs text-theme-textmuted">Legacy Knowledge Block (HTML)</label><textarea class="w-full bg-theme-bg border border-theme-border p-2 font-mono rounded h-32 focus:border-theme-primary text-xs" onchange="ConfigManager._upP('sopText', this.value)">${profile.sopText || ''}</textarea></div>
                             <button class="bg-indigo-700 hover:bg-indigo-600 mt-2 py-2 px-3 rounded text-xs text-white shadow font-bold text-center w-full" onclick="ConfigManager._addSOP()">Convert to Modular SOP Sections</button>
                         `}
                     </div>
 
-                    <div class="bg-gray-800 p-4 border border-gray-700 rounded shadow-md">
-                        <h4 class="font-bold text-gray-300 border-b border-gray-700 pb-1 mb-3">Note Template</h4>
-                        <div class="mb-3"><label class="block mb-1 text-xs text-gray-400">Note Schema (Injects {fields} & {reusable_text})</label><textarea class="w-full bg-gray-900 border border-gray-600 p-2 font-mono rounded h-24 focus:border-blue-500 text-xs" onchange="ConfigManager._upP('noteTemplate', this.value)">${profile.noteTemplate}</textarea></div>
+                    <div class="bg-theme-panel1 p-4 border border-theme-borderdark rounded shadow-md">
+                        <h4 class="font-bold text-theme-text border-b border-theme-borderdark pb-1 mb-3">Note Template</h4>
+                        <div class="mb-3"><label class="block mb-1 text-xs text-theme-textmuted">Note Schema (Injects {fields} & {reusable_text})</label><textarea class="w-full bg-theme-bg border border-theme-border p-2 font-mono rounded h-24 focus:border-theme-primary text-xs" onchange="ConfigManager._upP('noteTemplate', this.value)">${profile.noteTemplate}</textarea></div>
                     </div>
 
-                    <div class="bg-gray-800 p-4 border border-gray-700 rounded shadow-md">
-                        <h4 class="font-bold text-gray-300 border-b border-gray-700 pb-1 mb-3">Crystal WorkOrder Default Hooks</h4>
+                    <div class="bg-theme-panel1 p-4 border border-theme-borderdark rounded shadow-md">
+                        <h4 class="font-bold text-theme-text border-b border-theme-borderdark pb-1 mb-3">Crystal WorkOrder Default Hooks</h4>
                         <div class="grid grid-cols-2 gap-3 text-sm">
 ${ConfigManager._renderCrystalHooks()}
                         </div>
                     </div>
 
                     <!-- Timer Widget Settings -->
-                    <div class="bg-gray-800 p-4 border border-gray-700 rounded shadow-md">
-                        <div class="flex justify-between items-center border-b border-gray-700 pb-1 mb-3">
-                            <h4 class="font-bold text-gray-300">Timer Configuration</h4>
+                    <div class="bg-theme-panel1 p-4 border border-theme-borderdark rounded shadow-md">
+                        <div class="flex justify-between items-center border-b border-theme-borderdark pb-1 mb-3">
+                            <h4 class="font-bold text-theme-text">Timer Configuration</h4>
                             <div class="flex items-center space-x-2">
                                 <input type="checkbox" id="admin-timer-enabled" ${profile.timerConfig && profile.timerConfig.enabled ? 'checked' : ''} onchange="ConfigManager._upP_TC('enabled', this.checked)">
-                                <label class="text-xs text-gray-300 font-bold">Enabled</label>
+                                <label class="text-xs text-theme-text font-bold">Enabled</label>
                             </div>
                         </div>
                         <div class="space-y-3 text-sm ${!(profile.timerConfig && profile.timerConfig.enabled) ? 'opacity-50 pointer-events-none' : ''}">
                             
                             <div>
-                                <label class="block text-xs text-gray-400 mb-1">Widget Location</label>
-                                <select class="w-full bg-gray-900 border border-gray-600 p-2 rounded text-gray-200" onchange="ConfigManager._upP_TC('location', this.value)">
+                                <label class="block text-xs text-theme-textmuted mb-1">Widget Location</label>
+                                <select class="w-full bg-theme-bg border border-theme-border p-2 rounded text-theme-text" onchange="ConfigManager._upP_TC('location', this.value)">
                                     <option value="floating" ${!profile.timerConfig || profile.timerConfig.location === 'floating' || profile.timerConfig.location === undefined ? 'selected' : ''}>Floating (Draggable)</option>
                                     <option value="header" ${profile.timerConfig && profile.timerConfig.location === 'header' ? 'selected' : ''}>Header (Next to title)</option>
                                     <option value="header-center" ${profile.timerConfig && profile.timerConfig.location === 'header-center' ? 'selected' : ''}>Header (Center)</option>
@@ -803,14 +803,14 @@ ${ConfigManager._renderCrystalHooks()}
                             </div>
 
                             <div>
-                                <label class="block text-xs text-gray-400 mb-1">Widget Label</label>
-                                <input type="text" class="w-full bg-gray-900 border border-gray-600 p-2 rounded text-gray-200" value="${profile.timerConfig ? profile.timerConfig.defaultLabel : 'SLA Time'}" onchange="ConfigManager._upP_TC('defaultLabel', this.value)">
+                                <label class="block text-xs text-theme-textmuted mb-1">Widget Label</label>
+                                <input type="text" class="w-full bg-theme-bg border border-theme-border p-2 rounded text-theme-text" value="${profile.timerConfig ? profile.timerConfig.defaultLabel : 'SLA Time'}" onchange="ConfigManager._upP_TC('defaultLabel', this.value)">
                             </div>
                             
                             <div>
                                 <div class="flex justify-between items-center mb-1">
-                                    <label class="block text-xs text-gray-400">Breakpoints</label>
-                                    <button class="text-[10px] bg-blue-700 hover:bg-blue-600 px-2 py-0.5 rounded text-white" onclick="ConfigManager._addTimerBreakpoint()">+ Add Breakpoint</button>
+                                    <label class="block text-xs text-theme-textmuted">Breakpoints</label>
+                                    <button class="text-[10px] bg-theme-primary hover:bg-theme-primary px-2 py-0.5 rounded text-white" onclick="ConfigManager._addTimerBreakpoint()">+ Add Breakpoint</button>
                                 </div>
                                 <div class="space-y-2 max-h-40 overflow-y-auto pr-1">
                                     ${ConfigManager._renderTimerBreakpoints(profile)}
@@ -825,19 +825,19 @@ ${ConfigManager._renderCrystalHooks()}
                     <!-- Forms Col -->
                   <div class="w-1/2 flex flex-col space-y-4">
                       <!-- Phases -->
-                      <div class="bg-gray-800 p-4 border border-gray-700 rounded shadow-md max-h-80 flex flex-col">
-                           <div class="flex justify-between items-center border-b border-gray-700 pb-2 mb-2">
-                              <h4 class="font-bold text-gray-300">Investigation Phases</h4>
-                              <button class="bg-blue-700 hover:bg-blue-600 py-1 px-3 rounded text-xs text-white shadow font-bold" onclick="ConfigManager._addPha()">+ Add Phase</button>
+                      <div class="bg-theme-panel1 p-4 border border-theme-borderdark rounded shadow-md max-h-80 flex flex-col">
+                           <div class="flex justify-between items-center border-b border-theme-borderdark pb-2 mb-2">
+                              <h4 class="font-bold text-theme-text">Investigation Phases</h4>
+                              <button class="bg-theme-primary hover:bg-theme-primary py-1 px-3 rounded text-xs text-white shadow font-bold" onclick="ConfigManager._addPha()">+ Add Phase</button>
                           </div>
                           <div class="flex-1 overflow-y-auto pr-1">
                               ${phaseHtml}
                           </div>
                       </div>
 
-                      <div class="bg-gray-800 p-4 border border-gray-700 rounded shadow-md flex-1 flex flex-col">
-                          <div class="flex justify-between items-center border-b border-gray-700 pb-2 mb-3">
-                              <h4 class="font-bold text-gray-300">Generated Form Fields</h4>
+                      <div class="bg-theme-panel1 p-4 border border-theme-borderdark rounded shadow-md flex-1 flex flex-col">
+                          <div class="flex justify-between items-center border-b border-theme-borderdark pb-2 mb-3">
+                              <h4 class="font-bold text-theme-text">Generated Form Fields</h4>
                               <button class="bg-green-700 hover:bg-green-600 py-1 px-3 rounded text-xs text-white shadow font-bold" onclick="ConfigManager._addField()">+ Add Field</button>
                           </div>
                           <div class="flex-1 overflow-y-auto pr-1 h-96">
@@ -885,7 +885,7 @@ ${ConfigManager._renderCrystalHooks()}
                 delete this.activeConfig.profiles[this.editingProfileId];
                 this.editingProfileId = null;
                 this.renderAdminProfiles();
-                document.getElementById('admin-editor-area').innerHTML = '<p class="text-gray-500 italic">Select an option from the sidebar to edit.</p>';
+                document.getElementById('admin-editor-area').innerHTML = '<p class="text-theme-textmuted italic">Select an option from the sidebar to edit.</p>';
             }
         }
     }

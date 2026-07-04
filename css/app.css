@@ -176,3 +176,7 @@ body.theme-classic h1.classic-title {
 body.theme-classic .theme-walmart {
     font-family: var(--theme-font-family);
 }
+/* Missing theme components */
+body.theme-classic .theme-walmart-exclusive {
+    display: none !important;
+}
