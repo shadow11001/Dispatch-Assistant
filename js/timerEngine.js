@@ -49,24 +49,13 @@ const TimerEngine = {
                 headerContainer.appendChild(this.widget);
             } else if (this.config.location === 'header' && titleElement) {
                 // Wrap the Title and the Timer together so 'justify-between' doesn't push the timer to the center of the screen
-                if (titleElement.parentElement.classList.contains('items-center') && titleElement.parentElement.tagName.toLowerCase() === 'div' && titleElement.parentElement.id === 'header-left-group') {
-                    // Already wrapped
+                if (document.getElementById('header-left-group')) {
+                    // Target specific wrapper gracefully so we don't accidentally nest or un-nest logo items if already created
+                    document.getElementById('header-left-group').parentNode.appendChild(this.widget);
+                } else if (titleElement.parentElement.classList.contains('items-center')) {
                     titleElement.parentElement.appendChild(this.widget);
                 } else {
-                    // Wrapper creation
-                    const wrapper = document.createElement('div');
-                    wrapper.id = 'header-left-group';
-                    wrapper.className = "flex items-center space-x-6"; // "space-x-6" provides approx half-inch gap
-                    titleElement.parentNode.insertBefore(wrapper, titleElement);
-                    
-                    const walmartLogo = document.querySelector('.walmart-logo-container');
-                    const classicTitle = document.querySelector('.classic-title');
-                    
-                    if (walmartLogo) wrapper.appendChild(walmartLogo);
-                    if (classicTitle) wrapper.appendChild(classicTitle);
-                    
-                    wrapper.appendChild(this.widget);
-                    this.widget.classList.remove('ml-6'); // Strip redundant margin since Tailwind space-x-6 handles it
+                    titleElement.parentNode.appendChild(this.widget);
                 }
             } else {
                 document.body.appendChild(this.widget);

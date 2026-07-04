@@ -53,6 +53,33 @@ body.theme-walmart {
     --theme-font-family: 'Everyday Sans Web', sans-serif;
 }
 
+
+body.theme-walmart-light {
+    /* Walmart Light Theme */
+    --theme-bg-main: #f3f4f6;      /* Light Gray backdrop */
+    --theme-bg-panel1: #ffffff;    /* Absolute White panels */
+    --theme-bg-panel2: #fafafa;    /* Very light gray inner panel */
+    --theme-bg-panel3: #ffffff;
+    
+    --theme-bg-input: #ffffff;     
+    --theme-border-main: #d1d5db;  /* light gray border */
+    --theme-border-dark: #e5e7eb;  
+    
+    --theme-primary: #0053E2;      /* True Blue */
+    --theme-primary-hover: #0040af; 
+    --theme-accent: #0053E2;       /* In light mode, yellow headers are hard to read. Use True Blue for headers. */
+    --theme-accent-secondary: #001E60; /* Dark blue for secondary accents */
+    
+    --theme-text-main: #111827;    /* Almost black text */
+    --theme-text-muted: #4b5563;   /* Gray text */
+    --theme-text-dark: #374151;    
+    
+    --theme-header-bg: #0053E2;    /* True Blue Header */
+    --theme-header-text: #ffffff;  /* White Header Text */
+    
+    --theme-font-family: 'Everyday Sans Web', sans-serif;
+}
+
 body.theme-classic {
     --theme-font-family: sans-serif;
 }
@@ -65,11 +92,13 @@ body {
     display: none;
 }
 
-body.theme-walmart .walmart-logo-container {
+body.theme-walmart .walmart-logo-container,
+body.theme-walmart-light .walmart-logo-container {
     display: flex;
 }
 
-body.theme-walmart h1.classic-title {
+body.theme-walmart h1.classic-title,
+body.theme-walmart-light h1.classic-title {
     display: none;
 }
 
@@ -184,4 +213,8 @@ body.theme-classic .theme-walmart-exclusive {
 /* Missing theme components */
 body.theme-classic .theme-walmart-exclusive {
     display: none !important;
+}
+
+body.theme-walmart-light #walmart-wordmark {
+    content: url('../assets/img/WMT-Wordmark-Standard-TrueBlue-RGB.svg');
 }

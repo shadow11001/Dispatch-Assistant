@@ -529,8 +529,9 @@ const ConfigManager = {
                         <label class="block mb-1 font-bold mt-2">App Theme</label>
                         <p class="text-xs text-white mb-1">Select the color branding pattern for the application.</p>
                         <select class="w-full bg-theme-input border border-theme-borderdark p-2 rounded focus:border-theme-primary" onchange="ConfigManager.activeConfig.theme = this.value; document.body.className = this.value + ' bg-theme-bg h-screen flex flex-col font-sans text-theme-text';">
-                            <option value="theme-walmart" ${this.activeConfig.theme === 'theme-walmart' ? 'selected' : ''}>Walmart (Branded)</option>
-                            <option value="theme-classic" ${this.activeConfig.theme === 'theme-classic' || !this.activeConfig.theme ? 'selected' : ''}>Classic (Dark)</option>
+                            <option value="theme-walmart" ${this.activeConfig.theme === 'theme-walmart' ? 'selected' : ''}>Walmart (Dark)</option>
+                            <option value="theme-walmart-light" ${this.activeConfig.theme === 'theme-walmart-light' ? 'selected' : ''}>Walmart (Light)</option>
+                            <option value="theme-classic" ${this.activeConfig.theme === 'theme-classic' || (!this.activeConfig.theme && this.activeConfig.theme !== 'theme-walmart-light') ? 'selected' : ''}>Classic (Dark)</option>
                         </select>
                     </div>
 <div><label class="block mb-1 font-bold mt-2">Author</label><input class="w-full bg-theme-bg border border-theme-border p-2 rounded focus:border-theme-primary" onchange="ConfigManager.activeConfig.author = this.value" value="${this.activeConfig.author || ''}"></div>
