@@ -19,8 +19,14 @@ window.AlarmAssistantConfig = {
   "version": "1.0.8",
   "lastUpdated": "2026-07-04",
   "author": "Andrew Toothman",
-  "changeDescription": "Updated and standardized RPL and SCL",
+  "changeDescription": "Fixed bug",
   "history": [
+    {
+      "version": "1.0.8",
+      "date": "2026-07-04",
+      "author": "Andrew Toothman",
+      "description": "Fixed bug"
+    },
     {
       "version": "1.0.8",
       "date": "2026-07-04",
@@ -1075,6 +1081,12 @@ window.AlarmAssistantConfig = {
           "content": "<div class=\"max-w-full space-y-4 text-sm\">\n  <!-- Mandatory Rules -->\n  <div class=\"bg-opacity-20 rounded border border-red-700 bg-red-900 p-3 shadow-sm\">\n    <h4 class=\"mb-2 font-bold text-red-400\">⚠️ Mandatory Call Rules</h4>\n\n    <ul class=\"list-disc space-y-1 pl-5 text-gray-300\">\n      <li>Do not ask the store if a Work Order is needed.</li>\n      <li>Work Orders are determined by alarm condition per SOP.</li>\n      <li><strong>Always use the scripted closing:</strong> “Please monitor product and follow refrigeration failure guidelines that can be found on The Wire.”</li>\n      <li>\n        If a manager asks about ETA:\n        <span class=\"text-yellow-300\"> “A technician will be onsite as soon as possible based on technician assignment.” </span>\n      </li>\n    </ul>\n  </div>\n\n  <!-- Scenario 1 -->\n  <details class=\"group rounded border border-gray-700 bg-gray-800 shadow-sm\">\n    <summary class=\"cursor-pointer p-3 font-bold text-blue-400 hover:bg-gray-700\">🎬 Scenario 1: Manager Answers</summary>\n\n    <div class=\"space-y-3 border-t border-l-4 border-l-blue-500 bg-gray-900 p-3\">\n      <div class=\"space-y-2 text-gray-300\">\n        <p class=\"text-xs font-bold tracking-wider text-purple-400 uppercase\">Agent</p>\n        <p>\"Hello, my name is [FirstName], calling from Upstream Facility Services regarding a refrigeration issue. May I get your name and position for documentation?\"</p>\n\n        <p>\"The issue I’m calling about is [CaseOrRack] in alarm for [Issue Type]. It has been active for [Time], currently reading [CurrentReading] with a setpoint of [SetPoint].\"</p>\n\n        <p>\"We have created an emergency response work order and a technician will be onsite ASAP. Do you have any questions?\"</p>\n\n        <p class=\"text-xs font-bold tracking-wider text-green-400 uppercase\">Manager</p>\n        <p>\"[Response or No questions]\"</p>\n\n        <p class=\"text-xs font-bold tracking-wider text-purple-400 uppercase\">Agent Closing</p>\n        <p class=\"font-bold text-blue-300\">\"Thank you for your time today. Please monitor product and follow refrigeration failure guidelines as found on The Wire.\"</p>\n      </div>\n    </div>\n  </details>\n\n  <!-- Scenario 2 -->\n  <details class=\"group rounded border border-gray-700 bg-gray-800 shadow-sm\">\n    <summary class=\"cursor-pointer p-3 font-bold text-yellow-400 hover:bg-gray-700\">🎬 Scenario 2: No Answer (Voicemail)</summary>\n\n    <div class=\"space-y-3 border-t border-l-4 border-l-yellow-500 bg-gray-900 p-3\">\n      <p class=\"text-xs font-bold tracking-wider text-purple-400 uppercase\">Agent Voicemail Script</p>\n\n      <p class=\"text-gray-300\">\"Good [Time of day], my name is [FirstName] from Upstream Facility Services regarding [CaseOrRack] in alarm for [IssueType]...\"</p>\n\n      <p class=\"font-bold text-blue-300\">\"Please monitor product and follow refrigeration failure guidelines as found on The Wire.\"</p>\n\n      <div class=\"mt-2 rounded bg-gray-800 p-2\">\n        <span class=\"mb-1 block text-xs font-bold text-gray-400 uppercase\"> Required After Voicemail </span>\n\n        <ul class=\"list-disc space-y-1 pl-4 text-xs text-gray-400\">\n          <li>Document attempted contact and voicemail left.</li>\n          <li>Continue to next approved contact if required.</li>\n        </ul>\n      </div>\n    </div>\n  </details>\n\n  <!-- Recap -->\n  <div class=\"rounded border border-gray-700 bg-gray-800 p-3\">\n    <h4 class=\"mb-2 border-b border-gray-700 pb-1 text-xs font-bold tracking-wider text-gray-300 uppercase\">🧠 Call Completion Checklist</h4>\n\n    <div class=\"space-y-1 text-xs text-gray-400\">\n      <p>✅ Main store line attempted first</p>\n      <p>✅ Approved contact list used before marking no answer</p>\n      <p>✅ Voicemail left when available</p>\n      <p>✅ Manager information documented when contact is made</p>\n      <p>✅ Scripted closing executed</p>\n    </div>\n  </div>\n</div>\n",
           "showAfter": "phase-2-dispatch",
           "showOnlyOnPhase": "phase-3-creation"
+        },
+        {
+          "id": "forced-instruction",
+          "title": "Force Instructions",
+          "content": "        <div class=\"bg-gray-800 p-2 rounded mb-2 border-l-4 border-yellow-500\">\n            <h4 class=\"font-bold text-yellow-400\">Override Procedure:</h4>\n            <p class=\"text-xs text-gray-300\">Take the baseline Suction Setpoint and place a force in EMS +15 PSI higher so it tracks aggressively but safely if isolated.</p>\n            <p class=\"text-xs text-yellow-200 mt-1 font-bold\">You should force it to exactly: <span class=\"bg-yellow-900 text-yellow-100 px-1 rounded\">{parseFloat(data.suct_psi_setpoint) + thresholds.suction_psi.targetVariance.above + 1} PSI</span></p>\n        </div>",
+          "showIf": "suct_psi_setpoint !== ''"
         }
       ],
       "crystalAttributes": {
@@ -1142,7 +1154,11 @@ window.AlarmAssistantConfig = {
           "id": "case_temps",
           "label": "Case Temps",
           "type": "radio",
-          "phase": "phase-2-investigate2"
+          "phase": "phase-2-investigate2",
+          "options": [
+            "Normal",
+            "High"
+          ]
         },
         {
           "id": "high_case_temps",
@@ -3036,73 +3052,75 @@ window.AlarmAssistantConfig = {
       "label": "Store Number",
       "type": "text",
       "source": "parsed_site_number",
-      "phase": "phase-1-investigate",
-      "required": true
+      "phase": "phase-1-investigate1"
     },
     {
       "id": "rack",
-      "label": "Affected Rack/System",
+      "label": "Rack/Area",
       "type": "text",
-      "phase": "phase-1-investigate",
-      "required": true
+      "phase": "phase-1-investigate1"
     },
     {
-      "id": "system_reading",
-      "label": "System Reading (Alarm Status)",
-      "type": "select",
+      "id": "suct_psi_status",
+      "label": "Suct PSI Status",
+      "type": "radio",
+      "placeholder": "e.g. B05, B06, RCU1...",
+      "phase": "phase-1-investigate1",
+      "trainingExplanation": "Determine if this is a comm loss or transducer failure.",
       "options": [
-        "Phase Loss Confirmed",
-        "Flashing/Intermittent",
-        "Cleared"
-      ],
-      "phase": "phase-1-investigate",
-      "trainingExplanation": "Document if the alarm is still active right now.",
-      "visibleIf": "rack !== ''",
-      "required": true
-    },
-    {
-      "id": "comp_status",
-      "label": "Compressor Status",
-      "type": "select",
-      "options": [
-        "All Off",
-        "Some Running",
         "Running Normally",
+        "Open Fault",
+        "Shorted Fault",
+        "Comm Loss/Stale Data",
         "Unknown/No Data"
+      ]
+    },
+    {
+      "id": "comm_loss_other",
+      "label": "Any other modules in comm loss?",
+      "type": "text",
+      "phase": "phase-1-investigate1"
+    },
+    {
+      "id": "suct_psi_setpoint",
+      "label": "Suct PSI Setpoint",
+      "type": "text",
+      "options": [
+        ""
       ],
-      "phase": "phase-1-investigate",
-      "trainingExplanation": "Usually Phase Loss drops all compressors offline to protect them.",
-      "visibleIf": "rack !== ''",
-      "required": true,
-      "trainingLink": "https://teams.wal-mart.com/sites/BCKnowledgebase/Pages/Compressor%20Triage.aspx"
+      "phase": "phase-2-investigate2"
+    },
+    {
+      "id": "sensor_force",
+      "label": "Did you force it?",
+      "type": "radio",
+      "phase": "phase-2-investigate2",
+      "options": [
+        "Did not force suct psi",
+        "Forced to {parseFloat(data.suct_psi_setpoint) + thresholds.suction_psi.targetVariance.above + 1} PSI"
+      ]
     },
     {
       "id": "case_temps",
       "label": "Case Temps",
       "type": "radio",
+      "phase": "phase-2-investigate2",
       "options": [
         "Normal",
         "High"
-      ],
-      "phase": "phase-1-investigate",
-      "trainingExplanation": "Are the cases warming up yet? Helps justify priority.",
-      "visibleIf": "rack !== ''",
-      "required": true,
-      "trainingLink": "https://teams.wal-mart.com/sites/BCKnowledgebase/Pages/Working%20Single%20Case%20Alarms.aspx"
+      ]
     },
     {
       "id": "high_case_temps",
       "label": "Affected Cases",
       "type": "text",
-      "visibleIf": "case_temps === 'High'",
-      "phase": "phase-1-investigate"
+      "phase": "phase-2-investigate2"
     },
     {
       "id": "time_in_alarm",
       "label": "Time In Alarm",
       "type": "time",
-      "phase": "phase-2-dispatch",
-      "required": true
+      "phase": "phase-3-dispatch"
     },
     {
       "id": "existing_wo",
@@ -3111,18 +3129,17 @@ window.AlarmAssistantConfig = {
       "options": [
         "No open WO found",
         "Linked to WO",
-        "Recalled WO (Under 10 Days)"
+        "Recalled WO"
       ],
-      "phase": "phase-2-dispatch",
-      "trainingExplanation": "If the same issue has a prior WO within 10 days, recall/link the WO.",
-      "required": true
+      "phase": "phase-3-dispatch",
+      "trainingExplanation": "Recall window is 10 days."
     },
     {
       "id": "linked_wo_num",
       "label": "Linked WO Number",
       "type": "text",
-      "visibleIf": "existing_wo === 'Linked to WO' || existing_wo === 'Recalled WO (Under 10 Days)'",
-      "phase": "phase-2-dispatch"
+      "visibleIf": "existing_wo === 'Linked to WO'",
+      "phase": "phase-3-dispatch"
     },
     {
       "id": "action_taken",
@@ -3133,10 +3150,9 @@ window.AlarmAssistantConfig = {
         "Snoozed",
         "Linked Existing WO",
         "Recalled WO",
-        "Escalated for Review"
+        "Snoozed/Escalated for Review"
       ],
-      "phase": "phase-2-dispatch",
-      "required": true
+      "phase": "phase-3-dispatch"
     },
     {
       "id": "priority",
@@ -3153,17 +3169,13 @@ window.AlarmAssistantConfig = {
         "P21-Onsite w/I 21 days"
       ],
       "default": "PE-Emergency-Onsite w/i 2 hours",
-      "phase": "phase-2-dispatch",
-      "trainingExplanation": "Rack Phase Loss is always a PE2, do not downgrade.",
-      "required": false,
-      "visibleIf": "action_taken !== 'Created WO'"
+      "phase": "phase-3-dispatch"
     },
     {
       "id": "contact_name",
       "label": "Contact Name",
       "type": "text",
-      "phase": "phase-3-creation",
-      "required": true
+      "phase": "phase-4-creation"
     },
     {
       "id": "contact_position",
@@ -3175,15 +3187,14 @@ window.AlarmAssistantConfig = {
         "Coach",
         "Other"
       ],
-      "phase": "phase-3-creation",
-      "required": true
+      "phase": "phase-4-creation"
     },
     {
       "id": "contact_position_other",
       "label": "Other Position",
       "type": "text",
       "visibleIf": "contact_position === 'Other'",
-      "phase": "phase-3-creation"
+      "phase": "phase-4-creation"
     },
     {
       "id": "contact_result",
@@ -3194,19 +3205,16 @@ window.AlarmAssistantConfig = {
         "No Answer / Left Voicemail",
         "Call not required"
       ],
-      "phase": "phase-3-creation",
-      "trainingExplanation": "Standard escalation requires notifying the store to monitor product.",
-      "source": "Answered",
-      "required": true,
-      "trainingLink": "https://teams.wal-mart.com/sites/IGCanadaWiki/SitePages/Outbound-Calls.aspx"
+      "default": "Answered",
+      "phase": "phase-4-creation"
     },
     {
       "id": "custom_notes",
       "label": "Additional Notes",
       "type": "textarea",
-      "placeholder": "Any extra diagnostic findings, why it was snoozed, etc...",
-      "phase": "phase-3-creation",
-      "trainingExplanation": "Always document why Priority was selected, and if snoozed, justify why."
+      "placeholder": "Any extra diagnostic findings...",
+      "phase": "phase-4-creation"
     }
-  ]
+  ],
+  "theme": "theme-classic"
 };
