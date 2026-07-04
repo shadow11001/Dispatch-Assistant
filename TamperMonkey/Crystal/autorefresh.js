@@ -2,6 +2,7 @@
 // @name         Crystal Alert Watcher
 // @namespace    crystal-alert-watcher
 // @version      1.4
+// @author       Andrew Toothman - vn580fc
 // @description  Watches Walmart Crystal alerts and notifies on new tasks
 // @match        https://crystal.walmart.com/us/iot/alert-manager*
 // @grant        GM_setValue
