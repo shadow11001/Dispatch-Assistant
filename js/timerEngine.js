@@ -58,8 +58,13 @@ const TimerEngine = {
                     wrapper.id = 'header-left-group';
                     wrapper.className = "flex items-center space-x-6"; // "space-x-6" provides approx half-inch gap
                     titleElement.parentNode.insertBefore(wrapper, titleElement);
-                    wrapper.appendChild(document.querySelector('.walmart-logo-container'));
-                    wrapper.appendChild(document.querySelector('.classic-title'));
+                    
+                    const walmartLogo = document.querySelector('.walmart-logo-container');
+                    const classicTitle = document.querySelector('.classic-title');
+                    
+                    if (walmartLogo) wrapper.appendChild(walmartLogo);
+                    if (classicTitle) wrapper.appendChild(classicTitle);
+                    
                     wrapper.appendChild(this.widget);
                     this.widget.classList.remove('ml-6'); // Strip redundant margin since Tailwind space-x-6 handles it
                 }
