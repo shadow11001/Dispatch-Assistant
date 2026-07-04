@@ -15,6 +15,7 @@
     --theme-primary: #2563eb;      /* blue-600 */
     --theme-primary-hover: #3b82f6;/* blue-500 */
     --theme-accent: #60a5fa;       /* blue-400 */
+    --theme-accent-secondary: #93c5fd; /* blue-300 */
     
     --theme-text-main: #e5e7eb;    /* gray-200 */
     --theme-text-muted: #d1d5db;   /* gray-300 */

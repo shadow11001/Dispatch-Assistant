@@ -23,7 +23,7 @@ const TimerEngine = {
                 const isHeader = this.config.location === 'header' || this.config.location === 'header-center';
         
         if (isHeader) {
-            this.widget.className = "bg-gray-800 border-2 border-gray-600 rounded py-1 px-3 shadow flex items-center space-x-3 transition cursor-pointer";
+            this.widget.className = "bg-theme-panel1 border-2 border-theme-border rounded py-1 px-3 shadow flex items-center space-x-3 transition cursor-pointer";
             if (this.config.location === 'header') {
                 // Handled natively by wrapper space-x-6
             } else {
@@ -34,15 +34,15 @@ const TimerEngine = {
             this.widget.innerHTML = `
                 <div class="flex items-center space-x-3 pointer-events-none">
                     <div class="flex flex-col items-center leading-none">
-                        <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wider" id="sla-timer-label">${this.config.defaultLabel || "SLA Time"}</span>
+                        <span class="text-[9px] text-theme-accentsec font-bold uppercase tracking-wider" id="sla-timer-label">${this.config.defaultLabel || "SLA Time"}</span>
                         <span class="text-lg font-mono text-gray-100 font-bold leading-none" id="sla-timer-display">00:00</span>
                     </div>
-                    <div id="sla-timer-tooltip" class="text-xs italic font-bold hidden border-l border-gray-600 pl-3"></div>
+                    <div id="sla-timer-tooltip" class="text-xs italic font-bold hidden border-l border-theme-border pl-3"></div>
                 </div>
             `;
             
             const headerContainer = document.querySelector('header');
-            const titleElement = document.querySelector('header h1');
+            const titleElement = document.querySelector('header .walmart-logo-container') || document.querySelector('header h1.classic-title');
             
             if (this.config.location === 'header-center' && headerContainer) {
                 // Append broadly to the header and let 'absolute' center it
@@ -65,10 +65,10 @@ const TimerEngine = {
                 document.body.appendChild(this.widget);
             }
         } else {
-            this.widget.className = "fixed bottom-4 right-4 bg-gray-800 border-2 border-gray-600 rounded-lg p-3 shadow-2xl z-40 cursor-pointer hover:bg-gray-700 transition";
+            this.widget.className = "fixed bottom-4 right-4 bg-theme-panel1 border-2 border-theme-border rounded-lg p-3 shadow-2xl z-40 cursor-pointer hover:bg-theme-bg transition";
             this.widget.innerHTML = `
                 <div class="flex flex-col items-center justify-center pointer-events-none">
-                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1" id="sla-timer-label">${this.config.defaultLabel || "SLA Time"}</span>
+                    <span class="text-xs text-theme-accentsec font-bold uppercase tracking-wider mb-1" id="sla-timer-label">${this.config.defaultLabel || "SLA Time"}</span>
                     <span class="text-2xl font-mono text-gray-100 font-bold" id="sla-timer-display">00:00</span>
                     <div id="sla-timer-tooltip" class="mt-2 text-xs italic text-center text-gray-300 hidden max-w-[150px]"></div>
                 </div>
