@@ -18,7 +18,7 @@
      * CONFIG
      **********************/
     const CONFIG = {
-        pollInterval: 5000,
+        pollInterval: 60000,
 
         endpoint: "/api/iot/v1/task/queue/getTasksInQueue",
 
@@ -31,10 +31,10 @@
 
         playSound: true,
         soundType: "speech", // Options: "beep", "speech", "custom"
-        speechText: "You got mail!", // Used if soundType is "speech"
+        speechText: "New Alert", // Used if soundType is "speech"
         customSoundUrl: "", // URL to mp3/wav file if soundType is "custom"
 
-        panelPosition: "bottom-right", // Options: "bottom-right", "bottom-left", "top-right", "top-left"
+        panelPosition: "bottom-left", // Options: "bottom-right", "bottom-left", "top-right", "top-left"
         
         desktopNotification: true,
         flashTitle: true,
