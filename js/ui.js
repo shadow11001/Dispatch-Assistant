@@ -158,7 +158,9 @@ const UI = {
             this.evalDynamicVisibility();
         }
         
-        this._debouncedPhaseRender();
+        this.renderKnowledge(this.currentProfile);
+                     this.triggerNoteRender();
+                     this._debouncedPhaseRender();
     },
 
     renderPhasedWorkflow: function() {
@@ -252,7 +254,9 @@ const UI = {
                      radioEl.className = "form-radio h-4 w-4 text-theme-accentsec bg-theme-input border-theme-border";
                      radioEl.addEventListener('change', (e) => {
                           this.formState[field.id] = e.target.value;
-                          this._debouncedPhaseRender();
+                          this.renderKnowledge(this.currentProfile);
+                     this.triggerNoteRender();
+                     this._debouncedPhaseRender();
                      });
                      
                      const span = document.createElement('span');
@@ -284,6 +288,8 @@ const UI = {
 
                 inputObj.addEventListener('change', (e) => {
                      this.formState[field.id] = e.target.value;
+                     this.renderKnowledge(this.currentProfile);
+                     this.triggerNoteRender();
                      this._debouncedPhaseRender();
                 });
             } else if (field.type === 'textarea') {
@@ -295,6 +301,8 @@ const UI = {
                 inputObj.value = currentValue;
                 inputObj.addEventListener('input', (e) => {
                      this.formState[field.id] = e.target.value;
+                     this.renderKnowledge(this.currentProfile);
+                     this.triggerNoteRender();
                      this._debouncedPhaseRender();
                 });
             } else if (field.type === 'time') {
@@ -332,7 +340,9 @@ const UI = {
                     if (h === 0 && m === 0) result = ""; // Clear if empty
                     
                     this.formState[field.id] = result;
-                    this._debouncedPhaseRender();
+                    this.renderKnowledge(this.currentProfile);
+                     this.triggerNoteRender();
+                     this._debouncedPhaseRender();
                 };
 
                 if (hoursInput) hoursInput.addEventListener('input', updateTime);
@@ -360,6 +370,8 @@ const UI = {
                 inputObj.value = currentValue;
                 inputObj.addEventListener('input', (e) => {
                      this.formState[field.id] = e.target.value;
+                     this.renderKnowledge(this.currentProfile);
+                     this.triggerNoteRender();
                      this._debouncedPhaseRender();
                 });
             }
@@ -528,6 +540,8 @@ const UI = {
                 inputObj.value = currentValue;
                 inputObj.addEventListener('input', (e) => {
                      this.formState[field.id] = e.target.value;
+                     this.renderKnowledge(this.currentProfile);
+                     this.triggerNoteRender();
                      this._debouncedPhaseRender(); // Just update note for text changes, no full re-render needed
                 });
             } else if (field.type === 'time') {
@@ -565,7 +579,9 @@ const UI = {
                     if (h === 0 && m === 0) result = ""; // Clear if empty
                     
                     this.formState[field.id] = result;
-                    this._debouncedPhaseRender();
+                    this.renderKnowledge(this.currentProfile);
+                     this.triggerNoteRender();
+                     this._debouncedPhaseRender();
                 };
 
                 if (hoursInput) hoursInput.addEventListener('input', updateTime);
@@ -593,6 +609,8 @@ const UI = {
                 inputObj.value = currentValue;
                 inputObj.addEventListener('input', (e) => {
                      this.formState[field.id] = e.target.value;
+                     this.renderKnowledge(this.currentProfile);
+                     this.triggerNoteRender();
                      this._debouncedPhaseRender();
                 });
             }
@@ -601,7 +619,9 @@ const UI = {
             this.dynamicQuestions.appendChild(fieldDiv);
         });
 
-        this._debouncedPhaseRender();  // Regenerate note so hidden fields show up as blank or [tags]
+        this.renderKnowledge(this.currentProfile);
+                     this.triggerNoteRender();
+                     this._debouncedPhaseRender();  // Regenerate note so hidden fields show up as blank or [tags]
     },
 
     evalSOPVisibility: function() {
