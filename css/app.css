@@ -38,8 +38,8 @@ body.theme-walmart {
     --theme-border-main: #152744;  
     --theme-border-dark: #0A162B;  
     
-    --theme-primary: #0053E2;      /* True Blue */
-    --theme-primary-hover: #0040af; 
+    --theme-primary: #0071CE;      /* True Blue */
+    --theme-primary-hover: #00569d; 
     --theme-accent: #FFC220;       /* Spark Yellow */
     --theme-accent-secondary: #A9DDF7; /* Sky Blue */
     
@@ -65,17 +65,17 @@ body.theme-walmart-light {
     --theme-border-main: #d1d5db;  /* light gray border */
     --theme-border-dark: #e5e7eb;  
     
-    --theme-primary: #0053E2;      /* True Blue */
+    --theme-primary: #0071CE;      /* True Blue */
     --theme-primary-hover: #0040af; 
-    --theme-accent: #0053E2;       /* In light mode, yellow headers are hard to read. Use True Blue for headers. */
+    --theme-accent: #0071CE;       /* In light mode, yellow headers are hard to read. Use True Blue for headers. */
     --theme-accent-secondary: #001E60; /* Dark blue for secondary accents */
     
     --theme-text-main: #111827;    /* Almost black text */
     --theme-text-muted: #4b5563;   /* Gray text */
     --theme-text-dark: #374151;    
     
-    --theme-header-bg: #e6f1fd;    /* Light Blue Header */
-    --theme-header-text: #0053E2;  /* True Blue Header Text */
+    --theme-header-bg: #E6F0FA;    /* Light Blue Header */
+    --theme-header-text: #004C91;  /* Accessible Header Text */
     
     --theme-font-family: 'Everyday Sans Web', sans-serif;
 }
@@ -222,7 +222,7 @@ body.theme-walmart-light #walmart-wordmark {
 /* Light mode header specifics */
 body.theme-walmart-light header {
     background-color: #ffffff; /* Override to real white */
-    border-bottom-color: #0053E2; /* Blue border */
+    border-bottom-color: #0071CE; /* Blue border */
 }
 body.theme-walmart-light header span.group-hover\:text-white {
     --tw-text-opacity: 1;
@@ -236,12 +236,12 @@ body.theme-walmart-light header .group:hover span {
 }
 
 body.theme-walmart-light #admin-mode-btn {
-    background-color: transparent;
-    color: #0053E2;
-    border: 1px solid #0053E2;
+    background-color: transparent !important;
+    color: #004C91 !important;
+    border: 1px solid #004C91 !important;
 }
 body.theme-walmart-light #admin-mode-btn:hover {
-    background-color: #e6f1fd;
+    background-color: #E6F0FA;
 }
 
 /* Timer text color overrides for Light theme */
@@ -250,13 +250,18 @@ body.theme-walmart-light #sla-timer-display {
 }
 body.theme-walmart-light .bg-theme-panel1 {
     /* If the timer widget is panel1, ensure border is visible */
-    border-color: #0053E2;
+    border-color: #0071CE;
 }
 
 /* Light Theme Training Toggle Label Override */
+body.theme-walmart-light header input:checked ~ div.peer-checked\:bg-theme-primary {
+    background-color: #0071CE !important;
+}
 body.theme-walmart-light header input:checked ~ div.peer-checked\:after\:border-white::after {
-    border-color: #0053E2;
+    border-color: #0071CE !important;
 }
 body.theme-walmart-light header div.peer-focus\:ring-theme-primary {
-    --tw-ring-color: #0053E2;
+    --tw-ring-color: #0071CE;
 }
+
+
