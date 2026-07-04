@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Crystal Alert Watcher
 // @namespace    crystal-alert-watcher
-// @version      1.0
+// @version      1.4
 // @description  Watches Walmart Crystal alerts and notifies on new tasks
 // @match        https://crystal.walmart.com/us/iot/alert-manager*
 // @grant        GM_setValue
@@ -51,7 +51,7 @@
     const seenAlerts = new Set(GM_getValue(STORAGE_KEY, []));
 
     let lastCheckTime = null;
-    let running = true;
+    let running = false;
 
     /**********************
      * SOUND
@@ -285,9 +285,8 @@ Latest Count: ${count ?? "-"}
         /**********************
      * START
      **********************/
-        console.log("[CrystalWatcher] Started");
+        console.log("[CrystalWatcher] Loaded");
 
-        updatePanel("STARTING", 0);
-        loop();
+        updatePanel("STOPPED", "-");
 
     })();
