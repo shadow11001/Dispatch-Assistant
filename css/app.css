@@ -74,8 +74,8 @@ body.theme-walmart-light {
     --theme-text-muted: #4b5563;   /* Gray text */
     --theme-text-dark: #374151;    
     
-    --theme-header-bg: #0053E2;    /* True Blue Header */
-    --theme-header-text: #ffffff;  /* White Header Text */
+    --theme-header-bg: #e6f1fd;    /* Light Blue Header */
+    --theme-header-text: #0053E2;  /* True Blue Header Text */
     
     --theme-font-family: 'Everyday Sans Web', sans-serif;
 }
@@ -217,4 +217,46 @@ body.theme-classic .theme-walmart-exclusive {
 
 body.theme-walmart-light #walmart-wordmark {
     content: url('../assets/img/WMT-Wordmark-Standard-TrueBlue-RGB.svg');
+}
+
+/* Light mode header specifics */
+body.theme-walmart-light header {
+    background-color: #ffffff; /* Override to real white */
+    border-bottom-color: #0053E2; /* Blue border */
+}
+body.theme-walmart-light header span.group-hover\:text-white {
+    --tw-text-opacity: 1;
+    color: #4b5563; /* Keep it dark */
+}
+body.theme-walmart-light header input:checked ~ span {
+    color: #4b5563; 
+}
+body.theme-walmart-light header .group:hover span {
+    color: #111827;
+}
+
+body.theme-walmart-light #admin-mode-btn {
+    background-color: transparent;
+    color: #0053E2;
+    border: 1px solid #0053E2;
+}
+body.theme-walmart-light #admin-mode-btn:hover {
+    background-color: #e6f1fd;
+}
+
+/* Timer text color overrides for Light theme */
+body.theme-walmart-light #sla-timer-display {
+    color: #111827 !important; /* Dark text for light mode */
+}
+body.theme-walmart-light .bg-theme-panel1 {
+    /* If the timer widget is panel1, ensure border is visible */
+    border-color: #0053E2;
+}
+
+/* Light Theme Training Toggle Label Override */
+body.theme-walmart-light header input:checked ~ div.peer-checked\:after\:border-white::after {
+    border-color: #0053E2;
+}
+body.theme-walmart-light header div.peer-focus\:ring-theme-primary {
+    --tw-ring-color: #0053E2;
 }
