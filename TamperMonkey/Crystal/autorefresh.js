@@ -236,7 +236,20 @@ Seen Alerts: ${seenAlerts.size}
 Last Check: ${lastCheckTime || "never"}
 
 Latest Count: ${count ?? "-"}
+<button id="cw-toggle-btn" style="margin-top: 10px; width: 100%; padding: 5px; cursor: pointer; color: black; font-weight: bold; background-color: ${running ? '#00ff88' : '#ff4444'};">
+    ${running ? 'STOP WATCHING' : 'START WATCHING'}
+</button>
         `;
+            
+            document.getElementById("cw-toggle-btn").addEventListener("click", () => {
+                running = !running;
+                if (running) {
+                    updatePanel("STARTING", count);
+                    loop(); // Restart the loop
+                } else {
+                    updatePanel("STOPPED", count);
+                }
+            });
     }
 
         /**********************
