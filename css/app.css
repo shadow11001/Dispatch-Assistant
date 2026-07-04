@@ -171,11 +171,15 @@ body.theme-classic .walmart-logo-container {
 }
 
 body.theme-classic h1.classic-title {
-    display: block;
+    display: block !important;
 }
 
 body.theme-classic .theme-walmart {
     font-family: var(--theme-font-family);
+}
+/* Missing theme components */
+body.theme-classic .theme-walmart-exclusive {
+    display: none !important;
 }
 /* Missing theme components */
 body.theme-classic .theme-walmart-exclusive {
