@@ -15,6 +15,13 @@ const StorageProvider = {
             return {};
         }
     },
+    clearSession: function() {
+        try {
+            localStorage.removeItem('alarmAssistantSession');
+        } catch (e) {
+            console.warn('Failed to clear session from localStorage', e);
+        }
+    },
     saveConfig: function(config) {
         try {
             localStorage.setItem('alarmAssistantConfig', JSON.stringify(config));

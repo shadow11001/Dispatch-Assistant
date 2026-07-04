@@ -1,4 +1,77 @@
-/* application specific styles here */
+
+@import url('../branding-assets/EverydaySans/EverydaySans WebFonts/fonts.css');
+
+:root {
+    /* Classic Theme (Default) */
+    --theme-bg-main: #111827;      /* gray-900 */
+    --theme-bg-panel1: #1f2937;    /* gray-800 */
+    --theme-bg-panel2: #111827;    /* gray-900 */
+    --theme-bg-panel3: #1f2937;    /* gray-800 */
+    
+    --theme-bg-input: #374151;     /* gray-700 */
+    --theme-border-main: #4b5563;  /* gray-600 */
+    --theme-border-dark: #374151;  /* gray-700 */
+    
+    --theme-primary: #2563eb;      /* blue-600 */
+    --theme-primary-hover: #3b82f6;/* blue-500 */
+    --theme-accent: #60a5fa;       /* blue-400 */
+    
+    --theme-text-main: #e5e7eb;    /* gray-200 */
+    --theme-text-muted: #d1d5db;   /* gray-300 */
+    --theme-text-dark: #9ca3af;    /* gray-400 */
+    
+    --theme-header-bg: #1f2937;    /* gray-800 */
+    --theme-header-text: #ffffff;  /* white */
+    
+    --theme-font-family: sans-serif;
+}
+
+body.theme-walmart {
+    /* Walmart Theme */
+    --theme-bg-main: #041121;
+    --theme-bg-panel1: #0A162B;
+    --theme-bg-panel2: #041121;
+    --theme-bg-panel3: #0D1B2A;
+    
+    --theme-bg-input: #152744;     
+    --theme-border-main: #152744;  
+    --theme-border-dark: #0A162B;  
+    
+    --theme-primary: #0053E2;      /* True Blue */
+    --theme-primary-hover: #0040af; 
+    --theme-accent: #FFC220;       /* Spark Yellow */
+    --theme-accent-secondary: #A9DDF7; /* Sky Blue */
+    
+    --theme-text-main: #ffffff;
+    --theme-text-muted: #ffffff; 
+    --theme-text-dark: #ffffff; 
+    
+    --theme-header-bg: #001E60;    /* Dark Blue */
+    --theme-header-text: #FFC220;
+    
+    --theme-font-family: 'Everyday Sans Web', sans-serif;
+}
+
+body.theme-classic {
+    --theme-font-family: sans-serif;
+}
+
+body {
+    font-family: var(--theme-font-family);
+}
+
+.walmart-logo-container {
+    display: none;
+}
+
+body.theme-walmart .walmart-logo-container {
+    display: flex;
+}
+
+body.theme-walmart h1.classic-title {
+    display: none;
+}
+
 /* Tailwind handles most utility classes directly in HTML */
 textarea {
     resize: none;
@@ -91,3 +164,15 @@ textarea {
 .edge-glow-purple { animation: edge-glow-purple 2s infinite ease-in-out; transition: box-shadow 0.3s; }
 .edge-glow-blue { animation: edge-glow-blue 2s infinite ease-in-out; transition: box-shadow 0.3s; }
 .edge-glow-green { animation: edge-glow-green 2s infinite ease-in-out; transition: box-shadow 0.3s; }
+
+body.theme-classic .walmart-logo-container {
+    display: none !important;
+}
+
+body.theme-classic h1.classic-title {
+    display: block;
+}
+
+body.theme-classic .theme-walmart {
+    font-family: var(--theme-font-family);
+}

@@ -524,7 +524,16 @@ const ConfigManager = {
                 <h3 class="text-xl font-bold text-blue-400 mb-4">Editing: ${prettyName}</h3>
                 <div class="space-y-3 max-w-lg text-gray-300 text-sm bg-gray-800 p-4 border border-gray-700 rounded shadow-md">
                     <div><label class="block mb-1 font-bold">App Version</label><input class="w-full bg-gray-900 border border-gray-600 p-2 rounded focus:border-blue-500" onchange="ConfigManager.activeConfig.version = this.value" value="${this.activeConfig.version || ''}"></div>
-                    <div><label class="block mb-1 font-bold mt-2">Author</label><input class="w-full bg-gray-900 border border-gray-600 p-2 rounded focus:border-blue-500" onchange="ConfigManager.activeConfig.author = this.value" value="${this.activeConfig.author || ''}"></div>
+                    
+                    <div>
+                        <label class="block mb-1 font-bold mt-2">App Theme</label>
+                        <p class="text-xs text-white mb-1">Select the color branding pattern for the application.</p>
+                        <select class="w-full bg-theme-input border border-theme-borderdark p-2 rounded focus:border-theme-primary" onchange="ConfigManager.activeConfig.theme = this.value; document.body.className = this.value + ' bg-theme-bg h-screen flex flex-col font-sans text-theme-text';">
+                            <option value="theme-walmart" ${this.activeConfig.theme === 'theme-walmart' ? 'selected' : ''}>Walmart (Branded)</option>
+                            <option value="theme-classic" ${this.activeConfig.theme === 'theme-classic' || !this.activeConfig.theme ? 'selected' : ''}>Classic (Dark)</option>
+                        </select>
+                    </div>
+<div><label class="block mb-1 font-bold mt-2">Author</label><input class="w-full bg-gray-900 border border-gray-600 p-2 rounded focus:border-blue-500" onchange="ConfigManager.activeConfig.author = this.value" value="${this.activeConfig.author || ''}"></div>
                     <div>
                         <label class="block mb-1 font-bold mt-2">Stores in Remodel (Comma Separated)</label>
                         <p class="text-xs text-gray-400 mb-1">List store numbers currently under remodel to highlight them automatically in the ribbon.</p>

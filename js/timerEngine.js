@@ -77,6 +77,21 @@ const TimerEngine = {
         }
 
         this.display = document.getElementById('sla-timer-display');
+        
+        // Calculate max configured SLA if breakpoints exist
+        this.maxSLA = null;
+        if (this.config.breakpoints && this.config.breakpoints.length > 0) {
+            // Find max minuteEnd, ignoring 999
+            let maxMin = 0;
+            this.config.breakpoints.forEach(bp => {
+                if (bp.minuteEnd < 999 && bp.minuteEnd > maxMin) {
+                    maxMin = bp.minuteEnd;
+                }
+            });
+            if (maxMin > 0) {
+                this.maxSLA = maxMin;
+            }
+        }
         this.label = document.getElementById('sla-timer-label');
         this.tooltip = document.getElementById('sla-timer-tooltip');
 
@@ -179,7 +194,11 @@ const TimerEngine = {
         let m = Math.floor(totalSeconds / 60);
         let s = totalSeconds % 60;
         
-        this.display.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        let timeStr = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        if (this.maxSLA) {
+            timeStr += ` / ${this.maxSLA.toString().padStart(2, '0')}:00`;
+        }
+        this.display.innerText = timeStr;
         this.evalBreakpoints(m);
     },
     

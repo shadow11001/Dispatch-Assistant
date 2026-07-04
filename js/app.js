@@ -19,6 +19,10 @@ const App = {
         }
 
         // 2. Initialize UI binding
+        // Load explicit theme
+        const activeTheme = this.config.theme || 'theme-walmart';
+        document.body.className = activeTheme + ' bg-theme-bg h-screen flex flex-col font-sans text-theme-text';
+        
         UI.init();
         
         // Try restoring session
