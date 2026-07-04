@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Crystal Alert Watcher
 // @namespace    crystal-alert-watcher
-// @version      1.4
+// @version      1.5
 // @author       Andrew Toothman - vn580fc
 // @description  Watches Walmart Crystal alerts and notifies on new tasks
 // @match        https://crystal.walmart.com/us/iot/alert-manager*
@@ -9,6 +9,8 @@
 // @grant        GM_getValue
 // @grant        GM_notification
 // @grant        GM_addStyle
+// @grant        GM_getResourceURL
+// @resource     customAlertSound file:///home/morphon/path/to/your/sound.mp3
 // @run-at       document-idle
 // ==/UserScript==
 
@@ -77,9 +79,21 @@
             } else if (CONFIG.soundType === "speech") {
                 const utterance = new SpeechSynthesisUtterance(CONFIG.speechText || "New alert");
                 speechSynthesis.speak(utterance);
-            } else if (CONFIG.soundType === "custom" && CONFIG.customSoundUrl) {
-                const audio = new Audio(CONFIG.customSoundUrl);
-                audio.play();
+            } else if (CONFIG.soundType === "custom") {
+                let audioUrl = CONFIG.customSoundUrl;
+                
+                // If using a local file via GM_getResourceURL
+                if (typeof GM_getResourceURL === 'function') {
+                    const resourceUrl = GM_getResourceURL("customAlertSound");
+                    if (resourceUrl) {
+                        audioUrl = resourceUrl;
+                    }
+                }
+                
+                if (audioUrl) {
+                    const audio = new Audio(audioUrl);
+                    audio.play();
+                }
             }
         } catch (e) {
             console.warn("Sound failed", e);
