@@ -283,6 +283,16 @@ Latest Count: ${count ?? "-"}
                 return;
             }
 
+            // Pause checking if we aren't on the main queue page (e.g. inside a specific alert)
+            const currentPath = window.location.pathname;
+            const isMainPage = currentPath === '/us/iot/alert-manager' || currentPath === '/us/iot/alert-manager/';
+            
+            if (!isMainPage) {
+                updatePanel("PAUSED (In Alert)", "-");
+                setTimeout(loop, CONFIG.pollInterval);
+                return;
+            }
+
             lastCheckTime = new Date().toLocaleTimeString();
 
             const data = await fetchAlerts();
