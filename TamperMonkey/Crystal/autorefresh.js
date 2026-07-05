@@ -10,7 +10,7 @@
 // @grant        GM_notification
 // @grant        GM_addStyle
 // @grant        GM_getResourceURL
-// @resource     customAlertSound file:///home/morphon/path/to/your/sound.mp3
+// @resource     customAlertSound file:///C:/path/to/your/sound.mp3
 // @run-at       document-idle
 // ==/UserScript==
 
@@ -131,13 +131,29 @@
      * AUTO CLICK ASSIGN BUTTON
      **********************/
     function clickAssignButton() {
-            const btn = [...document.querySelectorAll("button")]
-            .find(b => b.textContent.trim() === "Assign");
-
-            if (btn) {
-                if (CONFIG.debug) console.log("[CrystalWatcher] Clicking Assign button");
-                btn.click();
+            // Updated to be more resilient. Wait for DOM ready or try to hit a refresh button first if needed.
+            // Some SPAs require clicking a refresh button to see the new alerts before the Assign button appears.
+            
+            // Try clicking "Refresh" first if that's a button on the UI
+            const refreshBtn = [...document.querySelectorAll("button")]
+                .find(b => b.textContent.trim().toLowerCase() === "refresh");
+            if(refreshBtn) {
+                 if (CONFIG.debug) console.log("[CrystalWatcher] Clicking Refresh button");
+                 refreshBtn.click();
             }
+
+            // Small delay to let UI populate if refresh happened
+            setTimeout(() => {
+                const btn = [...document.querySelectorAll("button")]
+                .find(b => b.textContent.trim() === "Assign");
+
+                if (btn) {
+                    if (CONFIG.debug) console.log("[CrystalWatcher] Clicking Assign button");
+                    btn.click();
+                } else {
+                     if (CONFIG.debug) console.log("[CrystalWatcher] Assign button not found in DOM");
+                }
+            }, 500); 
         }
 
         /**********************
