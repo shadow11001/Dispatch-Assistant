@@ -51,10 +51,11 @@
      * STATE
      **********************/
     const STORAGE_KEY = "crystal_seen_alerts_v1";
+    const RUNNING_KEY = "crystal_running_state_v1";
     const seenAlerts = new Set(GM_getValue(STORAGE_KEY, []));
 
     let lastCheckTime = null;
-    let running = false;
+    let running = GM_getValue(RUNNING_KEY, false);
 
     /**********************
      * SOUND
@@ -131,29 +132,43 @@
      * AUTO CLICK ASSIGN BUTTON
      **********************/
     function clickAssignButton() {
-            // Updated to be more resilient. Wait for DOM ready or try to hit a refresh button first if needed.
-            // Some SPAs require clicking a refresh button to see the new alerts before the Assign button appears.
-            
-            // Try clicking "Refresh" first if that's a button on the UI
-            const refreshBtn = [...document.querySelectorAll("button")]
-                .find(b => b.textContent.trim().toLowerCase() === "refresh");
-            if(refreshBtn) {
-                 if (CONFIG.debug) console.log("[CrystalWatcher] Clicking Refresh button");
-                 refreshBtn.click();
-            }
+            // Some SPAs require clicking a specific refresh button, or failing that, a full page reload.
 
-            // Small delay to let UI populate if refresh happened
-            setTimeout(() => {
+            const assignBtnText = "Assign"; // Target exact text
+
+            const clickAssign = () => {
                 const btn = [...document.querySelectorAll("button")]
-                .find(b => b.textContent.trim() === "Assign");
+                    .find(b => b.textContent.trim() === assignBtnText);
 
                 if (btn) {
                     if (CONFIG.debug) console.log("[CrystalWatcher] Clicking Assign button");
                     btn.click();
-                } else {
-                     if (CONFIG.debug) console.log("[CrystalWatcher] Assign button not found in DOM");
+                    return true;
                 }
-            }, 500); 
+                return false;
+            };
+
+            // First pass, check if it's already there
+            if (clickAssign()) return;
+
+            // Try clicking a UI "Refresh" button
+            const refreshBtn = [...document.querySelectorAll("button")]
+                .find(b => b.textContent.trim().toLowerCase() === "refresh");
+
+            if (refreshBtn) {
+                 if (CONFIG.debug) console.log("[CrystalWatcher] Clicking Refresh button");
+                 refreshBtn.click();
+                 
+                 setTimeout(() => {
+                     if (!clickAssign()) {
+                         if (CONFIG.debug) console.log("[CrystalWatcher] Assign button not found after UI refresh, falling back to full page reload.");
+                         location.reload();
+                     }
+                 }, 1000); 
+            } else {
+                 if (CONFIG.debug) console.log("[CrystalWatcher] No Refresh button found, falling back to full page reload.");
+                 location.reload();
+            }
         }
 
         /**********************
@@ -274,6 +289,7 @@ Latest Count: ${count ?? "-"}
             
             document.getElementById("cw-toggle-btn").addEventListener("click", () => {
                 running = !running;
+                GM_setValue(RUNNING_KEY, running);
                 if (running) {
                     updatePanel("STARTING", count);
                     loop(); // Restart the loop
@@ -316,8 +332,13 @@ Latest Count: ${count ?? "-"}
         /**********************
      * START
      **********************/
-        console.log("[CrystalWatcher] Loaded");
+        console.log("[CrystalWatcher] Loaded, running state: " + running);
 
-        updatePanel("STOPPED", "-");
+        if (running) {
+            updatePanel("STARTING", 0);
+            loop();
+        } else {
+            updatePanel("STOPPED", "-");
+        }
 
     })();
