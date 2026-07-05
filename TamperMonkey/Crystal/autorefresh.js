@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Crystal Alert Watcher
 // @namespace    crystal-alert-watcher
-// @version      1.5
+// @version      1.6
 // @author       Andrew Toothman - vn580fc
 // @description  Watches Walmart Crystal alerts and notifies on new tasks
 // @match        https://crystal.walmart.com/us/iot/alert-manager*
@@ -131,30 +131,14 @@
      * AUTO CLICK ASSIGN BUTTON
      **********************/
     function clickAssignButton() {
-            // Updated to be more resilient. Wait for DOM ready or try to hit a refresh button first if needed.
-            // Some SPAs require clicking a refresh button to see the new alerts before the Assign button appears.
-            
-            // Try clicking "Refresh" first if that's a button on the UI
-            const refreshBtn = [...document.querySelectorAll("button")]
-                .find(b => b.textContent.trim().toLowerCase() === "refresh");
-            if(refreshBtn) {
-                 if (CONFIG.debug) console.log("[CrystalWatcher] Clicking Refresh button");
-                 refreshBtn.click();
-            }
-
-            // Small delay to let UI populate if refresh happened
-            setTimeout(() => {
-                const btn = [...document.querySelectorAll("button")]
-                .find(b => b.textContent.trim() === "Assign");
-
-                if (btn) {
-                    if (CONFIG.debug) console.log("[CrystalWatcher] Clicking Assign button");
-                    btn.click();
-                } else {
-                     if (CONFIG.debug) console.log("[CrystalWatcher] Assign button not found in DOM");
-                }
-            }, 500); 
+        const btn = [...document.querySelectorAll("button")].find(b => b.textContent.trim() === "Assign");
+        if (btn) {
+            if (CONFIG.debug) console.log("[CrystalWatcher] Clicking Assign button");
+            btn.click();
+        } else {
+            if (CONFIG.debug) console.log("[CrystalWatcher] Assign button not found in DOM");
         }
+    }
 
         /**********************
      * SAVE STATE
