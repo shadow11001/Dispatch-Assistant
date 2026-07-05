@@ -131,14 +131,14 @@
      * AUTO CLICK ASSIGN BUTTON
      **********************/
     function clickAssignButton() {
-        const btn = [...document.querySelectorAll("button")].find(b => b.textContent.trim() === "Assign");
-        if (btn) {
-            if (CONFIG.debug) console.log("[CrystalWatcher] Clicking Assign button");
-            btn.click();
-        } else {
-            if (CONFIG.debug) console.log("[CrystalWatcher] Assign button not found in DOM");
+            const btn = [...document.querySelectorAll("button")]
+            .find(b => b.textContent.trim() === "Assign");
+
+            if (btn) {
+                if (CONFIG.debug) console.log("[CrystalWatcher] Clicking Assign button");
+                btn.click();
+            }
         }
-    }
 
         /**********************
      * SAVE STATE
