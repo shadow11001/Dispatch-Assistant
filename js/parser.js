@@ -35,6 +35,11 @@ const Parser = {
         
         safeExtract("contact", /Contact:\s*(.+?)(?=\s*\||$)/i);
         
+        // Auto Title-Case the contact (e.g. SHERRI COLGROVE -> Sherri Colgrove)
+        if (parsed.contact && parsed.contact === parsed.contact.toUpperCase()) {
+            parsed.contact = parsed.contact.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+        }
+        
         safeExtract("position", /Position:\s*(.+?)(?=\s*\||$)/i);
         safeExtract("units_affected", /Units Affected:\s*(\d+)/i);
         safeExtract("rack_associated", /Rack Associated:\s*(.+?)(?=\s*\||$)/i);

@@ -308,7 +308,7 @@ const UI = {
 
             if (field.type === 'timerStartButton') {
                 const btn = document.createElement('button');
-                btn.className = "mt-2 bg-theme-primary text-white font-bold py-2 px-4 rounded shadow hover:bg-theme-primaryhover w-full transition";
+                btn.className = "mt-2 bg-theme-primary text-white font-bold py-2 px-4 rounded shadow hover:bg-theme-primaryhover w-auto min-w-[200px] transition";
                 btn.innerText = field.label || "Start Timer";
                 
                 // Expose timer options as fields
