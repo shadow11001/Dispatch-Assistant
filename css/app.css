@@ -99,7 +99,7 @@ body.theme-walmart-light .walmart-logo-container {
 
 body.theme-walmart h1.classic-title,
 body.theme-walmart-light h1.classic-title {
-    display: none;
+    display: none !important;
 }
 
 /* Tailwind handles most utility classes directly in HTML */

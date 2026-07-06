@@ -17,16 +17,19 @@ const UI = {
         const titles = document.querySelectorAll('header h1');
         
         // Update UI Tabs
+        const activeClasses = ['bg-theme-bg', 'text-theme-text', 'shadow-sm'];
+        const inactiveClasses = ['text-theme-textmuted'];
+
         if (mode === 'DISPATCH') {
             titles.forEach(t => t.textContent = "Dispatch Assistant");
             
             if (this.tabDispatches) {
-                this.tabDispatches.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-800', 'dark:text-gray-100', 'shadow-sm');
-                this.tabDispatches.classList.remove('text-gray-400', 'dark:text-gray-400');
+                this.tabDispatches.classList.add(...activeClasses);
+                this.tabDispatches.classList.remove(...inactiveClasses);
             }
             if (this.tabAlarms) {
-                this.tabAlarms.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-800', 'dark:text-gray-100', 'shadow-sm');
-                this.tabAlarms.classList.add('text-gray-400', 'dark:text-gray-400');
+                this.tabAlarms.classList.remove(...activeClasses);
+                this.tabAlarms.classList.add(...inactiveClasses);
             }
             
             if (this.alertInput) {
@@ -38,12 +41,12 @@ const UI = {
             titles.forEach(t => t.textContent = "Alarm Alert Assistant");
             
             if (this.tabAlarms) {
-                this.tabAlarms.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-800', 'dark:text-gray-100', 'shadow-sm');
-                this.tabAlarms.classList.remove('text-gray-400', 'dark:text-gray-400');
+                this.tabAlarms.classList.add(...activeClasses);
+                this.tabAlarms.classList.remove(...inactiveClasses);
             }
             if (this.tabDispatches) {
-                this.tabDispatches.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-800', 'dark:text-gray-100', 'shadow-sm');
-                this.tabDispatches.classList.add('text-gray-400', 'dark:text-gray-400');
+                this.tabDispatches.classList.remove(...activeClasses);
+                this.tabDispatches.classList.add(...inactiveClasses);
             }
             
             if (this.alertInput) {
