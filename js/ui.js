@@ -321,7 +321,7 @@ const UI = {
                         btn.classList.add('opacity-50', 'cursor-not-allowed');
                     }
                 };
-                fieldDiv.appendChild(btn);
+                inputObj = btn; // Set inputObj so it doesn't crash on appendChild later
             } else if (field.type === 'radio') {
                 const radioGroup = document.createElement('div');
                 radioGroup.className = "flex space-x-4";
@@ -574,7 +574,7 @@ const UI = {
                         btn.classList.add('opacity-50', 'cursor-not-allowed');
                     }
                 };
-                fieldDiv.appendChild(btn);
+                inputObj = btn; // Set inputObj so it doesn't crash on appendChild later
             } else if (field.type === 'radio') {
                 const radioGroup = document.createElement('div');
                 radioGroup.className = "flex space-x-4";

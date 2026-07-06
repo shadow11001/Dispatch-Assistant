@@ -99,8 +99,15 @@ const App = {
             if (profile && profile.timerConfig && profile.timerConfig.enabled) {
                 console.log("Starting Timer Engine...");
                 TimerEngine.init(profile);
-                if (this.config.mode !== 'DISPATCH') {
+                
+                // Allow timer options internally to force-override the start schema
+                const forceManual = profile.timerConfig && profile.timerConfig.requireManualStart;
+
+                // Stop auto-starting if Dispatch mode OR heavily overridden by manual block policy
+                if (this.config.mode !== 'DISPATCH' && profile.type !== 'DISPATCH' && !forceManual) {
                     TimerEngine.start();
+                } else {
+                    console.log("Timer auto-start suppressed. Waiting for user interaction.");
                 }
             } else {
                 console.log("Timer is disabled or missing on this profile.");
