@@ -104,6 +104,19 @@ const TimerEngine = {
             if (this.isRunning) this.stop();
             else this.start();
         });
+
+        // Modify standard start based on ALARM vs DISPATCH
+        if(window.ConfigManager && window.ConfigManager.mode === 'DISPATCH') {
+           // Provide a manual start method mapped to standard start but don't auto-start
+           this.manualStart = () => this.start();
+           
+           // Show timer as paused/pending initially
+           if(this.display) this.display.innerText = "Pending...";
+           if(this.widget) this.widget.classList.add('opacity-50');
+           if (this.config.location === 'header' || this.config.location === 'header-center') this.widget.style.display = 'flex';
+        } else {
+           this.start();
+        }
         
         // Re-bind dragging if floating
         if (!isHeader) {
@@ -134,6 +147,12 @@ const TimerEngine = {
     start: function() {
         if (!this.config || !this.config.enabled) return;
         console.log("TimerEngine start");
+        
+        // Remove pending visual state if transitioning from manual dispatch start
+        if (this.display && this.display.innerText === "Pending...") {
+            this.widget.classList.remove('opacity-50');
+            this.display.innerText = "00:00"; 
+        }
         
         // If we are resuming, subtract the properly paused elapsed time from NOW so it "picks up" where it left off safely.
         if (this.pausedElapsed && this.pausedElapsed > 0) {

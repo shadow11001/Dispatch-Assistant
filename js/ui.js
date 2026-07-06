@@ -14,7 +14,7 @@ const UI = {
         this.app.config.mode = mode;
         if(window.ConfigManager) window.ConfigManager.mode = mode;
         
-        const titles = document.querySelectorAll('header h1.classic-title');
+        const titles = document.querySelectorAll('header h1');
         
         // Update UI Tabs
         if (mode === 'DISPATCH') {
