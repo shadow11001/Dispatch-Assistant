@@ -599,21 +599,7 @@ const ConfigManager = {
             `;
         } else if (fieldKey === 'parserRules') {
             ConfigManager._upPS = (v) => { this.activeConfig.parserRules.schema = v.split(',').map(s=>s.trim()); };
-            ConfigManager._upDR = (idx, k, v) => {
-                if(!this.activeConfig.parserRules.dispatchRules) this.activeConfig.parserRules.dispatchRules = [];
-                this.activeConfig.parserRules.dispatchRules[idx][k] = v;
-            };
-            ConfigManager._rmDR = (idx) => {
-                this.activeConfig.parserRules.dispatchRules.splice(idx, 1);
-                this.editTopLevelField('parserRules', prettyName);
-            };
-            ConfigManager._addDR = () => {
-                if(!this.activeConfig.parserRules.dispatchRules) this.activeConfig.parserRules.dispatchRules = [];
-                this.activeConfig.parserRules.dispatchRules.push({ key: "new_key", regex: "" });
-                this.editTopLevelField('parserRules', prettyName);
-            };
-
-            const dispatchRules = this.activeConfig.parserRules.dispatchRules || [];
+            ConfigManager._upDS = (v) => { this.activeConfig.parserRules.dispatchSchema = v.split(',').map(s=>s.trim()); };
 
             editorArea.innerHTML = `
                 <h3 class="text-xl font-bold text-theme-accentsec mb-4">Editing: ${prettyName}</h3>
@@ -631,29 +617,11 @@ const ConfigManager = {
                 </div>
 
                 <div class="space-y-4 max-w-xl text-theme-text text-sm bg-theme-panel1 p-4 border border-theme-borderdark rounded shadow-md">
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="font-bold text-lg">Dispatch Regex Extraction Rules</h4>
-                        <button class="bg-theme-accentsec hover:bg-opacity-80 text-theme-bg px-2 py-1 rounded text-xs font-bold" onclick="ConfigManager._addDR()">+ Add Regex Rule</button>
-                    </div>
-                    <p class="text-xs text-theme-textmuted mb-4">Dispatch parsing relies on Regex match extraction, not delimited splits. Group 1 (...) from the regex becomes the variable.</p>
-                    
-                    <div class="space-y-3">
-                        ${dispatchRules.map((rule, i) => `
-                            <div class="bg-theme-bg p-3 rounded border border-theme-border flex items-start space-x-3">
-                                <div class="flex-1 space-y-2">
-                                    <div class="flex items-center space-x-2">
-                                        <label class="w-20 text-xs font-bold text-theme-textmuted">Key:</label>
-                                        <input value="${rule.key}" onchange="ConfigManager._upDR(${i}, 'key', this.value)" class="flex-1 bg-theme-panel1 border border-theme-border p-1 rounded font-mono text-sm text-theme-text">
-                                    </div>
-                                    <div class="flex items-center space-x-2">
-                                        <label class="w-20 text-xs font-bold text-theme-textmuted mt-1">Regex:</label>
-                                        <input value="${rule.regex}" onchange="ConfigManager._upDR(${i}, 'regex', this.value)" placeholder="/Reference#?:\\s*(.+?)/i" class="flex-1 bg-theme-panel1 border border-theme-border p-1 rounded font-mono text-sm text-theme-accentsec">
-                                    </div>
-                                </div>
-                                <button class="text-red-500 hover:text-red-400 font-bold px-2 py-1 bg-theme-panel1 border border-theme-border rounded" onclick="ConfigManager._rmDR(${i})">X</button>
-                            </div>
-                        `).join('')}
-                        ${dispatchRules.length === 0 ? '<p class="text-xs italic text-gray-500">No dynamic dispatch regex rules configured. System defaults will apply.</p>' : ''}
+                    <h4 class="font-bold text-lg mb-2">Dispatch Native Parsing</h4>
+                    <div>
+                        <label class="block mb-1 font-bold">Schema Keys (Comma Separated)</label>
+                        <p class="text-xs text-theme-textmuted mb-2">Since Dispatches are parsed sequentially via standard colon and space parsing, you can define keys here to be formally tracked as <code>parsed_</code> variables.</p>
+                        <textarea class="w-full bg-theme-bg border border-theme-border p-2 rounded h-32 font-mono leading-relaxed" onchange="ConfigManager._upDS(this.value)">${(targetData.dispatchSchema || []).join(',\n')}</textarea>
                     </div>
                 </div>
             `;

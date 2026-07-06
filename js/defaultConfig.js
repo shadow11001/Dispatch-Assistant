@@ -3213,6 +3213,16 @@ window.AlarmAssistantConfig = {
     },
     "parserRules": {
         "delimiter": "|",
+        "dispatchSchema": [
+            "reference_number",
+            "contact",
+            "position",
+            "units_affected",
+            "rack_associated",
+            "systems_affected",
+            "alarm_message",
+            "manual_comment"
+        ],
         "schema": [
             "location",
             "site_number",
