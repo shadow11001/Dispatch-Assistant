@@ -12,21 +12,16 @@ const UI = {
 
     switchMode: function(mode) {
         this.app.config.mode = mode;
-        if(window.ConfigManager) window.ConfigManager.mode = mode;
-        
-        const titles = document.querySelectorAll('header h1.classic-title');
         
         // Update UI Tabs
         if (mode === 'DISPATCH') {
-            titles.forEach(t => t.textContent = "Dispatch Assistant");
-            
             if (this.tabDispatches) {
-                this.tabDispatches.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-800', 'dark:text-gray-100', 'shadow-sm');
-                this.tabDispatches.classList.remove('text-gray-400', 'dark:text-gray-400');
+                this.tabDispatches.classList.add('active', 'border-theme-primary', 'text-theme-text');
+                this.tabDispatches.classList.remove('border-transparent', 'text-theme-textmuted');
             }
             if (this.tabAlarms) {
-                this.tabAlarms.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-800', 'dark:text-gray-100', 'shadow-sm');
-                this.tabAlarms.classList.add('text-gray-400', 'dark:text-gray-400');
+                this.tabAlarms.classList.remove('active', 'border-theme-primary', 'text-theme-text');
+                this.tabAlarms.classList.add('border-transparent', 'text-theme-textmuted');
             }
             
             if (this.alertInput) {
@@ -35,15 +30,13 @@ const UI = {
                 document.querySelector('label[for="alert-input"]').textContent = "Paste Dispatch Detail";
             }
         } else {
-            titles.forEach(t => t.textContent = "Alarm Alert Assistant");
-            
             if (this.tabAlarms) {
-                this.tabAlarms.classList.add('bg-white', 'dark:bg-gray-800', 'text-gray-800', 'dark:text-gray-100', 'shadow-sm');
-                this.tabAlarms.classList.remove('text-gray-400', 'dark:text-gray-400');
+                this.tabAlarms.classList.add('active', 'border-theme-primary', 'text-theme-text');
+                this.tabAlarms.classList.remove('border-transparent', 'text-theme-textmuted');
             }
             if (this.tabDispatches) {
-                this.tabDispatches.classList.remove('bg-white', 'dark:bg-gray-800', 'text-gray-800', 'dark:text-gray-100', 'shadow-sm');
-                this.tabDispatches.classList.add('text-gray-400', 'dark:text-gray-400');
+                this.tabDispatches.classList.remove('active', 'border-theme-primary', 'text-theme-text');
+                this.tabDispatches.classList.add('border-transparent', 'text-theme-textmuted');
             }
             
             if (this.alertInput) {
@@ -299,7 +292,27 @@ const UI = {
             let inputObj = null;
             let currentValue = this.formState[field.id] || "";
 
-            if (field.type === 'radio') {
+            if (field.type === 'timerStartButton') {
+                const btn = document.createElement('button');
+                btn.className = "mt-2 bg-theme-primary text-white font-bold py-2 px-4 rounded shadow hover:bg-theme-primaryhover w-full transition";
+                btn.innerText = field.label || "Start Timer";
+                
+                // Expose timer options as fields
+                if (field.options && field.options.length > 0) {
+                    btn.setAttribute('data-target-timer', field.options[0]);
+                }
+                
+                // When clicked, invoke the manual timer start method
+                btn.onclick = (e) => {
+                    e.preventDefault();
+                    if (window.TimerEngine && typeof window.TimerEngine.manualStart === 'function') {
+                        window.TimerEngine.manualStart();
+                        btn.innerText = "Timer Running";
+                        btn.classList.add('opacity-50', 'cursor-not-allowed');
+                    }
+                };
+                fieldWrapper.appendChild(btn);
+            } else if (field.type === 'radio') {
                 const radioGroup = document.createElement('div');
                 radioGroup.className = "flex space-x-4";
                 (Array.isArray(field.options) ? field.options : field.options.split(",")).forEach(rawOpt => {
@@ -532,7 +545,27 @@ const UI = {
             let inputObj = null;
             let currentValue = this.formState[field.id] || "";
 
-            if (field.type === 'radio') {
+            if (field.type === 'timerStartButton') {
+                const btn = document.createElement('button');
+                btn.className = "mt-2 bg-theme-primary text-white font-bold py-2 px-4 rounded shadow hover:bg-theme-primaryhover w-full transition";
+                btn.innerText = field.label || "Start Timer";
+                
+                // Expose timer options as fields
+                if (field.options && field.options.length > 0) {
+                    btn.setAttribute('data-target-timer', field.options[0]);
+                }
+                
+                // When clicked, invoke the manual timer start method
+                btn.onclick = (e) => {
+                    e.preventDefault();
+                    if (window.TimerEngine && typeof window.TimerEngine.manualStart === 'function') {
+                        window.TimerEngine.manualStart();
+                        btn.innerText = "Timer Running";
+                        btn.classList.add('opacity-50', 'cursor-not-allowed');
+                    }
+                };
+                fieldWrapper.appendChild(btn);
+            } else if (field.type === 'radio') {
                 const radioGroup = document.createElement('div');
                 radioGroup.className = "flex space-x-4";
                 (Array.isArray(field.options) ? field.options : field.options.split(",")).forEach(rawOpt => {
