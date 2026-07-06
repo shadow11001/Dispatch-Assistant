@@ -4,9 +4,50 @@ const UI = {
     currentPhaseIndex: 0,
     completedPhases: [],
 
-    init: function () {
+    init: function (appInstance) {
+        if (appInstance) this.app = appInstance;
         this.cacheDOM();
         this.bindEvents();
+    },
+
+    switchMode: function(mode) {
+        this.app.config.mode = mode;
+        
+        // Update UI Tabs
+        if (mode === 'DISPATCH') {
+            if (this.tabDispatches) {
+                this.tabDispatches.classList.add('active', 'border-theme-primary', 'text-theme-text');
+                this.tabDispatches.classList.remove('border-transparent', 'text-theme-textmuted');
+            }
+            if (this.tabAlarms) {
+                this.tabAlarms.classList.remove('active', 'border-theme-primary', 'text-theme-text');
+                this.tabAlarms.classList.add('border-transparent', 'text-theme-textmuted');
+            }
+            
+            if (this.alertInput) {
+                this.alertInput.placeholder = "Paste Dispatch Information here...";
+                document.querySelector('#panel-workflow h2').textContent = "1. Dispatch Workflow";
+                document.querySelector('label[for="alert-input"]').textContent = "Paste Dispatch Detail";
+            }
+        } else {
+            if (this.tabAlarms) {
+                this.tabAlarms.classList.add('active', 'border-theme-primary', 'text-theme-text');
+                this.tabAlarms.classList.remove('border-transparent', 'text-theme-textmuted');
+            }
+            if (this.tabDispatches) {
+                this.tabDispatches.classList.remove('active', 'border-theme-primary', 'text-theme-text');
+                this.tabDispatches.classList.add('border-transparent', 'text-theme-textmuted');
+            }
+            
+            if (this.alertInput) {
+                this.alertInput.placeholder = "e.g. US|54|C|100001|MODBUS|...";
+                document.querySelector('#panel-workflow h2').textContent = "1. Guided Workflow";
+                document.querySelector('label[for="alert-input"]').textContent = "Paste Alert ID";
+            }
+        }
+        
+        // Clear current state
+        if (this.clearNoteBtn) this.clearNoteBtn.click();
     },
 
     cacheDOM: function () {
@@ -23,9 +64,19 @@ const UI = {
         this.generatedNote = document.getElementById('generated-note');
         this.copyNoteBtn = document.getElementById('copy-note-btn');
         this.clearNoteBtn = document.getElementById('clear-note-btn');
+        
+        this.tabAlarms = document.getElementById('tab-alarms');
+        this.tabDispatches = document.getElementById('tab-dispatches');
     },
 
     bindEvents: function () {
+        // Tab switching
+        if (this.tabAlarms) {
+            this.tabAlarms.addEventListener('click', () => this.switchMode('ALERT'));
+        }
+        if (this.tabDispatches) {
+            this.tabDispatches.addEventListener('click', () => this.switchMode('DISPATCH'));
+        }
         if (this.adminModeBtn) {
             this.adminModeBtn.addEventListener('click', () => {
                 ConfigManager.openAdminModal();
@@ -145,10 +196,22 @@ const UI = {
             this.formState = { alert_id: parsedData._original_alert };
             profile.fields.forEach(f => {
                 let initialValue = f.default || "";
+                // Hardcode logic for site_number legacy
                 if (f.source === "parsed_site_number" && parsedData.site_number) {
                     initialValue = parsedData.site_number;
                 }
-                this.formState[f.id] = initialValue;
+                // Dynamic parsing mapping
+                if (f.source && f.source.startsWith('parsed_')) {
+                    const parsedKey = f.source.replace('parsed_', '');
+                    if (parsedData[parsedKey] !== undefined && parsedData[parsedKey] !== "") {
+                        initialValue = parsedData[parsedKey];
+                    }
+                }
+                
+                // Don't overwrite state if we are accumulating and already have it
+                if (this.formState[f.id] === undefined || this.formState[f.id] === "") {
+                    this.formState[f.id] = initialValue;
+                }
             });
         }
 
@@ -232,7 +295,7 @@ const UI = {
             if (field.type === 'radio') {
                 const radioGroup = document.createElement('div');
                 radioGroup.className = "flex space-x-4";
-                field.options.forEach(rawOpt => {
+                (Array.isArray(field.options) ? field.options : field.options.split(",")).forEach(rawOpt => {
                      // Dynamic math/variable interpolation inside options!
                      let opt = rawOpt;
                      if (opt.includes('{') && opt.includes('}')) {
@@ -274,7 +337,7 @@ const UI = {
                 defaultOpt.innerText = "-- Select --";
                 inputObj.appendChild(defaultOpt);
 
-                (field.options || []).forEach(opt => {
+                (Array.isArray(field.options) ? field.options : (field.options ? field.options.split(',') : [])).forEach(opt => {
                      const optEl = document.createElement('option');
                      optEl.value = opt;
                      optEl.innerText = opt;
@@ -465,7 +528,7 @@ const UI = {
             if (field.type === 'radio') {
                 const radioGroup = document.createElement('div');
                 radioGroup.className = "flex space-x-4";
-                field.options.forEach(rawOpt => {
+                (Array.isArray(field.options) ? field.options : field.options.split(",")).forEach(rawOpt => {
                      // Dynamic math/variable interpolation inside options!
                      let opt = rawOpt;
                      if (opt.includes('{') && opt.includes('}')) {
@@ -692,6 +755,13 @@ const UI = {
 
     renderWorkOrderAttributes: function(profile) {
         this.crystalAttributesList.innerHTML = '';
+        
+        // Hide Crystal WorkOrder block entirely for Dispatch mode
+        if (ConfigManager.mode === 'DISPATCH' || !profile.crystalAttributes || !profile.crystalAttributes.enabled) {
+            this.crystalAttributesContainer.classList.add('hidden');
+            return;
+        }
+
         this.crystalAttributesContainer.classList.remove('hidden');
         
         const attrs = profile.crystalAttributes;

@@ -52,6 +52,12 @@
             <!-- Timer will natively be appended to #header-left-group via JS due to its id matching logic -->
         </div>
         <div class="flex items-center space-x-6 mr-2">
+            <!-- Type Tabs Slider -->
+            <div class="flex items-center space-x-2 bg-gray-200 dark:bg-gray-700 py-1 px-3 rounded-full shadow-inner select-none transition-colors">
+                <span id="tab-alarms" class="text-sm font-semibold cursor-pointer text-gray-800 dark:text-gray-100 transition-colors pointer-cursor p-1 px-2 rounded hover:bg-gray-300 dark:hover:bg-gray-600 bg-white dark:bg-gray-800 shadow-sm">Alarms</span>
+                <span id="tab-dispatches" class="text-sm font-semibold cursor-pointer text-gray-400 dark:text-gray-400 transition-colors pointer-cursor p-1 px-2 rounded hover:bg-gray-300 dark:hover:bg-gray-600">Dispatches</span>
+            </div>
+
             <label class="inline-flex relative items-center cursor-pointer group">
                 <input type="checkbox" id="training-mode-toggle" class="sr-only peer" checked>
                 <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-theme-primary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-theme-primary"></div>
@@ -135,7 +141,13 @@
                         <h3 class="text-theme-textmuted text-xs font-bold uppercase">Alarm Profiles</h3>
                         <button id="admin-add-profile-btn" title="Add New Profile" class="text-theme-accent hover:text-theme-accentsec text-lg leading-none font-bold py-0 px-2 rounded hover:bg-theme-input transition">+</button>
                     </div>
-                    <ul id="admin-profiles-list" class="space-y-1 flex-1"></ul>
+                    <ul id="admin-profiles-list" class="space-y-1"></ul>
+
+                    <div class="flex justify-between items-center mb-2 mt-4 border-t border-theme-borderdark pt-4">
+                        <h3 class="text-theme-textmuted text-xs font-bold uppercase">Dispatch Profiles</h3>
+                        <button id="admin-add-dispatch-btn" title="Add New Dispatch Profile" class="text-theme-accent hover:text-theme-accentsec text-lg leading-none font-bold py-0 px-2 rounded hover:bg-theme-input transition">+</button>
+                    </div>
+                    <ul id="admin-dispatches-list" class="space-y-1 flex-1"></ul>
                 </div>
                 <!-- Main Editor Area -->
                 <div class="flex-1 p-4 overflow-y-auto bg-theme-bg flex flex-col" id="admin-editor-area">

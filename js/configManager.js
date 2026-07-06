@@ -280,7 +280,11 @@ const ConfigManager = {
             }
         });
 
-        document.getElementById('admin-add-profile-btn').addEventListener('click', () => this.createNewProfile());
+        document.getElementById('admin-add-profile-btn').addEventListener('click', () => this.createNewProfile('ALARM'));
+        const dispatchBtn = document.getElementById('admin-add-dispatch-btn');
+        if(dispatchBtn) {
+            dispatchBtn.addEventListener('click', () => this.createNewProfile('DISPATCH'));
+        }
         
         // Navigation binds
         document.getElementById('nav-global-settings').addEventListener('click', () => this.editTopLevelField('global', 'Global App Settings'));
@@ -291,8 +295,10 @@ const ConfigManager = {
     },
 
     renderAdminProfiles: function() {
-        const list = document.getElementById('admin-profiles-list');
-        list.innerHTML = '';
+        const alarmsList = document.getElementById('admin-profiles-list');
+        const dispatchesList = document.getElementById('admin-dispatches-list');
+        if(alarmsList) alarmsList.innerHTML = '';
+        if(dispatchesList) dispatchesList.innerHTML = '';
         
         const highlightSelected = (items, selectedLi) => {
             Array.from(document.querySelectorAll('#admin-modal li')).forEach(nav => {
@@ -302,30 +308,38 @@ const ConfigManager = {
         };
 
         // Add Generic profile at top
-        const genericLi = document.createElement('li');
-        genericLi.className = "cursor-pointer p-2 rounded hover:bg-theme-input text-theme-text text-sm transition";
-        genericLi.innerText = "Generic Fallback";
-        genericLi.addEventListener('click', (e) => {
-             this.editProfile('GENERIC');
-             highlightSelected(list, e.currentTarget);
-        });
-        list.appendChild(genericLi);
+          const genericLi = document.createElement('li');
+          genericLi.className = "cursor-pointer p-2 rounded hover:bg-theme-input text-theme-text text-sm transition";
+          genericLi.innerText = "Generic Fallback";
+          genericLi.addEventListener('click', (e) => {
+               this.editProfile('GENERIC');
+               if (typeof alarmsList !== 'undefined') highlightSelected(alarmsList, e.currentTarget);
+          });
+          if (typeof alarmsList !== 'undefined') alarmsList.appendChild(genericLi);
 
-        // Add dynamically configured profiles
-        if(this.activeConfig.profiles) {
-            Object.keys(this.activeConfig.profiles).forEach(key => {
-                const profile = this.activeConfig.profiles[key];
-                const li = document.createElement('li');
-                li.className = "cursor-pointer p-2 rounded hover:bg-theme-input text-theme-text mt-1 text-sm transition";
-                li.innerText = `${profile.id} - ${profile.name}`;
-                li.addEventListener('click', (e) => {
-                     this.editProfile(key);
-                     highlightSelected(list, e.currentTarget);
-                });
-                list.appendChild(li);
-            });
-        }
-    },
+          // Add dynamically configured profiles
+          if(this.activeConfig && this.activeConfig.profiles) {
+              Object.keys(this.activeConfig.profiles).forEach(key => {
+                  const profile = this.activeConfig.profiles[key];
+                  const li = document.createElement('li');
+                  li.className = "cursor-pointer p-2 rounded hover:bg-theme-input text-theme-text mt-1 text-sm transition";
+                  li.innerText = `${profile.id || key} - ${profile.name}`;
+                  li.addEventListener('click', (e) => {
+                       this.editProfile(key);
+                       if ((profile.type === 'DISPATCH' || key === 'DISPATCH') && typeof dispatchesList !== 'undefined') {
+                            highlightSelected(dispatchesList, e.currentTarget);
+                       } else if (typeof alarmsList !== 'undefined') {
+                            highlightSelected(alarmsList, e.currentTarget);
+                       }
+                  });
+                  if (profile.type === 'DISPATCH' && typeof dispatchesList !== 'undefined') {
+                       dispatchesList.appendChild(li);
+                  } else if (typeof alarmsList !== 'undefined') {
+                       alarmsList.appendChild(li);
+                  }
+              });
+          }
+      },
 
     editTopLevelField: function(fieldKey, prettyName) {
         this.editingProfileId = null;
@@ -701,6 +715,7 @@ const ConfigManager = {
                             <option value="radio" ${f.type === 'radio'?'selected':''}>Radio Group</option>
                             <option value="select" ${f.type === 'select'?'selected':''}>Combobox / Select</option>
                             <option value="time" ${f.type === 'time'?'selected':''}>Time (Hrs/Mins)</option>
+                            <option value="timerStartButton" ${f.type === 'timerStartButton'?'selected':''}>Button - Timer Start (Dispatch Only)</option>
                         </select>
                     </div>
                     <div><label class="text-xs text-theme-textmuted font-bold block mb-1">Source Default</label><input value="${f.source || f.default || ''}" placeholder="e.g. parsed_site_number" onchange="ConfigManager._upField(${i}, 'source', this.value)" class="w-full bg-theme-panel1 border-theme-border p-1 rounded text-sm text-theme-text"></div>
@@ -727,7 +742,7 @@ const ConfigManager = {
                      ${f.type === 'radio' || f.type === 'select' ? `
                          <div class="col-span-2">
                             <label class="text-xs text-theme-textmuted font-bold block mb-1">Options (Comma separated)</label>
-                            <input value="${(f.options||[]).join(', ')}" onchange="ConfigManager._upField(${i}, 'options', this.value.split(',').map(s=>s.trim()))" class="w-full bg-theme-panel1 border-theme-border p-1 rounded text-sm text-theme-text">
+                            <input value="${Array.isArray(f.options) ? f.options.join(', ') : (f.options || '')}" onchange="ConfigManager._upField(${i}, 'options', this.value.split(',').map(s=>s.trim()))" class="w-full bg-theme-panel1 border-theme-border p-1 rounded text-sm text-theme-text">
                          </div>
                      ` : ''}
                 </div>
@@ -776,12 +791,14 @@ const ConfigManager = {
                         <div class="mb-3"><label class="block mb-1 text-xs text-theme-textmuted">Note Schema (Injects {fields} & {reusable_text})</label><textarea class="w-full bg-theme-bg border border-theme-border p-2 font-mono rounded h-24 focus:border-theme-primary text-xs" onchange="ConfigManager._upP('noteTemplate', this.value)">${profile.noteTemplate}</textarea></div>
                     </div>
 
+${ConfigManager.mode === 'DISPATCH' ? '' : `
                     <div class="bg-theme-panel1 p-4 border border-theme-borderdark rounded shadow-md">
                         <h4 class="font-bold text-theme-text border-b border-theme-borderdark pb-1 mb-3">Crystal WorkOrder Default Hooks</h4>
                         <div class="grid grid-cols-2 gap-3 text-sm">
 ${ConfigManager._renderCrystalHooks()}
                         </div>
                     </div>
+`}
 
                     <!-- Timer Widget Settings -->
                     <div class="bg-theme-panel1 p-4 border border-theme-borderdark rounded shadow-md">
@@ -854,11 +871,12 @@ ${ConfigManager._renderCrystalHooks()}
         }
     },
 
-    createNewProfile: function() {
-        const id = prompt("Enter new Profile / Alarm Type ID (e.g., GSP):");
+    createNewProfile: function(type = 'ALARM') {
+        const id = prompt(`Enter new ${type === 'DISPATCH' ? 'Dispatch' : 'Alarm'} Profile ID (e.g., ${type === 'DISPATCH' ? 'NEW_DISPATCH' : 'GSP'}):`);
         if(id && !this.activeConfig.profiles[id]) {
             this.activeConfig.profiles[id] = {
                 id: id,
+                type: type,
                 name: "New Profile",
                 sopText: "<p>New SOP instructions here.</p>",
                 crystalAttributes: {
