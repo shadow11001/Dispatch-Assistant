@@ -318,7 +318,7 @@ const UI = {
                         btn.classList.add('opacity-50', 'cursor-not-allowed');
                     }
                 };
-                fieldWrapper.appendChild(btn);
+                fieldDiv.appendChild(btn);
             } else if (field.type === 'radio') {
                 const radioGroup = document.createElement('div');
                 radioGroup.className = "flex space-x-4";
@@ -571,7 +571,7 @@ const UI = {
                         btn.classList.add('opacity-50', 'cursor-not-allowed');
                     }
                 };
-                fieldWrapper.appendChild(btn);
+                fieldDiv.appendChild(btn);
             } else if (field.type === 'radio') {
                 const radioGroup = document.createElement('div');
                 radioGroup.className = "flex space-x-4";
