@@ -739,7 +739,7 @@ const ConfigManager = {
                          <label class="text-xs text-theme-textmuted font-bold block mb-1">Training Link (URL)</label>
                          <input type="url" value="${f.trainingLink || ''}" placeholder="https://..." onchange="ConfigManager._upField(${i}, 'trainingLink', this.value)" class="w-full bg-theme-panel1 border-theme-border p-1 rounded text-sm text-theme-text">
                      </div>
-                     ${f.type === 'radio' || f.type === 'select' ? `
+                     ${f.type === 'radio' || f.type === 'select' || f.type === 'timerStartButton' ? `
                          <div class="col-span-2">
                             <label class="text-xs text-theme-textmuted font-bold block mb-1">Options (Comma separated)</label>
                             <input value="${Array.isArray(f.options) ? f.options.join(', ') : (f.options || '')}" onchange="ConfigManager._upField(${i}, 'options', this.value.split(',').map(s=>s.trim()))" class="w-full bg-theme-panel1 border-theme-border p-1 rounded text-sm text-theme-text">

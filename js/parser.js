@@ -1,4 +1,53 @@
 const Parser = {
+        parseDispatchString: function(dispatchString, config) {
+        if (!dispatchString) return null;
+        
+        // Sometimes the user will paste two blocks. Sometimes reference number is standalone.
+        // E.g: "Reference#: 260705-005046 \n Home Office Only | Refrigeration - HO Use Only..."
+        
+        // Retrieve existing state if we are accumulating data
+        let existingState = typeof window !== 'undefined' && window.ParserState ? window.ParserState : {};
+        
+        // Don't overwrite raw if appending
+        let mergedRaw = existingState.raw ? existingState.raw + '\n' + dispatchString : dispatchString;
+
+        let parsed = {
+            alarm_type: 'DISPATCH',
+            ...existingState,
+            raw: mergedRaw
+        };
+
+        const extract = (pattern) => {
+            const match = dispatchString.match(pattern);
+            return match && match[1] ? match[1].trim() : "";
+        };
+
+        // If we found a value previously, don't overwrite it with empty if not found this time
+        const safeExtract = (key, pattern) => {
+            const newVal = extract(pattern);
+            if (newVal) parsed[key] = newVal;
+        };
+
+
+        // Try extracting with "Reference#: " prefix or just a plain 6-6 digit format anywhere
+        safeExtract("reference_number", /Reference#?:?\s*(\d{6}-\d{6})/i);
+        if(!parsed.reference_number) safeExtract("reference_number", /(\d{6}-\d{6})/);
+        
+        safeExtract("contact", /Contact:\s*(.+?)(?=\s*\||$)/i);
+        
+        safeExtract("position", /Position:\s*(.+?)(?=\s*\||$)/i);
+        safeExtract("units_affected", /Units Affected:\s*(\d+)/i);
+        safeExtract("rack_associated", /Rack Associated:\s*(.+?)(?=\s*\||$)/i);
+        safeExtract("systems_affected", /Systems Affected:\s*(.+?)(?=\s*\||$)/i);
+        safeExtract("alarm_message", /Alarm Message:\s*(.+?)(?=\s*\||$)/i);
+        safeExtract("manual_comment", /Manual Comment:\s*(.+?)(?=\s*\||$)/i);
+
+        
+        // Save state so sequential pastes build up the full object
+        window.ParserState = parsed;
+        return parsed;
+    },
+
     parseAlertString: function(alertString, config) {
         if (!alertString || typeof alertString !== 'string') return null;
 

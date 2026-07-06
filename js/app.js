@@ -23,7 +23,7 @@ const App = {
         const activeTheme = this.config.theme || 'theme-walmart';
         document.body.className = activeTheme + ' bg-theme-bg h-screen flex flex-col font-sans text-theme-text';
         
-        UI.init();
+        UI.init(this);
         
         // Try restoring session
         this.restoreSession();
@@ -33,10 +33,23 @@ const App = {
         if (!rawAlertString) return;
 
         // Pass config to parser so it knows the expected schema format and delimiter
-        const parsedData = Parser.parseAlertString(rawAlertString, this.config);
+        let parsedData;
+        if (typeof Parser === 'undefined' && typeof window.Parser !== 'undefined') {
+             // Fallback
+             parsedData = (this.config.mode === 'DISPATCH')
+                ? window.Parser.parseDispatchString(rawAlertString, this.config)
+                : window.Parser.parseAlertString(rawAlertString, this.config);
+        } else {
+             parsedData = (this.config.mode === 'DISPATCH')
+                ? Parser.parseDispatchString(rawAlertString, this.config)
+                : Parser.parseAlertString(rawAlertString, this.config);
+        }
         
         UI.renderParsedData(parsedData);
         
+        // Ensure state carries through to rendering cycle
+        parsedData._original_alert = parsedData.raw || "DISPATCH";
+
         // Determine Profile
         let profileId = parsedData.alarm_type || "UNKNOWN";
         let profile = this.config.profiles[profileId];
@@ -86,7 +99,9 @@ const App = {
             if (profile && profile.timerConfig && profile.timerConfig.enabled) {
                 console.log("Starting Timer Engine...");
                 TimerEngine.init(profile);
-                TimerEngine.start();
+                if (this.config.mode !== 'DISPATCH') {
+                    TimerEngine.start();
+                }
             } else {
                 console.log("Timer is disabled or missing on this profile.");
             }

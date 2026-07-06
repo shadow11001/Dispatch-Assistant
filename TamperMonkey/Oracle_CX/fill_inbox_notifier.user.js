@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  Automates pressing "Fill Inbox", intercepting the fillInbox request, and playing a sound if successful.
-// @author       You
+// @author       Andrew Toothman - vn580fc
 // @match        https://centralops.custhelp.com/AgentWeb/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=custhelp.com
 // @grant        none
@@ -13,7 +13,7 @@
     'use strict';
 
     // ---- CONFIGURATION ----
-    const FILL_INBOX_POLL_INTERVAL = 30000; // Time in milliseconds (e.g., 30s)
+    const FILL_INBOX_POLL_INTERVAL = 60000; // Time in milliseconds (e.g., 30s)
     const AUDIO_URL = 'https://actions.google.com/sounds/v1/alarms/beep_short.ogg'; // Notification sound URL
 
     // Add a UI overlay for stats

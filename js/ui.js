@@ -72,7 +72,7 @@ const UI = {
     bindEvents: function () {
         // Tab switching
         if (this.tabAlarms) {
-            this.tabAlarms.addEventListener('click', () => this.switchMode('ALERT'));
+            this.tabAlarms.addEventListener('click', () => this.switchMode('ALARM'));
         }
         if (this.tabDispatches) {
             this.tabDispatches.addEventListener('click', () => this.switchMode('DISPATCH'));

@@ -6,23 +6,14 @@ const DecisionEngine = {
     checkCondition: function(conditionStr, formData) {
         if (!conditionStr || typeof conditionStr !== 'string') return true;
         try {
-            // Evaluates using a scoped function. 
-            // "with(data)" allows condition strings to reference formData keys directly as variables
-            // To prevent ReferenceErrors when fields are empty, map the condition keys safely
-            // Creating a safe proxy that returns undefined instead of throwing
-            const safeData = new Proxy(formData, {
-                has(target, prop) {
-                    return true; // trick 'with' into thinking the property exists
-                },
-                get(target, prop) {
-                    return target[prop] !== undefined ? target[prop] : ''; // return empty string if missing text
-                }
+            const safeData = new Proxy(formData || {}, {
+                has(target, prop) { return true; },
+                get(target, prop) { return target[prop] !== undefined ? target[prop] : ''; }
             });
-            const func = new Function('data', `with(data) { return !!(${conditionStr}); }`);
+            const func = new Function('data', `try { with(data) { return !!(${conditionStr}); } } catch(e) { return false; }`);
             return func(safeData);
         } catch (e) {
-            console.warn("DecisionEngine eval error:", conditionStr, e);
-            return true; // Fail-safe to avoid breaking the UI for malformed rules
+            return true; // Fail-safe
         }
     },
 
@@ -32,16 +23,21 @@ const DecisionEngine = {
     calculateRecommendation: function(formula, formData, config) {
         if (!formula) return null;
         try {
-            // Provide context for calculations (formData + systemThresholds)
+            const safeData = new Proxy(formData || {}, {
+                has(target, prop) { return true; },
+                get(target, prop) { return target[prop] !== undefined ? target[prop] : ''; }
+            });
             const context = {
-                data: formData,
+                data: safeData,
                 thresholds: config && config.systemThresholds ? config.systemThresholds : {}
             };
-            // e.g. "parseInt(data.alarm_threshold) + thresholds.suction_psi.targetVariance.above"
-            const func = new Function('ctx', `with(ctx) { return ${formula}; }`);
-            return func(context);
+            const safeContext = new Proxy(context, {
+                has(target, prop) { return true; },
+                get(target, prop) { return target[prop] !== undefined ? target[prop] : ''; }
+            });
+            const func = new Function('ctx', `try { with(ctx) { return ${formula}; } } catch(e) { return ''; }`);
+            return func(safeContext);
         } catch (e) {
-            console.warn("DecisionEngine calculation error:", formula, e);
             return null;
         }
     },
