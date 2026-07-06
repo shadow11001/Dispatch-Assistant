@@ -11,7 +11,8 @@ const UI = {
     },
 
     switchMode: function(mode) {
-        ConfigManager.setMode(mode);
+        this.app.config.mode = mode;
+        if(window.ConfigManager) window.ConfigManager.mode = mode;
         
         const titles = document.querySelectorAll('header h1.classic-title');
         

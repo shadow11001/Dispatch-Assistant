@@ -404,6 +404,22 @@ const ConfigManager = {
                                 <li><strong class="text-theme-text">Phase Assignment:</strong> The ID of the Phase this question belongs to.</li>
                                 <li><strong class="text-theme-text">Options:</strong> Comma-separated choices for Radio/Select.</li>
                             </ul>
+                            
+                            <div class="mt-3 bg-gray-100 dark:bg-gray-800 p-3 rounded border border-theme-border flex flex-col gap-1 items-start shadow-sm">
+                                <h5 class="font-bold mb-1 text-theme-primary text-sm flex">Parsed Context Variables (parsed_*)</h5>
+                                <p class="mb-2 text-xs text-theme-textmuted">You can utilize variables parsed directly from the incoming alert using the parser engine or dispatch schema. Whenever you select a data source prefixed with <code class="bg-gray-200 dark:bg-gray-700 px-1 rounded">parsed_</code>, it binds automatically to the metadata extraction dictionary.</p>
+                                
+                                <strong class="text-theme-text text-sm">Common Examples:</strong>
+                                <ul class="list-disc pl-5 mb-2 text-theme-text font-mono text-[11px] max-w-full overflow-x-auto space-y-1">
+                                    <li><strong class="text-theme-primary">parsed_site_number</strong> : Matches the Store/Site Number directly.</li>
+                                    <li><strong class="text-theme-primary">parsed_ems</strong> : Main network/EMS platform isolated (e.g. BacnetNetwork).</li>
+                                    <li><strong class="text-theme-primary">parsed_alarm_type</strong> : Extracted Alert Code / Alert Description.</li>
+                                    <li><strong class="text-theme-primary">parsed_incident_id</strong> : Usually reserved for ticketing / SNOW.</li>
+                                    <li><strong class="text-theme-primary">parsed_store_ems_primary</strong> : The verified main platform from standard JSON mappings.</li>
+                                    <li><strong class="text-theme-primary">parsed__original_alert</strong> : Safe copy of the literal user pasting.</li>
+                                </ul>
+                                <p class="text-[11px] italic text-gray-400 mt-1">If the parser maps any new chunk using its rule array or regex extracts, you simply prepend <code>parsed_</code> to the key name to access it inside your Form layout.</p>
+                            </div>
                         </div>
 
                         <div>
