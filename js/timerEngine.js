@@ -105,17 +105,24 @@ const TimerEngine = {
             else this.start();
         });
 
-        // Modify standard start based on ALARM vs DISPATCH
-        if(window.ConfigManager && window.ConfigManager.mode === 'DISPATCH') {
-           // Provide a manual start method mapped to standard start but don't auto-start
-           this.manualStart = () => this.start();
-           
+        // Provide a manual start method globally for convenience
+        this.manualStart = () => this.start();
+
+        // Check if manual start is required by the config or app mode
+        const isDispatchMode = (window.ConfigManager && window.ConfigManager.mode === 'DISPATCH') || 
+                               (typeof App !== 'undefined' && App.config && App.config.mode === 'DISPATCH');
+        const forceManual = this.config && this.config.requireManualStart;
+
+        if (isDispatchMode || forceManual) {
            // Show timer as paused/pending initially
            if(this.display) this.display.innerText = "Pending...";
            if(this.widget) this.widget.classList.add('opacity-50');
            if (this.config.location === 'header' || this.config.location === 'header-center') this.widget.style.display = 'flex';
+           console.log("TimerEngine init: auto-start suppressed. Mode:", isDispatchMode ? 'DISPATCH' : 'ALARM', "ForceManual:", forceManual);
         } else {
-           this.start();
+           // We do not start here anymore because App.js handleParseAlert has its own logic that calls TimerEngine.start() explicitly
+           // Calling this.start() here causes duplicate timers or bypasses app.js checks.
+           console.log("TimerEngine init: ready. Deferring to App.js for start.");
         }
         
         // Re-bind dragging if floating

@@ -287,7 +287,11 @@ const UI = {
             const label = document.createElement('label');
             label.className = "block text-sm font-bold text-theme-text mb-1";
             label.innerText = field.label + (field.required ? " *" : "");
-            fieldDiv.appendChild(label);
+            
+            // Do not append top-level label for timer start buttons
+            if (field.type !== 'timerStartButton') {
+                fieldDiv.appendChild(label);
+            }
 
             const isTrainingMode = this.trainingModeToggle ? this.trainingModeToggle.checked : false;
 
@@ -540,7 +544,11 @@ const UI = {
             const label = document.createElement('label');
             label.className = "block text-sm font-bold text-theme-text mb-1";
             label.innerText = field.label + (field.required ? " *" : "");
-            fieldDiv.appendChild(label);
+            
+            // Do not append top-level label for timer start buttons
+            if (field.type !== 'timerStartButton') {
+                fieldDiv.appendChild(label);
+            }
 
             const isTrainingMode = this.trainingModeToggle ? this.trainingModeToggle.checked : false;
 
