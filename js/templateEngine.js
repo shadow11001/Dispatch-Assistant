@@ -42,7 +42,16 @@ const TemplateEngine = {
                 return "";
             }
 
-            // Return empty string for any empty field instead of brackets, so we can clean up labels globally
+            // Return empty string ONLY if the key corresponds to a dynamic form field that is missing/unanswered.
+            // If the key does not match any known field id, it's a literal user-defined bracket in standard text (e.g. {Name}).
+            if (config && config.activeProfileFields) {
+                const isFormAssignedField = config.activeProfileFields.some(f => f.id === key);
+                if (!isFormAssignedField) {
+                    return match; // It's not a field, it's just raw bracketed text like [or { ] from instructions
+                }
+            }
+
+            // If it IS a form field but unanswered, clear it out.
             return ""; 
         });
 
