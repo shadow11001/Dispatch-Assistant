@@ -774,6 +774,12 @@ const UI = {
                 // Dynamic math/variable interpolation inside SOP content!
                 if (contentText.includes('{') && contentText.includes('}')) {
                     contentText = contentText.replace(/\{([^}]+)\}/g, (match, expression) => {
+                        // First see if it exists nakedly inside form data (raw passthrough, like "{dispatch_ref}")
+                        if (this.formState[expression] !== undefined && this.formState[expression] !== "") {
+                            return this.formState[expression];
+                        }
+                        
+                        // Otherwise, process as math/conditional expression
                         let res = DecisionEngine.calculateRecommendation(expression, this.formState, App.config);
                         return res !== null && res !== undefined && !isNaN(res) ? res : match;
                     });
