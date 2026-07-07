@@ -108,13 +108,21 @@ const UI = {
 
         if (this.parseBtn && this.alertInput) {
             this.parseBtn.addEventListener('click', () => {
-                App.handleParseAlert(this.alertInput.value || '');
+                const val = this.alertInput.value || '';
+                App.handleParseAlert(val);
+                if (App.config.mode === 'DISPATCH') {
+                    this.alertInput.value = '';
+                }
             });
             
             this.alertInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    App.handleParseAlert(this.alertInput.value || '');
+                    const val = this.alertInput.value || '';
+                    App.handleParseAlert(val);
+                    if (App.config.mode === 'DISPATCH') {
+                        this.alertInput.value = '';
+                    }
                 }
             });
         }
