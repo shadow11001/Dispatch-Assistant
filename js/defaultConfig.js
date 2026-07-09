@@ -16,11 +16,17 @@ window.AlarmAssistantConfig = {
         "5845",
         "5872"
     ],
-    "version": "1.0.9",
-    "lastUpdated": "2026-07-05",
+    "version": "1.1.0",
+    "lastUpdated": "2026-07-06",
     "author": "Andrew Toothman",
-    "changeDescription": "Updated SCL, RDN, MCL profiles.",
+    "changeDescription": "Imported profiles, added Dispatch profile and Dispatch parsing.",
     "history": [
+        {
+            "version": "1.1.0",
+            "date": "2026-07-06",
+            "author": "Andrew Toothman",
+            "description": "Imported profiles, added Dispatch profile and Dispatch parsing."
+        },
         {
             "version": "1.0.9",
             "date": "2026-07-05",
