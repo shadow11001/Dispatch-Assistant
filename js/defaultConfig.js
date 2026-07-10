@@ -9,60 +9,6 @@ window.DispatchAssistantConfig = {
             "date": "2026-07-06",
             "author": "Andrew Toothman",
             "description": "Imported profiles, added Dispatch profile and Dispatch parsing."
-        },
-        {
-            "version": "1.0.9",
-            "date": "2026-07-05",
-            "author": "Andrew Toothman",
-            "description": "Updated SCL, RDN, MCL profiles."
-        },
-        {
-            "version": "1.0.7",
-            "date": "2026-07-02",
-            "author": "Andrew Toothman",
-            "description": ""
-        },
-        {
-            "version": "1.0.7",
-            "date": "2026-07-02",
-            "author": "Andrew Toothman",
-            "description": "Updated Profiles"
-        },
-        {
-            "version": "1.0.7",
-            "date": "2026-07-02",
-            "author": "Andrew Toothman",
-            "description": "Updated RPL Profile and config"
-        },
-        {
-            "version": "1.0.6",
-            "date": "2026-06-28",
-            "author": "Andrew Toothman",
-            "description": "Updated initial AT profiles, general configuration, and testing/refinement."
-        },
-        {
-            "version": "1.0.5",
-            "date": "2026-06-28",
-            "author": "System Admin",
-            "description": ""
-        },
-        {
-            "version": "1.0.4",
-            "date": "2026-06-28",
-            "author": "System Admin",
-            "description": ""
-        },
-        {
-            "version": "1.0.3",
-            "date": "2026-06-28",
-            "author": "System Admin",
-            "description": "Updated RPL, Showcasing all features available. Updated GENERIC for automated alarm type profile generation."
-        },
-        {
-            "version": "1.0.2",
-            "date": "2026-06-27",
-            "author": "System Admin",
-            "description": "Update RPL"
         }
     ],
     "reusableText": {
