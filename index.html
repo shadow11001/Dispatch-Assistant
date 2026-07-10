@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alarm Alert Assistant</title>
+    <title>Dispatch Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
         <script>
         tailwind.config = {
@@ -45,18 +45,15 @@
                 <div class="flex items-center space-x-3 walmart-logo-container">
                     <img src="assets/img/WMT-Spark-SparkYellow-RGB.svg" alt="Walmart Spark" class="h-8 w-8">
                     <img id="walmart-wordmark" src="assets/img/WMT-Wordmark-Standard-White-RGB.svg" alt="Walmart" class="h-6 object-contain hidden sm:block">
-                    <h1 class="text-xl font-bold text-theme-headertext border-l-2 border-theme-borderdark pl-3 whitespace-nowrap walmart-title">Alarm Alert Assistant</h1>
+                    <h1 class="text-xl font-bold text-theme-headertext border-l-2 border-theme-borderdark pl-3 whitespace-nowrap walmart-title">Dispatch Assistant</h1>
                 </div>
-                <h1 class="text-xl font-bold text-theme-headertext classic-title whitespace-nowrap">Alarm Alert Assistant</h1>
+                <h1 class="text-xl font-bold text-theme-headertext classic-title whitespace-nowrap">Dispatch Assistant</h1>
             </div>
             <!-- Timer will natively be appended to #header-left-group via JS due to its id matching logic -->
         </div>
         <div class="flex items-center space-x-6 mr-2">
             <!-- Type Tabs Slider -->
-            <div class="flex items-center space-x-2 bg-theme-panel2 py-1 px-3 rounded-full shadow-inner select-none transition-colors border border-theme-borderdark">
-                <span id="tab-alarms" class="text-sm font-semibold cursor-pointer transition-colors pointer-cursor p-1 px-2 rounded hover:opacity-80 bg-theme-bg text-theme-text shadow-sm">Alarms</span>
-                <span id="tab-dispatches" class="text-sm font-semibold cursor-pointer transition-colors pointer-cursor p-1 px-2 rounded hover:opacity-80 text-theme-textmuted">Dispatches</span>
-            </div>
+            
 
             <label class="inline-flex relative items-center cursor-pointer group">
                 <input type="checkbox" id="training-mode-toggle" class="sr-only peer" checked>
@@ -88,7 +85,7 @@
         <section id="panel-knowledge" class="w-1/3 bg-theme-bg border-r border-theme-borderdark p-4 flex flex-col overflow-y-auto">
             <h2 class="font-bold text-lg border-b border-theme-borderdark pb-2 mb-4 text-theme-accent">2. Knowledge & Rules</h2>
             <div id="sop-container" class="prose text-sm text-theme-text bg-theme-panel1 p-4 rounded border border-theme-borderdark shadow-sm h-full">
-                <p class="text-theme-textmuted italic">Please parse an alert or select an alarm type to view SOPs.</p>
+                <p class="text-theme-textmuted italic">Please parse an alert or select a dispatch type to view SOPs.</p>
             </div>
         </section>
 
@@ -138,12 +135,6 @@
                         <li id="nav-master-json" class="cursor-pointer p-2 rounded hover:bg-theme-input text-theme-accent font-bold border border-theme-borderdark mt-2 transition">Master Raw JSON</li>
                     </ul>
                     <div class="flex justify-between items-center mb-2 mt-4 border-t border-theme-borderdark pt-4">
-                        <h3 class="text-theme-textmuted text-xs font-bold uppercase">Alarm Profiles</h3>
-                        <button id="admin-add-profile-btn" title="Add New Profile" class="text-theme-accent hover:text-theme-accentsec text-lg leading-none font-bold py-0 px-2 rounded hover:bg-theme-input transition">+</button>
-                    </div>
-                    <ul id="admin-profiles-list" class="space-y-1"></ul>
-
-                    <div class="flex justify-between items-center mb-2 mt-4 border-t border-theme-borderdark pt-4">
                         <h3 class="text-theme-textmuted text-xs font-bold uppercase">Dispatch Profiles</h3>
                         <button id="admin-add-dispatch-btn" title="Add New Dispatch Profile" class="text-theme-accent hover:text-theme-accentsec text-lg leading-none font-bold py-0 px-2 rounded hover:bg-theme-input transition">+</button>
                     </div>
@@ -161,7 +152,6 @@
         </div>
     </div>
 
-    <script src="js/emsMapping.js"></script>
     <script src="js/defaultConfig.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/parser.js"></script>

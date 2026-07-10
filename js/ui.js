@@ -27,9 +27,9 @@ const UI = {
                 this.tabDispatches.classList.add(...activeClasses);
                 this.tabDispatches.classList.remove(...inactiveClasses);
             }
-            if (this.tabAlarms) {
-                this.tabAlarms.classList.remove(...activeClasses);
-                this.tabAlarms.classList.add(...inactiveClasses);
+            if (this.tabDispatches) {
+                this.tabDispatches.classList.remove(...activeClasses);
+                this.tabDispatches.classList.add(...inactiveClasses);
             }
             
             if (this.alertInput) {
@@ -38,11 +38,11 @@ const UI = {
                 document.querySelector('label[for="alert-input"]').textContent = "Paste Dispatch Detail";
             }
         } else {
-            titles.forEach(t => t.textContent = "Alarm Alert Assistant");
+            titles.forEach(t => t.textContent = "Dispatch Assistant");
             
-            if (this.tabAlarms) {
-                this.tabAlarms.classList.add(...activeClasses);
-                this.tabAlarms.classList.remove(...inactiveClasses);
+            if (this.tabDispatches) {
+                this.tabDispatches.classList.add(...activeClasses);
+                this.tabDispatches.classList.remove(...inactiveClasses);
             }
             if (this.tabDispatches) {
                 this.tabDispatches.classList.remove(...activeClasses);
@@ -75,14 +75,14 @@ const UI = {
         this.copyNoteBtn = document.getElementById('copy-note-btn');
         this.clearNoteBtn = document.getElementById('clear-note-btn');
         
-        this.tabAlarms = document.getElementById('tab-alarms');
+        this.tabDispatches = document.getElementById('tab-dispatches');
         this.tabDispatches = document.getElementById('tab-dispatches');
     },
 
     bindEvents: function () {
         // Tab switching
-        if (this.tabAlarms) {
-            this.tabAlarms.addEventListener('click', () => this.switchMode('ALARM'));
+        if (this.tabDispatches) {
+            this.tabDispatches.addEventListener('click', () => this.switchMode('DISPATCH'));
         }
         if (this.tabDispatches) {
             this.tabDispatches.addEventListener('click', () => this.switchMode('DISPATCH'));
@@ -148,7 +148,7 @@ const UI = {
                  if (this.alertInput) this.alertInput.value = '';
                  if (this.parsedContainer) this.parsedContainer.classList.add('hidden');
                  if (this.dynamicQuestions) this.dynamicQuestions.innerHTML = '';
-                 if (this.sopContainer) this.sopContainer.innerHTML = '<p class="text-theme-textmuted italic">Please parse an alert or select an alarm type to view SOPs.</p>';
+                 if (this.sopContainer) this.sopContainer.innerHTML = '<p class="text-theme-textmuted italic">Please parse an alert or select a dispatch type to view SOPs.</p>';
                  if (this.crystalAttributesContainer) this.crystalAttributesContainer.classList.add('hidden');
                  if (this.generatedNote) this.generatedNote.value = '';
                  this.formState = {};
@@ -196,7 +196,7 @@ const UI = {
             <ul class="mt-1 list-disc pl-4 text-xs font-mono">
                 <li>Site: ${parsedData.site_number || 'N/A'}</li>
                 <li>Reported EMS Network: ${parsedData.ems || 'N/A'}</li>
-                <li>Alarm Type: <span class="bg-theme-primary px-1 rounded text-theme-accentsec font-bold">${parsedData.alarm_type || 'Unknown'}</span></li>
+                <li>Dispatch Type: <span class="bg-theme-primary px-1 rounded text-theme-accentsec font-bold">${parsedData.dispatch_type || 'Unknown'}</span></li>
                 <li>Incident ID: ${parsedData.incident_id || 'N/A'}</li>
                 ${emsContext}
             </ul>

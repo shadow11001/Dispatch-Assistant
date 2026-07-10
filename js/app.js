@@ -2,13 +2,13 @@ const App = {
     config: null,
 
     init: function() {
-        console.log("Initializing Alarm Alert Assistant...");
+        console.log("Initializing Dispatch Assistant...");
         
         // 1. Load Configuration
         // DEV MODE: Force reload from file instead of cache if developing append ?clearCache=true
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('clearCache') === 'true') {
-            localStorage.removeItem('alarmAssistantConfig');
+            localStorage.removeItem('dispatchAssistantConfig');
             console.log("Cleared local config cache for dev.");
         }
         
@@ -38,11 +38,11 @@ const App = {
              // Fallback
              parsedData = (this.config.mode === 'DISPATCH')
                 ? window.Parser.parseDispatchString(rawAlertString, this.config)
-                : window.Parser.parseAlertString(rawAlertString, this.config);
+                : window.Parser.parseDispatchString(rawAlertString, this.config);
         } else {
              parsedData = (this.config.mode === 'DISPATCH')
                 ? Parser.parseDispatchString(rawAlertString, this.config)
-                : Parser.parseAlertString(rawAlertString, this.config);
+                : Parser.parseDispatchString(rawAlertString, this.config);
         }
         
         UI.renderParsedData(parsedData);
@@ -51,15 +51,15 @@ const App = {
         parsedData._original_alert = parsedData.raw || "DISPATCH";
 
         // Determine Profile
-        let profileId = parsedData.alarm_type || "UNKNOWN";
+        let profileId = parsedData.dispatch_type || "UNKNOWN";
         let profile = this.config.profiles[profileId];
         
         // If unknown, use generic profile as a template and create a new one
         if (!profile) {
-            console.warn(`Unknown alarm type ${profileId}, generating new profile from generic.`);
+            console.warn(`Unknown dispatch type ${profileId}, generating new profile from generic.`);
             
             // Deep copy the generic profile to create a starting point
-            profile = JSON.parse(JSON.stringify(this.config.genericProfile));
+            profile = JSON.parse(JSON.stringify(this.config.profiles.DISPATCH));
             profile.id = profileId;
             profile.name = "Auto-Generated: " + profileId;
             
@@ -73,7 +73,7 @@ const App = {
             if (window.UI) {
                 const toast = document.createElement('div');
                 toast.className = 'fixed top-4 right-4 bg-yellow-600 text-white px-4 py-2 rounded shadow-lg z-50';
-                toast.innerText = `New Alarm Type Detected: ${profileId}. A template profile has been auto-generated.`;
+                toast.innerText = `New Dispatch Type Detected: ${profileId}. A template profile has been auto-generated.`;
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 5000);
             }

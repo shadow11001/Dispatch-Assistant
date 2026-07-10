@@ -118,7 +118,7 @@ const TimerEngine = {
            if(this.display) this.display.innerText = "Pending...";
            if(this.widget) this.widget.classList.add('opacity-50');
            if (this.config.location === 'header' || this.config.location === 'header-center') this.widget.style.display = 'flex';
-           console.log("TimerEngine init: auto-start suppressed. Mode:", isDispatchMode ? 'DISPATCH' : 'ALARM', "ForceManual:", forceManual);
+           console.log("TimerEngine init: auto-start suppressed. Mode:", isDispatchMode ? 'DISPATCH' : 'DISPATCH', "ForceManual:", forceManual);
         } else {
            // We do not start here anymore because App.js handleParseAlert has its own logic that calls TimerEngine.start() explicitly
            // Calling this.start() here causes duplicate timers or bypasses app.js checks.
