@@ -216,6 +216,27 @@ window.DispatchAssistantConfig = {
                     "type": "text",
                     "phase": "phase-9-vendor",
                     "visibleIf": "vendor_name !== ''"
+                },
+                {
+                    "id": "timer_5min",
+                    "label": "Start 5-Minute Timer",
+                    "type": "timerStartButton",
+                    "duration": 5,
+                    "phase": "phase-4-wait5"
+                },
+                {
+                    "id": "timer_15min_accept",
+                    "label": "Start 15-Minute Timer",
+                    "type": "timerStartButton",
+                    "duration": 15,
+                    "phase": "phase-5-wait15"
+                },
+                {
+                    "id": "timer_30min_vendor",
+                    "label": "Start 30-Minute Vendor Timer",
+                    "type": "timerStartButton",
+                    "duration": 30,
+                    "phase": "phase-9-vendor"
                 }
             ],
             "noteTemplate": "",

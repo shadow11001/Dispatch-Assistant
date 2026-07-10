@@ -1,9 +1,9 @@
-
 const TimerEngine = {
     startTime: null,
     interval: null,
     isRunning: false,
     config: null,
+    durationTarget: null,
     
     init: function(config) {
         console.log("TimerEngine initialized with config:", config);
@@ -20,14 +20,11 @@ const TimerEngine = {
         this.widget.id = 'sla-timer-widget';
         this.widget.title = 'Click to Stop/Start Timer';
 
-                const isHeader = this.config.location === 'header' || this.config.location === 'header-center';
+        const isHeader = this.config.location === 'header' || this.config.location === 'header-center';
         
         if (isHeader) {
             this.widget.className = "bg-theme-panel1 border-2 border-theme-border rounded py-1 px-3 shadow flex items-center space-x-3 transition cursor-pointer";
-            if (this.config.location === 'header') {
-                // Handled natively by wrapper space-x-6
-            } else {
-                // Centered absolutely
+            if (this.config.location === 'header-center') {
                 this.widget.classList.add('absolute', 'left-1/2', 'transform', '-translate-x-1/2');
             }
 
@@ -45,229 +42,144 @@ const TimerEngine = {
             const titleElement = document.querySelector('header .walmart-logo-container') || document.querySelector('header h1.classic-title');
             
             if (this.config.location === 'header-center' && headerContainer) {
-                // Append broadly to the header and let 'absolute' center it
                 headerContainer.appendChild(this.widget);
             } else if (this.config.location === 'header' && titleElement) {
-                // Wrap the Title and the Timer together so 'justify-between' doesn't push the timer to the center of the screen
-                if (document.getElementById('header-left-group')) {
-                    // Target specific wrapper gracefully so we don't accidentally nest or un-nest logo items if already created
-                    document.getElementById('header-left-group').parentNode.appendChild(this.widget);
-                } else if (titleElement.parentElement.classList.contains('items-center')) {
-                    titleElement.parentElement.appendChild(this.widget);
-                } else {
-                    titleElement.parentNode.appendChild(this.widget);
-                }
+                // Insert directly after the title/logo element
+                titleElement.insertAdjacentElement('afterend', this.widget);
+            } else if (headerContainer) {
+                 headerContainer.appendChild(this.widget);
             } else {
-                document.body.appendChild(this.widget);
+                 document.body.appendChild(this.widget);
             }
+            
+            this.display = document.getElementById('sla-timer-display');
+            this.tooltip = document.getElementById('sla-timer-tooltip');
+            this.label = document.getElementById('sla-timer-label');
         } else {
-            this.widget.className = "fixed bottom-4 right-4 bg-theme-panel1 border-2 border-theme-border rounded-lg p-3 shadow-2xl z-40 cursor-pointer hover:bg-theme-bg transition";
-            this.widget.innerHTML = `
-                <div class="flex flex-col items-center justify-center pointer-events-none">
-                    <span class="text-xs text-theme-accentsec font-bold uppercase tracking-wider mb-1" id="sla-timer-label">${this.config.defaultLabel || "SLA Time"}</span>
-                    <span class="text-2xl font-mono text-gray-100 font-bold" id="sla-timer-display">00:00</span>
-                    <div id="sla-timer-tooltip" class="mt-2 text-xs italic text-center text-gray-300 hidden max-w-[150px]"></div>
+             // Fallback minimal
+             this.widget.className = "fixed bottom-16 right-4 bg-theme-panel1 border-2 border-theme-border rounded-lg shadow-lg p-3 w-64 z-50 transition cursor-pointer";
+             this.widget.innerHTML = `
+                <div class="flex flex-col text-center pointer-events-none">
+                    <span class="text-xs text-theme-accentsec font-bold uppercase tracking-wider" id="sla-timer-label">${this.config.defaultLabel || "SLA Time"}</span>
+                    <span class="text-2xl font-mono text-gray-100 mt-1 font-bold" id="sla-timer-display">00:00</span>
+                    <div id="sla-timer-tooltip" class="text-xs italic font-bold mt-2 pt-2 border-t border-theme-border hidden"></div>
                 </div>
             `;
             document.body.appendChild(this.widget);
-        }
-
-        this.display = document.getElementById('sla-timer-display');
-        
-        // Calculate max configured SLA if breakpoints exist
-        this.maxSLA = null;
-        if (this.config.breakpoints && this.config.breakpoints.length > 0) {
-            // Find max minuteEnd, ignoring 999
-            let maxMin = 0;
-            this.config.breakpoints.forEach(bp => {
-                if (bp.minuteEnd < 999 && bp.minuteEnd > maxMin) {
-                    maxMin = bp.minuteEnd;
-                }
-            });
-            if (maxMin > 0) {
-                this.maxSLA = maxMin;
-            }
-        }
-        this.label = document.getElementById('sla-timer-label');
-        this.tooltip = document.getElementById('sla-timer-tooltip');
-
-        // Setup Edge Glow Overlay
-        this.edgeOverlay = document.getElementById('sla-edge-overlay');
-        if (!this.edgeOverlay) {
-            this.edgeOverlay = document.createElement('div');
-            this.edgeOverlay.id = 'sla-edge-overlay';
-            this.edgeOverlay.className = 'fixed inset-0 pointer-events-none z-50 hidden transition-all duration-300';
-            document.body.appendChild(this.edgeOverlay);
+            this.display = document.getElementById('sla-timer-display');
+            this.tooltip = document.getElementById('sla-timer-tooltip');
+            this.label = document.getElementById('sla-timer-label');
         }
 
         this.widget.addEventListener('click', () => {
             if (this.isRunning) this.stop();
-            else this.start();
         });
 
         // Provide a manual start method globally for convenience
-        this.manualStart = () => this.start();
-
-        // Check if manual start is required by the config or app mode
-        const isDispatchMode = (window.ConfigManager && window.ConfigManager.mode === 'DISPATCH') || 
-                               (typeof App !== 'undefined' && App.config && App.config.mode === 'DISPATCH');
-        const forceManual = this.config && this.config.requireManualStart;
-
-        if (isDispatchMode || forceManual) {
-           // Show timer as paused/pending initially
-           if(this.display) this.display.innerText = "Pending...";
-           if(this.widget) this.widget.classList.add('opacity-50');
-           if (this.config.location === 'header' || this.config.location === 'header-center') this.widget.style.display = 'flex';
-           console.log("TimerEngine init: auto-start suppressed. Mode:", isDispatchMode ? 'DISPATCH' : 'DISPATCH', "ForceManual:", forceManual);
-        } else {
-           // We do not start here anymore because App.js handleParseAlert has its own logic that calls TimerEngine.start() explicitly
-           // Calling this.start() here causes duplicate timers or bypasses app.js checks.
-           console.log("TimerEngine init: ready. Deferring to App.js for start.");
-        }
-        
-        // Re-bind dragging if floating
-        if (!isHeader) {
-            let isDragging = false, currentX = 0, currentY = 0, initialX, initialY, xOffset = 0, yOffset = 0;
-            this.widget.addEventListener("mousedown", (e) => {
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
-                isDragging = true;
-            });
-            document.addEventListener("mouseup", () => {
-                initialX = currentX;
-                initialY = currentY;
-                isDragging = false;
-            });
-            document.addEventListener("mousemove", (e) => {
-                if (isDragging) {
-                    e.preventDefault();
-                    currentX = e.clientX - initialX;
-                    currentY = e.clientY - initialY;
-                    xOffset = currentX;
-                    yOffset = currentY;
-                    this.widget.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
-                }
-            });
-        }
+        window.TimerEngine = this;
+        // Do not auto start the timer!
     },
     
-    start: function() {
+    start: function(durationMinutes = null) {
         if (!this.config || !this.config.enabled) return;
-        console.log("TimerEngine start");
         
-        // Remove pending visual state if transitioning from manual dispatch start
-        if (this.display && this.display.innerText === "Pending...") {
-            this.widget.classList.remove('opacity-50');
-            this.display.innerText = "00:00"; 
-        }
-        
-        // If we are resuming, subtract the properly paused elapsed time from NOW so it "picks up" where it left off safely.
-        if (this.pausedElapsed && this.pausedElapsed > 0) {
-            this.startTime = Date.now() - this.pausedElapsed;
-            this.pausedElapsed = 0; // Handled
-        } else {
-            this.startTime = Date.now();
-        }
-        
+        // Always reset on start so "start" clicks cleanly override
         this.isRunning = true;
-        this.interval = setInterval(() => this.tick(), 1000);
+        this.startTime = Date.now();
+        
+        // Allow an override of the start time via duration (running downwards) or just keep tracking upwards
+        if (durationMinutes) {
+           this.durationTarget = durationMinutes * 60 * 1000;
+        } else {
+           this.durationTarget = null;
+        }
+
+        if(this.label) this.label.innerText = durationMinutes ? "Wait Timer" : "SLA Time";
         this.widget.classList.remove('opacity-50', 'hidden');
-        if (this.config.location === 'header' || this.config.location === 'header-center') this.widget.style.display = 'flex';
-        this.tick();
+
+        clearInterval(this.interval);
+        this.updateDisplay();
+        this.interval = setInterval(() => this.updateDisplay(), 1000);
     },
     
     stop: function() {
-        console.log("TimerEngine stop");
-        if (this.isRunning && this.startTime) {
-            // Save exactly how long we ran before stopping
-            this.pausedElapsed = Date.now() - this.startTime;
-        }
+        if (!this.isRunning) return;
         this.isRunning = false;
         clearInterval(this.interval);
-        if (this.widget) this.widget.classList.add('opacity-50');
+        
+        if (this.label) this.label.innerText = "Timer Stopped";
+        this.widget.classList.add('opacity-50');
+        
+        // Reset classes
+        this.widget.classList.remove('animate-pulse', 'bg-red-500', 'bg-yellow-500', 'bg-green-500', 'bg-blue-500');
+        this.widget.classList.add('bg-theme-panel1');
     },
-    
-    reset: function() {
-        console.log("TimerEngine reset");
-        this.stop();
-        this.pausedElapsed = 0;
-        this.startTime = null;
-        if (this.display) this.display.innerText = "00:00";
-        if (this.widget) {
-            // Hard completely hide component so it doesn't leave ghost wrappers
-            this.widget.classList.add('hidden');
-            this.widget.style.display = 'none';
-            this.widget.style.borderColor = '';
-            this.widget.style.boxShadow = '';
-            this.widget.classList.remove('timer-glow-yellow', 'timer-glow-orange', 'timer-glow-red', 'timer-glow-purple', 'timer-glow-blue', 'timer-glow-green', 'bg-red-900', 'border-red-500');
-        }
-        if (this.tooltip) {
-            this.tooltip.classList.add('hidden');
-            this.tooltip.innerText = "";
-            this.tooltip.style.color = '';
-        }
-    },
-    
-    tick: function() {
-        if (!this.isRunning) return;
+
+    updateDisplay: function() {
+        if (!this.isRunning || !this.display) return;
         
-        let elapsed = Date.now() - this.startTime;
-        let totalSeconds = Math.floor(elapsed / 1000);
-        let m = Math.floor(totalSeconds / 60);
-        let s = totalSeconds % 60;
+        const now = Date.now();
+        const elapsed = now - this.startTime;
+        let displayMs, isCountDown = false;
         
-        let timeStr = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        if (this.maxSLA) {
-            timeStr += ` / ${this.maxSLA.toString().padStart(2, '0')}:00`;
-        }
-        this.display.innerText = timeStr;
-        this.evalBreakpoints(m);
-    },
-    
-    evalBreakpoints: function(minutes) {
-        if (!this.config || !this.config.breakpoints) return;
-        
-        let activePoint = null;
-        for (let bp of this.config.breakpoints) {
-            if (minutes >= bp.minuteStart && minutes <= bp.minuteEnd) {
-                activePoint = bp;
-                break;
-            }
-        }
-        
-        this.widget.style.borderColor = '';
-        this.widget.style.boxShadow = '';
-        if(this.tooltip) this.tooltip.style.color = '';
-        this.widget.classList.remove('timer-glow-yellow', 'timer-glow-orange', 'timer-glow-red', 'timer-glow-purple', 'timer-glow-blue', 'timer-glow-green', 'bg-red-900', 'border-red-500');
-        if(this.tooltip) this.tooltip.classList.add('hidden');
-        
-        // Clear edge glows from overlay
-        if (this.edgeOverlay) {
-            this.edgeOverlay.className = 'fixed inset-0 pointer-events-none z-50 hidden transition-all duration-300';
+        if (this.durationTarget) {
+            displayMs = this.durationTarget - elapsed;
+            isCountDown = true;
+            if (displayMs <= 0) displayMs = 0; // Don't go negative
+        } else {
+            displayMs = elapsed;
         }
 
-        if (activePoint) {
-            if (activePoint.colorClass) {
-                if (activePoint.colorClass.includes('edge-glow')) {
-                    if (this.edgeOverlay) {
-                        this.edgeOverlay.classList.remove('hidden');
-                        this.edgeOverlay.classList.add(activePoint.colorClass);
-                    }
-                } else {
-                    this.widget.classList.add(...activePoint.colorClass.split(' '));
-                }
-            } else if (activePoint.customBorderHex) {
-                this.widget.style.borderColor = activePoint.customBorderHex;
-                this.widget.style.boxShadow = `0 0 10px ${activePoint.customBorderHex}`;
-            }
-            
-            if (activePoint.tooltip) {
-                this.tooltip.innerText = activePoint.tooltip;
+        const totalSeconds = Math.floor(displayMs / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        this.display.innerText = \`\${minutes.toString().padStart(2, '0')}:\${seconds.toString().padStart(2, '0')}\`;
+
+        // If it's a fixed countdown timer, we handle visualization separately
+        if (isCountDown) {
+            if (this.tooltip) {
+                this.tooltip.innerText = "Waiting...";
                 this.tooltip.classList.remove('hidden');
-                if (activePoint.customTextHex) {
-                    this.tooltip.style.color = activePoint.customTextHex;
-                }
             }
+            this.widget.classList.remove('bg-theme-panel1', 'bg-green-500', 'bg-yellow-500', 'bg-red-500', 'animate-pulse');
+            
+            if (displayMs === 0) {
+                 this.stop();
+                 this.display.innerText = "00:00";
+                 if(this.tooltip) this.tooltip.innerText = "Time Expired!";
+                 if(this.label) this.label.innerText = "Check Task";
+                 this.widget.classList.add('bg-red-500', 'text-white', 'animate-pulse');
+                 this.widget.classList.remove('opacity-50'); // pop it back actively
+            } else if (minutes < 2) {
+                 this.widget.classList.add('bg-yellow-500', 'text-black');
+            } else {
+                 this.widget.classList.add('bg-green-500', 'text-white');
+            }
+            return;
+        }
+
+        // Apply fallback breakpoints mapping if it's counting up normally
+        let activeBP = null;
+        if (this.config.breakpoints && !isCountDown) {
+            activeBP = this.config.breakpoints.find(bp => minutes >= bp.minuteStart && minutes < bp.minuteEnd);
+        }
+
+        this.widget.className = "bg-theme-panel1 border-2 border-theme-border rounded py-1 px-3 shadow flex items-center space-x-3 transition cursor-pointer";
+        if (this.config.location === 'header-center') this.widget.classList.add('absolute', 'left-1/2', 'transform', '-translate-x-1/2');
+
+        if (activeBP) {
+            if (activeBP.colorClass) {
+                this.widget.classList.remove('bg-theme-panel1');
+                this.widget.classList.add(...activeBP.colorClass.split(' '));
+            }
+            if (activeBP.tooltip && this.tooltip) {
+                this.tooltip.innerText = activeBP.tooltip;
+                this.tooltip.classList.remove('hidden');
+            } else if (this.tooltip) {
+                this.tooltip.classList.add('hidden');
+            }
+        } else if (this.tooltip) {
+            this.tooltip.classList.add('hidden');
         }
     }
 };

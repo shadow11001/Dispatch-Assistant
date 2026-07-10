@@ -334,6 +334,27 @@ const UI = {
                     }
                 };
                 inputObj = btn; // Set inputObj so it doesn't crash on appendChild later
+            } else if (field.type === 'timerStartButton') {
+                inputObj = document.createElement('button');
+                inputObj.className = "bg-theme-accentsec hover:bg-theme-primary transition text-white font-bold py-2 px-4 rounded shadow-sm text-sm w-full";
+                inputObj.innerText = field.label || "Start Timer";
+                
+                // Allow dynamic buttons to start the global TimerEngine for a specific duration
+                inputObj.onclick = (e) => {
+                    e.preventDefault();
+                    if (window.TimerEngine) {
+                        // Extract duration from field.duration or default to 5 minutes
+                        let mins = parseInt(field.duration, 10);
+                        if(isNaN(mins)) mins = 5; 
+                        
+                        // Fully reset the timer 
+                        window.TimerEngine.stop();
+                        window.TimerEngine.start(mins);
+                        
+                        inputObj.innerText = "Running " + mins + " Min Timer...";
+                        inputObj.classList.add('opacity-50', 'bg-green-600');
+                    }
+                };
             } else if (field.type === 'radio') {
                 const radioGroup = document.createElement('div');
                 radioGroup.className = "flex space-x-4";
@@ -614,7 +635,7 @@ const UI = {
                      radioEl.className = "form-radio h-4 w-4 text-theme-accentsec bg-theme-input border-theme-border";
                      radioEl.addEventListener('change', (e) => {
                           this.formState[field.id] = e.target.value;
-                          this.evalDynamicVisibility(); // Re-render tree on change
+                          this._debouncedPhaseRender(); // Re-render silently
                      });
                      
                      const span = document.createElement('span');
@@ -646,8 +667,8 @@ const UI = {
 
                 inputObj.addEventListener('change', (e) => {
                      this.formState[field.id] = e.target.value;
-                     this.evalDynamicVisibility();
-                });
+                     this._debouncedPhaseRender();
+        });
             } else if (field.type === 'textarea') {
                 inputObj = document.createElement('textarea');
                 inputObj.className = "block w-full border border-theme-border bg-theme-input text-theme-text rounded shadow-sm p-2 text-sm focus:ring-theme-primary focus:border-theme-primary";
