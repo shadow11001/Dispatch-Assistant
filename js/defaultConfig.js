@@ -314,8 +314,21 @@ window.DispatchAssistantConfig = {
             "units_affected",
             "rack_associated",
             "systems_affected",
-            "alarm_message",
+            "dispatch_message",
             "manual_comment"
+        ],
+        "schema": [
+            "location",
+            "site_number",
+            "ems",
+            "unknown1",
+            "network_location",
+            "network_address",
+            "unknown2",
+            "io",
+            "io_type",
+            "dispatch_type",
+            "incident_id"
         ]
     },
     "theme": "theme-classic"
