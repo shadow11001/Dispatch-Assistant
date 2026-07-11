@@ -768,13 +768,18 @@ const UI = {
 
         // If profile uses the new structured SOP sections
         if (profile.sopSections) {
-            const lastCompletedPhaseObj = this.currentPhaseIndex > 0 && profile.investigationPhases 
-                ? profile.investigationPhases[this.currentPhaseIndex - 1] 
+            let activePhases = [];
+            if (profile.investigationPhases) {
+                activePhases = DecisionEngine.getActivePhases(profile.investigationPhases, this.formState);
+            }
+            
+            const lastCompletedPhaseObj = this.currentPhaseIndex > 0 && activePhases.length > 0 
+                ? activePhases[this.currentPhaseIndex - 1] 
                 : null;
             const lastCompletedPhaseId = lastCompletedPhaseObj ? lastCompletedPhaseObj.id : null;
 
-            const currentPhaseObj = this.currentPhaseIndex >= 0 && profile.investigationPhases
-                ? profile.investigationPhases[this.currentPhaseIndex]
+            const currentPhaseObj = this.currentPhaseIndex >= 0 && activePhases.length > 0
+                ? activePhases[this.currentPhaseIndex]
                 : null;
             const currentPhaseId = currentPhaseObj ? currentPhaseObj.id : null;
 
