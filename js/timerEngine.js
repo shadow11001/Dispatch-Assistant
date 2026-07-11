@@ -39,13 +39,12 @@ const TimerEngine = {
             `;
             
             const headerContainer = document.querySelector('header');
-            // Insert directly before the Type Tabs Slider
-            const spacerGroup = document.querySelector('header .flex.items-center.space-x-6.mr-2');
+            const leftGroup = document.getElementById('header-left-group');
             
             if (this.config.location === 'header-center' && headerContainer) {
                 headerContainer.appendChild(this.widget);
-            } else if (this.config.location === 'header' && spacerGroup) {
-                spacerGroup.insertAdjacentElement('afterbegin', this.widget);
+            } else if (this.config.location === 'header' && leftGroup) {
+                leftGroup.appendChild(this.widget);
             } else if (headerContainer) {
                  headerContainer.appendChild(this.widget);
             } else {
