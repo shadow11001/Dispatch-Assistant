@@ -79,6 +79,20 @@ const TimerEngine = {
         window.TimerEngine = this;
         // Do not auto start the timer!
     },
+
+    reset: function() {
+        this.stop();
+        if (this.display) {
+            this.display.innerText = "00:00";
+        }
+        if (this.tooltip) {
+            this.tooltip.innerText = "";
+            this.tooltip.classList.add('hidden');
+        }
+        if (this.label) {
+            this.label.innerText = this.config?.defaultLabel || "SLA Time";
+        }
+    },
     
     start: function(durationMinutes = null) {
         if (!this.config || !this.config.enabled) return;
