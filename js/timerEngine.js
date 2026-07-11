@@ -94,12 +94,13 @@ const TimerEngine = {
         }
     },
     
-    start: function(durationMinutes = null) {
+    start: function(durationMinutes = null, tooltipText = null) {
         if (!this.config || !this.config.enabled) return;
         
         // Always reset on start so "start" clicks cleanly override
         this.isRunning = true;
         this.startTime = Date.now();
+        this.customTooltip = tooltipText;
         
         // Allow an override of the start time via duration (running downwards) or just keep tracking upwards
         if (durationMinutes) {
@@ -152,7 +153,7 @@ const TimerEngine = {
         // If it's a fixed countdown timer, we handle visualization separately
         if (isCountDown) {
             if (this.tooltip) {
-                this.tooltip.innerText = "Waiting...";
+                this.tooltip.innerText = this.customTooltip || "Waiting...";
                 this.tooltip.classList.remove('hidden');
             }
             this.widget.classList.remove('bg-theme-panel1', 'bg-green-500', 'bg-yellow-500', 'bg-red-500', 'animate-pulse');

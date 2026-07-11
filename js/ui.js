@@ -315,41 +315,25 @@ const UI = {
             let currentValue = this.formState[field.id] || "";
 
             if (field.type === 'timerStartButton') {
-                const btn = document.createElement('button');
-                btn.className = "mt-2 bg-theme-primary text-white font-bold py-2 px-4 rounded shadow hover:bg-theme-primaryhover w-auto min-w-[200px] transition";
-                btn.innerText = field.label || "Start Timer";
-                
-                // Expose timer options as fields
-                if (field.options && field.options.length > 0) {
-                    btn.setAttribute('data-target-timer', field.options[0]);
-                }
-                
-                // When clicked, invoke the manual timer start method
-                btn.onclick = (e) => {
-                    e.preventDefault();
-                    if (window.TimerEngine && typeof window.TimerEngine.manualStart === 'function') {
-                        window.TimerEngine.manualStart();
-                        btn.innerText = "Timer Running";
-                        btn.classList.add('opacity-50', 'cursor-not-allowed');
-                    }
-                };
-                inputObj = btn; // Set inputObj so it doesn't crash on appendChild later
-            } else if (field.type === 'timerStartButton') {
                 inputObj = document.createElement('button');
-                inputObj.className = "bg-theme-accentsec hover:bg-theme-primary transition text-white font-bold py-2 px-4 rounded shadow-sm text-sm w-full";
+                inputObj.className = "bg-theme-accentsec hover:bg-theme-primary transition text-white font-bold py-2 px-4 rounded shadow-sm text-sm w-full outline-none";
                 inputObj.innerText = field.label || "Start Timer";
                 
                 // Allow dynamic buttons to start the global TimerEngine for a specific duration
                 inputObj.onclick = (e) => {
                     e.preventDefault();
                     if (window.TimerEngine) {
-                        // Extract duration from field.duration or default to 5 minutes
                         let mins = parseInt(field.duration, 10);
                         if(isNaN(mins)) mins = 5; 
                         
-                        // Fully reset the timer 
+                        // Extract optional tooltip context
+                        let tooltipText = "";
+                        if (field.options && field.options.length > 0) {
+                             tooltipText = field.options[0];
+                        }
+                        
                         window.TimerEngine.stop();
-                        window.TimerEngine.start(mins);
+                        window.TimerEngine.start(mins, tooltipText);
                         
                         inputObj.innerText = "Running " + mins + " Min Timer...";
                         inputObj.classList.add('opacity-50', 'bg-green-600');
@@ -593,25 +577,30 @@ const UI = {
             let currentValue = this.formState[field.id] || "";
 
             if (field.type === 'timerStartButton') {
-                const btn = document.createElement('button');
-                btn.className = "mt-2 bg-theme-primary text-white font-bold py-2 px-4 rounded shadow hover:bg-theme-primaryhover w-full transition";
-                btn.innerText = field.label || "Start Timer";
+                inputObj = document.createElement('button');
+                inputObj.className = "bg-theme-accentsec hover:bg-theme-primary transition text-white font-bold py-2 px-4 rounded shadow-sm text-sm w-full outline-none";
+                inputObj.innerText = field.label || "Start Timer";
                 
-                // Expose timer options as fields
-                if (field.options && field.options.length > 0) {
-                    btn.setAttribute('data-target-timer', field.options[0]);
-                }
-                
-                // When clicked, invoke the manual timer start method
-                btn.onclick = (e) => {
+                // Allow dynamic buttons to start the global TimerEngine for a specific duration
+                inputObj.onclick = (e) => {
                     e.preventDefault();
-                    if (window.TimerEngine && typeof window.TimerEngine.manualStart === 'function') {
-                        window.TimerEngine.manualStart();
-                        btn.innerText = "Timer Running";
-                        btn.classList.add('opacity-50', 'cursor-not-allowed');
+                    if (window.TimerEngine) {
+                        let mins = parseInt(field.duration, 10);
+                        if(isNaN(mins)) mins = 5; 
+                        
+                        // Extract optional tooltip context
+                        let tooltipText = "";
+                        if (field.options && field.options.length > 0) {
+                             tooltipText = field.options[0];
+                        }
+                        
+                        window.TimerEngine.stop();
+                        window.TimerEngine.start(mins, tooltipText);
+                        
+                        inputObj.innerText = "Running " + mins + " Min Timer...";
+                        inputObj.classList.add('opacity-50', 'bg-green-600');
                     }
                 };
-                inputObj = btn; // Set inputObj so it doesn't crash on appendChild later
             } else if (field.type === 'radio') {
                 const radioGroup = document.createElement('div');
                 radioGroup.className = "flex space-x-4";
