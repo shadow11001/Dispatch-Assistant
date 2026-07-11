@@ -1,8 +1,8 @@
 window.DispatchAssistantConfig = {
-    "version": "1.1.0",
-    "lastUpdated": "2026-07-06",
+    "version": "1.0.0",
+    "lastUpdated": "2026-07-11",
     "author": "Andrew Toothman",
-    "changeDescription": "Imported profiles, added Dispatch profile and Dispatch parsing.",
+    "changeDescription": "Migrated Dispatch to its own standalone app. Overhauled note template formatting for Dispatch profile. Reverted version to 1.0.0",
     "history": [
         {
             "version": "1.1.0",
