@@ -70,7 +70,7 @@ window.DispatchAssistantConfig = {
                     "id": "phase-2-store",
                     "title": "Phase 2: Store Contact",
                     "sequence": 2,
-                    "activateIf": "emr_result === 'EMR Note Added'",
+                    "activateIf": "(emr_result === 'EMR Note Added') && (already_accepted === 'No' || already_accepted === '')",
                     "description": "Call Store Manager or Highest MOD."
                 },
                 {
@@ -112,7 +112,7 @@ window.DispatchAssistantConfig = {
                     "id": "phase-8-resolution",
                     "title": "Phase 8: Resolution & Acceptance",
                     "sequence": 8,
-                    "activateIf": "vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment'].includes(rm_action)",
+                    "activateIf": "vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment'].includes(rm_action) || already_accepted === 'Yes, Proceed to Close'",
                     "description": "Process the acceptance or wait for SC."
                 }
             ],
@@ -137,6 +137,17 @@ window.DispatchAssistantConfig = {
                     "label": "Store Number",
                     "type": "text",
                     "source": "parsed_site_number",
+                    "phase": "phase-1-init",
+                    "required": true
+                },
+                {
+                    "id": "already_accepted",
+                    "label": "Already Accepted / In Progress?",
+                    "type": "radio",
+                    "options": [
+                        "Yes, Proceed to Close",
+                        "No"
+                    ],
                     "phase": "phase-1-init",
                     "required": true
                 },
@@ -516,7 +527,7 @@ window.DispatchAssistantConfig = {
                         "Accepted in SC"
                     ],
                     "phase": "phase-8-resolution",
-                    "visibleIf": "tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment'].includes(rm_action) || vendor_name !== ''"
+                    "visibleIf": "tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment'].includes(rm_action) || vendor_name !== '' || already_accepted === 'Yes, Proceed to Close'"
                 }
             ],
             "sopSections": [
