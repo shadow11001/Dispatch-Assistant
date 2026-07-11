@@ -147,7 +147,40 @@ const UI = {
                  
                  if (this.alertInput) this.alertInput.value = '';
                  if (this.parsedContainer) this.parsedContainer.classList.add('hidden');
-                 if (this.dynamicQuestions) this.dynamicQuestions.innerHTML = '';
+                 if (this.dynamicQuestions) 
+        this.dynamicQuestions.innerHTML = '';
+
+        // Add a "Jump to Phase" Tool natively in the UI
+        const phaseJumperDiv = document.createElement('div');
+        phaseJumperDiv.className = "mb-4 pb-2 border-b border-theme-borderdark flex justify-between items-center";
+        
+        const jumpLabel = document.createElement('span');
+        jumpLabel.className = "text-xs font-bold text-theme-textmuted uppercase tracking-wider";
+        jumpLabel.innerText = "Current Phase";
+
+        const jumpSelect = document.createElement('select');
+        jumpSelect.className = "bg-theme-input border border-theme-border text-xs rounded text-theme-text ml-2 p-1 focus:ring-theme-primary focus:border-theme-primary outline-none";
+        
+        activePhases.forEach((p, index) => {
+            const opt = document.createElement('option');
+            opt.value = index;
+            opt.innerText = (index + 1) + ". " + p.title;
+            if (index === this.currentPhaseIndex) {
+                 opt.selected = true;
+            }
+            jumpSelect.appendChild(opt);
+        });
+
+        jumpSelect.addEventListener('change', (e) => {
+            this.currentPhaseIndex = parseInt(e.target.value, 10);
+            this.renderPhasedWorkflow();
+        });
+
+        phaseJumperDiv.appendChild(jumpLabel);
+        phaseJumperDiv.appendChild(jumpSelect);
+        this.dynamicQuestions.appendChild(phaseJumperDiv);
+
+
                  if (this.sopContainer) this.sopContainer.innerHTML = '<p class="text-theme-textmuted italic">Please parse an alert or select a dispatch type to view SOPs.</p>';
                  if (this.crystalAttributesContainer) this.crystalAttributesContainer.classList.add('hidden');
                  if (this.generatedNote) this.generatedNote.value = '';
