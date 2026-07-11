@@ -107,6 +107,13 @@ window.DispatchAssistantConfig = {
                     "sequence": 7,
                     "activateIf": "rm_action === 'No Answer / Voicemail Left' || rm_action === 'Nothing changes after 15 minutes' || fs_action === 'Assign a vendor' || rm_action === 'Assign a vendor'",
                     "description": "Manually assign the next eligible vendor."
+                },
+                {
+                    "id": "phase-8-resolution",
+                    "title": "Phase 8: Resolution & Acceptance",
+                    "sequence": 8,
+                    "activateIf": "vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment'].includes(rm_action)",
+                    "description": "Process the acceptance or wait for SC."
                 }
             ],
             "fields": [
@@ -115,6 +122,13 @@ window.DispatchAssistantConfig = {
                     "label": "Reference Number",
                     "type": "text",
                     "source": "parsed_reference_number",
+                    "phase": "phase-1-init",
+                    "required": true
+                },
+                {
+                    "id": "work_order",
+                    "label": "Work Order Number",
+                    "type": "text",
                     "phase": "phase-1-init",
                     "required": true
                 },
@@ -129,16 +143,35 @@ window.DispatchAssistantConfig = {
                 {
                     "id": "trade",
                     "label": "Trade",
-                    "type": "text",
+                    "type": "select",
                     "phase": "phase-1-init",
-                    "required": true
+                    "required": true,
+                    "options": [
+                        "Refrigeration",
+                        "HVAC",
+                        "Lighting",
+                        "General Repair",
+                        "Other"
+                    ]
                 },
                 {
                     "id": "priority",
                     "label": "Priority",
-                    "type": "text",
+                    "type": "select",
                     "phase": "phase-1-init",
-                    "required": true
+                    "required": true,
+                    "options": [
+                        "PE-Emergency-Onsite w/i 2 hours",
+                        "PE-Emergency-Onsite w/i 4 hours",
+                        "P1-Onsite w/i 24 hours",
+                        "P2-Onsite w/i 48 hours",
+                        "P3-Onsite w/i 3 days",
+                        "P5-Onsite w/i 5 days",
+                        "P7-Onsite w/i 7 days",
+                        "P21-Onsite w/i 21 days",
+                        "Scheduled Service",
+                        "Tech Initiated"
+                    ]
                 },
                 {
                     "id": "assets",
@@ -167,6 +200,26 @@ window.DispatchAssistantConfig = {
                     "source": "parsed_contact",
                     "phase": "phase-2-store",
                     "required": true
+                },
+                {
+                    "id": "contact_position",
+                    "label": "Contact Position",
+                    "type": "select",
+                    "options": [
+                        "Store Manager",
+                        "Team Lead",
+                        "Coach",
+                        "Other"
+                    ],
+                    "phase": "phase-2-store",
+                    "required": true
+                },
+                {
+                    "id": "contact_position_other",
+                    "label": "Other Position",
+                    "type": "text",
+                    "visibleIf": "contact_position === 'Other'",
+                    "phase": "phase-2-store"
                 },
                 {
                     "id": "store_answ",
@@ -295,6 +348,25 @@ window.DispatchAssistantConfig = {
                     "required": true
                 },
                 {
+                    "id": "fs_new_priority",
+                    "label": "Lowered Priority",
+                    "type": "select",
+                    "options": [
+                        "PE-Emergency-Onsite w/i 2 hours",
+                        "PE-Emergency-Onsite w/i 4 hours",
+                        "P1-Onsite w/i 24 hours",
+                        "P2-Onsite w/i 48 hours",
+                        "P3-Onsite w/i 3 days",
+                        "P5-Onsite w/i 5 days",
+                        "P7-Onsite w/i 7 days",
+                        "P21-Onsite w/i 21 days",
+                        "Scheduled Service",
+                        "Tech Initiated"
+                    ],
+                    "phase": "phase-5-fs",
+                    "visibleIf": "fs_action === 'Priority Lowered'"
+                },
+                {
                     "id": "timer_15min_fs",
                     "label": "Wait 15 Mins For FS Assignment/Acceptance",
                     "type": "timerStartButton",
@@ -330,6 +402,25 @@ window.DispatchAssistantConfig = {
                     "required": true
                 },
                 {
+                    "id": "rm_new_priority",
+                    "label": "Lowered Priority",
+                    "type": "select",
+                    "options": [
+                        "PE-Emergency-Onsite w/i 2 hours",
+                        "PE-Emergency-Onsite w/i 4 hours",
+                        "P1-Onsite w/i 24 hours",
+                        "P2-Onsite w/i 48 hours",
+                        "P3-Onsite w/i 3 days",
+                        "P5-Onsite w/i 5 days",
+                        "P7-Onsite w/i 7 days",
+                        "P21-Onsite w/i 21 days",
+                        "Scheduled Service",
+                        "Tech Initiated"
+                    ],
+                    "phase": "phase-6-rm",
+                    "visibleIf": "rm_action === 'Lowers priority'"
+                },
+                {
                     "id": "timer_15min_rm",
                     "label": "Wait 15 Mins For RM Assignment/Acceptance",
                     "type": "timerStartButton",
@@ -356,6 +447,57 @@ window.DispatchAssistantConfig = {
                     "required": true
                 },
                 {
+                    "id": "vendor_status",
+                    "label": "Vendor 1 Status",
+                    "type": "select",
+                    "options": [
+                        "Waiting for Acceptance",
+                        "Did Not Accept (Next Vendor)",
+                        "Accepted in SC"
+                    ],
+                    "phase": "phase-7-vendor",
+                    "visibleIf": "vendor_name !== ''",
+                    "required": true
+                },
+                {
+                    "id": "vendor_name_2",
+                    "label": "Vendor 2 Name",
+                    "type": "text",
+                    "phase": "phase-7-vendor",
+                    "visibleIf": "vendor_status === 'Did Not Accept (Next Vendor)'"
+                },
+                {
+                    "id": "vendor_rank_2",
+                    "label": "Vendor 2 Rank",
+                    "type": "text",
+                    "phase": "phase-7-vendor",
+                    "visibleIf": "vendor_name_2 !== ''"
+                },
+                {
+                    "id": "timer_30min_vendor2",
+                    "label": "Start 30-Minute Vendor Timer",
+                    "type": "timerStartButton",
+                    "duration": "30",
+                    "options": [
+                        "Wait 30 mins for Vendor 2"
+                    ],
+                    "phase": "phase-7-vendor",
+                    "visibleIf": "vendor_name_2 !== ''"
+                },
+                {
+                    "id": "vendor_status_2",
+                    "label": "Vendor 2 Status",
+                    "type": "select",
+                    "options": [
+                        "Waiting for Acceptance",
+                        "Did Not Accept (List Exhausted)",
+                        "Accepted in SC"
+                    ],
+                    "phase": "phase-7-vendor",
+                    "visibleIf": "vendor_name_2 !== ''",
+                    "required": true
+                },
+                {
                     "id": "timer_30min_vendor",
                     "label": "Start 30-Minute Vendor Timer",
                     "type": "timerStartButton",
@@ -373,7 +515,7 @@ window.DispatchAssistantConfig = {
                     "options": [
                         "Accepted in SC"
                     ],
-                    "phase": "phase-1-init",
+                    "phase": "phase-8-resolution",
                     "visibleIf": "tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment'].includes(rm_action) || vendor_name !== ''"
                 }
             ],
@@ -437,6 +579,12 @@ window.DispatchAssistantConfig = {
                     "title": "🎉 Work Order Accepted",
                     "showIf": "sc_acceptance === 'Accepted in SC' || fs_action === 'Priority Lowered' || fs_action === 'Other Approved Result' || rm_action === 'Lowers priority' || rm_action === 'Other Approved Result'",
                     "content": "<div class=\"rounded border-l-4 border-green-500 bg-green-900/20 p-3 text-sm\">\n                <h4 class=\"font-bold text-green-400 text-lg mb-2\">Process Completed!</h4>\n                <p class=\"mb-3\">The work order has been formally accepted or resolved by leadership in ServiceChannel. You may now close the Oracle task.</p>\n                <div class=\"flex items-center justify-between\">\n                    <h4 class=\"font-bold text-green-400\">Closing Note Template</h4>\n                    <button class=\"rounded bg-green-600 px-2 py-1 text-xs hover:bg-green-700 text-white font-bold\" onclick=\"navigator.clipboard.writeText(`Current ServiceChannel assignment checked. Work Order shows Accepted / Active / Priority Lowered / Other Approved Result. Closing the Oracle task as resolved.`)\">Copy Oracle Note</button>\n                </div>\n                <pre class=\"mt-2 rounded-lg border border-gray-700 bg-gray-900 p-3\"><code>Current ServiceChannel assignment checked. Work Order shows Accepted / Active / Priority Lowered / Other Approved Result. Closing the Oracle task as resolved.</code></pre>\n            </div>"
+                },
+                {
+                    "id": "terminal-exhausted",
+                    "title": "🛑 Workflow Halted: List Exhausted",
+                    "showIf": "vendor_status_2 === 'Did Not Accept (List Exhausted)'",
+                    "content": "<div class=\"rounded border-l-4 border-red-500 bg-red-900/20 p-3 text-sm\">\n            <h4 class=\"font-bold text-red-400 mb-2\">Process Exhausted</h4>\n            <p>No approved vendors are left. Add a note and ask the A1 or Operations Manager for help.</p>\n            <div class=\"mt-4 flex items-center justify-between\">\n                <h4 class=\"font-bold text-red-400\">Escalation Note Template</h4>\n                <button class=\"rounded bg-red-600 px-2 py-1 text-xs hover:bg-red-700 text-white font-bold\" onclick=\"navigator.clipboard.writeText(`Reference {dispatch_ref} | Vendor list exhausted. Escalating to A1/Operations Manager for assignment help.`)\">Copy</button>\n            </div>\n            <pre class=\"mt-2 rounded-lg border border-gray-700 bg-gray-900 p-3 whitespace-pre-wrap\"><code>Reference {dispatch_ref} | Vendor list exhausted. Escalating to A1/Operations Manager for assignment help.</code></pre>\n        </div>"
                 }
             ]
         }
