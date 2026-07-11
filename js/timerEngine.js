@@ -133,7 +133,7 @@ const TimerEngine = {
         const totalSeconds = Math.floor(displayMs / 1000);
         const minutes = Math.floor(totalSeconds / 60);
         const seconds = totalSeconds % 60;
-        this.display.innerText = \`\${minutes.toString().padStart(2, '0')}:\${seconds.toString().padStart(2, '0')}\`;
+        this.display.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
         // If it's a fixed countdown timer, we handle visualization separately
         if (isCountDown) {
