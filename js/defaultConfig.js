@@ -112,7 +112,7 @@ window.DispatchAssistantConfig = {
                     "id": "phase-8-resolution",
                     "title": "Phase 8: Resolution & Acceptance",
                     "sequence": 8,
-                    "activateIf": "vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment'].includes(rm_action) || already_accepted === 'Yes, Proceed to Close'",
+                    "activateIf": "vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment'].includes(rm_action) || already_accepted === 'Yes, Proceed to Close' || vendor_status_2 === 'Did Not Accept (List Exhausted)'",
                     "description": "Process the acceptance or wait for SC."
                 }
             ],
@@ -527,7 +527,7 @@ window.DispatchAssistantConfig = {
                         "Accepted in SC"
                     ],
                     "phase": "phase-8-resolution",
-                    "visibleIf": "tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment'].includes(rm_action) || vendor_name !== '' || already_accepted === 'Yes, Proceed to Close'"
+                    "visibleIf": "tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment'].includes(rm_action) || vendor_name !== '' || already_accepted === 'Yes, Proceed to Close' || vendor_status_2 === 'Did Not Accept (List Exhausted)'"
                 }
             ],
             "sopSections": [
@@ -595,7 +595,7 @@ window.DispatchAssistantConfig = {
                     "id": "terminal-exhausted",
                     "title": "🛑 Workflow Halted: List Exhausted",
                     "showIf": "vendor_status_2 === 'Did Not Accept (List Exhausted)'",
-                    "content": "<div class=\"rounded border-l-4 border-red-500 bg-red-900/20 p-3 text-sm\">\n            <h4 class=\"font-bold text-red-400 mb-2\">Process Exhausted</h4>\n            <p>No approved vendors are left. Add a note and ask the A1 or Operations Manager for help.</p>\n            <div class=\"mt-4 flex items-center justify-between\">\n                <h4 class=\"font-bold text-red-400\">Escalation Note Template</h4>\n                <button class=\"rounded bg-red-600 px-2 py-1 text-xs hover:bg-red-700 text-white font-bold\" onclick=\"navigator.clipboard.writeText(`Reference {dispatch_ref} | Vendor list exhausted. Escalating to A1/Operations Manager for assignment help.`)\">Copy</button>\n            </div>\n            <pre class=\"mt-2 rounded-lg border border-gray-700 bg-gray-900 p-3 whitespace-pre-wrap\"><code>Reference {dispatch_ref} | Vendor list exhausted. Escalating to A1/Operations Manager for assignment help.</code></pre>\n        </div>"
+                    "content": "<div class=\"rounded border-l-4 border-red-500 bg-red-900/20 p-3 text-sm\">\n            <h4 class=\"font-bold text-red-400 mb-2\">Process Exhausted - Re-Escalate</h4>\n            <p>No approved vendors are left. Re-engage the FS Manager or Operations Manager for manual intervention.</p>\n            <pre class=\"mt-2 bg-gray-900 border border-gray-700 rounded-lg p-3 whitespace-pre-wrap\"><code>Hello, this is [Your Name] calling from Upstream Facility Services regarding emergency {trade} Work Order for Store {store_number}.\nWe have exhausted the eligible vendor list and currently have no coverage. Please advise on next steps.</code></pre>\n            <div class=\"mt-4 flex items-center justify-between\">\n                <h4 class=\"font-bold text-red-400\">Escalation Note Template</h4>\n                <button class=\"rounded bg-red-600 px-2 py-1 text-xs hover:bg-red-700 text-white font-bold\" onclick=\"navigator.clipboard.writeText(`Reference {dispatch_ref} | Vendor list exhausted. Escalating back to FS/Operations Manager for assignment help.`)\">Copy</button>\n            </div>\n            <pre class=\"mt-2 rounded-lg border border-gray-700 bg-gray-900 p-3 whitespace-pre-wrap\"><code>Reference {dispatch_ref} | Vendor list exhausted. Escalating back to FS/Operations Manager for assignment help.</code></pre>\n        </div>"
                 }
             ]
         }
