@@ -39,13 +39,13 @@ const TimerEngine = {
             `;
             
             const headerContainer = document.querySelector('header');
-            const titleElement = document.querySelector('header .walmart-logo-container') || document.querySelector('header h1.classic-title');
+            // Insert directly before the Type Tabs Slider
+            const spacerGroup = document.querySelector('header .flex.items-center.space-x-6.mr-2');
             
             if (this.config.location === 'header-center' && headerContainer) {
                 headerContainer.appendChild(this.widget);
-            } else if (this.config.location === 'header' && titleElement) {
-                // Insert directly after the title/logo element
-                titleElement.insertAdjacentElement('afterend', this.widget);
+            } else if (this.config.location === 'header' && spacerGroup) {
+                spacerGroup.insertAdjacentElement('afterbegin', this.widget);
             } else if (headerContainer) {
                  headerContainer.appendChild(this.widget);
             } else {

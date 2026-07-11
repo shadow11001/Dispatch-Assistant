@@ -103,12 +103,8 @@ const App = {
                 // Allow timer options internally to force-override the start schema
                 const forceManual = profile.timerConfig && profile.timerConfig.requireManualStart;
 
-                // Stop auto-starting if Dispatch mode OR heavily overridden by manual block policy
-                if (this.config.mode !== 'DISPATCH' && profile.type !== 'DISPATCH' && !forceManual) {
-                    TimerEngine.start();
-                } else {
-                    console.log("Timer auto-start suppressed. Waiting for user interaction.");
-                }
+                // Stop auto-starting explicitly. We rely purely on workflow phase trigger buttons now.
+                console.log("Timer auto-start suppressed explicitly. Waiting for user interaction via form buttons.");
             } else {
                 console.log("Timer is disabled or missing on this profile.");
             }
