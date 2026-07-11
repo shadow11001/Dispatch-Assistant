@@ -597,7 +597,7 @@ window.DispatchAssistantConfig = {
                 {
                     "id": "success-accepted",
                     "title": "🎉 Work Order Accepted",
-                    "showIf": "wo_status && wo_status !== ''",
+                    "showIf": "wo_status !== '' && wo_status !== undefined",
                     "content": "<div class=\"rounded border-l-4 border-green-500 bg-green-900/20 p-3 text-sm\">\n                <h4 class=\"font-bold text-green-400 text-lg mb-2\">Process Completed!</h4>\n                <p class=\"mb-3\">The work order has been formally accepted or resolved by leadership in ServiceChannel. You may now close the Oracle task.</p>\n                <div class=\"flex items-center justify-between\">\n                    <h4 class=\"font-bold text-green-400\">Closing Note Template</h4>\n                    <button class=\"rounded bg-green-600 px-2 py-1 text-xs hover:bg-green-700 text-white font-bold\" onclick=\"navigator.clipboard.writeText(`Reference#: {dispatch_ref} | Current ServiceChannel assignment checked | Work Order shows {wo_status} | Closing the Oracle task as resolved.`)\">Copy Oracle Note</button>\n                </div>\n                <pre class=\"mt-2 rounded-lg border border-gray-700 bg-gray-900 p-3\"><code>Reference#: {dispatch_ref} | Current ServiceChannel assignment checked | Work Order shows {wo_status} | Closing the Oracle task as resolved.</code></pre>\n            </div>",
                     "showOnlyOnPhase": "phase-8-resolution"
                 },

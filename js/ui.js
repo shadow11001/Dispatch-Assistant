@@ -792,8 +792,19 @@ const UI = {
             visibleSections.forEach(section => {
                 let contentText = section.content || '';
                 // Dynamic math/variable interpolation inside SOP content!
-                if (contentText.includes('{') && contentText.includes('}')) {
-                    contentText = contentText.replace(/\{([^}]+)\}/g, (match, expression) => {
+                if (contentText.includes('{') && contentText.includes('}')) {                      // Custom string formatting for priority bounds before standard vars
+                      contentText = contentText.replace(/{_fs_lowered}/g, () => {
+                          const action = this.formState['fs_action'];
+                          const newPrio = this.formState['fs_new_priority'];
+                          return (action === 'Priority Lowered' && newPrio) ? ' | New Priority: ' + newPrio : '';
+                      });
+
+                      contentText = contentText.replace(/{_rm_lowered}/g, () => {
+                          const action = this.formState['rm_action'];
+                          const newPrio = this.formState['rm_new_priority'];
+                          return (action === 'Lowers priority' && newPrio) ? ' | New Priority: ' + newPrio : '';
+                      });
+                                          contentText = contentText.replace(/\{([^}]+)\}/g, (match, expression) => {
                         // First see if it exists nakedly inside form data (raw passthrough, like "{dispatch_ref}")
                         if (this.formState[expression] !== undefined && this.formState[expression] !== "") {
                             return this.formState[expression];
