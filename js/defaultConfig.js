@@ -112,7 +112,7 @@ window.DispatchAssistantConfig = {
                     "id": "phase-8-resolution",
                     "title": "Phase 8: Resolution & Acceptance",
                     "sequence": 8,
-                    "activateIf": "resume_phase === 'Phase 8: Resolution (Already Accepted)' || vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment'].includes(rm_action) || vendor_status_2 === 'Did Not Accept (List Exhausted)'",
+                    "activateIf": "resume_phase === 'Phase 8: Resolution (Already Accepted)' || vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Priority Lowered', 'Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept', 'Other Approved Result'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment', 'Lowers priority', 'Other Approved Result'].includes(rm_action) || vendor_status_2 === 'Did Not Accept (List Exhausted)'",
                     "description": "Process the acceptance or wait for SC."
                 }
             ],
@@ -529,24 +529,14 @@ window.DispatchAssistantConfig = {
                     "label": "Work Order Status",
                     "type": "select",
                     "options": [
+                        "",
                         "Accepted",
                         "Active",
                         "Priority Lowered",
                         "Other Approved Result"
                     ],
                     "phase": "phase-8-resolution",
-                    "required": true,
-                    "visibleIf": "resume_phase === 'Phase 8: Resolution (Already Accepted)' || tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment'].includes(rm_action) || vendor_name !== '' || vendor_status_2 === 'Did Not Accept (List Exhausted)'"
-                },
-                {
-                    "id": "sc_acceptance",
-                    "label": "Formally Accepted in SC?",
-                    "type": "radio",
-                    "options": [
-                        "Accepted in SC"
-                    ],
-                    "phase": "phase-8-resolution",
-                    "visibleIf": "resume_phase === 'Phase 8: Resolution (Already Accepted)' || tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment'].includes(rm_action) || vendor_name !== '' || vendor_status_2 === 'Did Not Accept (List Exhausted)'"
+                    "required": true
                 }
             ],
             "sopSections": [
@@ -607,14 +597,16 @@ window.DispatchAssistantConfig = {
                 {
                     "id": "success-accepted",
                     "title": "🎉 Work Order Accepted",
-                    "showIf": "sc_acceptance === 'Accepted in SC' || fs_action === 'Priority Lowered' || fs_action === 'Other Approved Result' || rm_action === 'Lowers priority' || rm_action === 'Other Approved Result'",
-                    "content": "<div class=\"rounded border-l-4 border-green-500 bg-green-900/20 p-3 text-sm\">\n                <h4 class=\"font-bold text-green-400 text-lg mb-2\">Process Completed!</h4>\n                <p class=\"mb-3\">The work order has been formally accepted or resolved by leadership in ServiceChannel. You may now close the Oracle task.</p>\n                <div class=\"flex items-center justify-between\">\n                    <h4 class=\"font-bold text-green-400\">Closing Note Template</h4>\n                    <button class=\"rounded bg-green-600 px-2 py-1 text-xs hover:bg-green-700 text-white font-bold\" onclick=\"navigator.clipboard.writeText(`Reference#: {dispatch_ref} | Current ServiceChannel assignment checked | Work Order shows {wo_status} | Closing the Oracle task as resolved.`)\">Copy Oracle Note</button>\n                </div>\n                <pre class=\"mt-2 rounded-lg border border-gray-700 bg-gray-900 p-3\"><code>Reference#: {dispatch_ref} | Current ServiceChannel assignment checked | Work Order shows {wo_status} | Closing the Oracle task as resolved.</code></pre>\n            </div>"
+                    "showIf": "wo_status && wo_status !== ''",
+                    "content": "<div class=\"rounded border-l-4 border-green-500 bg-green-900/20 p-3 text-sm\">\n                <h4 class=\"font-bold text-green-400 text-lg mb-2\">Process Completed!</h4>\n                <p class=\"mb-3\">The work order has been formally accepted or resolved by leadership in ServiceChannel. You may now close the Oracle task.</p>\n                <div class=\"flex items-center justify-between\">\n                    <h4 class=\"font-bold text-green-400\">Closing Note Template</h4>\n                    <button class=\"rounded bg-green-600 px-2 py-1 text-xs hover:bg-green-700 text-white font-bold\" onclick=\"navigator.clipboard.writeText(`Reference#: {dispatch_ref} | Current ServiceChannel assignment checked | Work Order shows {wo_status} | Closing the Oracle task as resolved.`)\">Copy Oracle Note</button>\n                </div>\n                <pre class=\"mt-2 rounded-lg border border-gray-700 bg-gray-900 p-3\"><code>Reference#: {dispatch_ref} | Current ServiceChannel assignment checked | Work Order shows {wo_status} | Closing the Oracle task as resolved.</code></pre>\n            </div>",
+                    "showOnlyOnPhase": "phase-8-resolution"
                 },
                 {
                     "id": "terminal-exhausted",
                     "title": "🛑 Workflow Halted: List Exhausted",
                     "showIf": "vendor_status_2 === 'Did Not Accept (List Exhausted)'",
-                    "content": "<div class=\"rounded border-l-4 border-red-500 bg-red-900/20 p-3 text-sm\">\n            <h4 class=\"font-bold text-red-400 mb-2\">Process Exhausted - Re-Escalate</h4>\n            <p>No approved vendors are left. Re-engage the FS Manager or Operations Manager for manual intervention.</p>\n            <pre class=\"mt-2 bg-gray-900 border border-gray-700 rounded-lg p-3 whitespace-pre-wrap\"><code>Hello, this is [Your Name] calling from Upstream Facility Services regarding emergency {trade} Work Order for Store {store_number}.\nWe have exhausted the eligible vendor list and currently have no coverage. Please advise on next steps.</code></pre>\n            <div class=\"mt-4 flex items-center justify-between\">\n                <h4 class=\"font-bold text-red-400\">Escalation Note Template</h4>\n                <button class=\"rounded bg-red-600 px-2 py-1 text-xs hover:bg-red-700 text-white font-bold\" onclick=\"navigator.clipboard.writeText(`Reference#: {dispatch_ref} | Vendor list exhausted | Escalating back to FS/Operations Manager for assignment help.`)\">Copy</button>\n            </div>\n            <pre class=\"mt-2 rounded-lg border border-gray-700 bg-gray-900 p-3 whitespace-pre-wrap\"><code>Reference#: {dispatch_ref} | Vendor list exhausted | Escalating back to FS/Operations Manager for assignment help.</code></pre>\n        </div>"
+                    "content": "<div class=\"rounded border-l-4 border-red-500 bg-red-900/20 p-3 text-sm\">\n            <h4 class=\"font-bold text-red-400 mb-2\">Process Exhausted - Re-Escalate</h4>\n            <p>No approved vendors are left. Re-engage the FS Manager or Operations Manager for manual intervention.</p>\n            <pre class=\"mt-2 bg-gray-900 border border-gray-700 rounded-lg p-3 whitespace-pre-wrap\"><code>Hello, this is [Your Name] calling from Upstream Facility Services regarding emergency {trade} Work Order for Store {store_number}.\nWe have exhausted the eligible vendor list and currently have no coverage. Please advise on next steps.</code></pre>\n            <div class=\"mt-4 flex items-center justify-between\">\n                <h4 class=\"font-bold text-red-400\">Escalation Note Template</h4>\n                <button class=\"rounded bg-red-600 px-2 py-1 text-xs hover:bg-red-700 text-white font-bold\" onclick=\"navigator.clipboard.writeText(`Reference#: {dispatch_ref} | Vendor list exhausted | Escalating back to FS/Operations Manager for assignment help.`)\">Copy</button>\n            </div>\n            <pre class=\"mt-2 rounded-lg border border-gray-700 bg-gray-900 p-3 whitespace-pre-wrap\"><code>Reference#: {dispatch_ref} | Vendor list exhausted | Escalating back to FS/Operations Manager for assignment help.</code></pre>\n        </div>",
+                    "showOnlyOnPhase": "phase-8-resolution"
                 }
             ]
         }
