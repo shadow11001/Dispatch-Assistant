@@ -248,15 +248,7 @@ const UI = {
     renderPhasedWorkflow: function() {
         if (!this.currentProfile || !this.currentProfile.investigationPhases) return;
 
-        let activePhases = DecisionEngine.getActivePhases(this.currentProfile.investigationPhases, this.formState);
-        if (this.forcePhaseOverride) {
-            const forcedPhase = this.currentProfile.investigationPhases.find(p => p.id === this.forcePhaseOverride);
-            if (forcedPhase && !activePhases.some(p => p.id === forcedPhase.id)) {
-                activePhases.push(forcedPhase); // temporarily append it so it can be viewed
-            }
-            this.currentPhaseIndex = activePhases.findIndex(p => p.id === this.forcePhaseOverride);
-            this.forcePhaseOverride = null; // consume it
-        }
+        const activePhases = DecisionEngine.getActivePhases(this.currentProfile.investigationPhases, this.formState);
         const currentPhase = activePhases[this.currentPhaseIndex];
 
         if (!currentPhase) {
@@ -279,41 +271,6 @@ const UI = {
 
         
         this.dynamicQuestions.innerHTML = '';
-
-        // Add a "Jump to Phase" Tool inside the phase indicator
-        const phaseJumperDiv = document.createElement('div');
-        phaseJumperDiv.className = "mb-4 pb-2 border-b border-theme-borderdark flex justify-between items-center";
-        
-        const jumpLabel = document.createElement('span');
-        jumpLabel.className = "text-xs font-bold text-theme-textmuted uppercase tracking-wider";
-        jumpLabel.innerText = "Current Phase";
-
-        const jumpSelect = document.createElement('select');
-        jumpSelect.className = "bg-theme-input border border-theme-border text-xs rounded text-theme-text ml-2 p-1 focus:ring-theme-primary focus:border-theme-primary outline-none max-w-[200px]";
-        
-        this.currentProfile.investigationPhases.forEach((p, index) => {
-            const opt = document.createElement('option');
-            // We use the raw phase array for arbitrary jumping so they can force-see a phase that might otherwise be hidden by activateIf
-            opt.value = p.id;
-            opt.innerText = p.title;
-            if (currentPhase && p.id === currentPhase.id) {
-                 opt.selected = true;
-            }
-            jumpSelect.appendChild(opt);
-        });
-
-        jumpSelect.addEventListener('change', (e) => {
-            const selectedPhaseId = e.target.value;
-            // Force this phase to be at the top of our sequence logic temporarily or safely shift index
-            // Since activePhases filters them out, we should inject dummy data into formState to make it appear, or just force the activePhases list.
-            // Easy way: Add an explicit override
-            this.forcePhaseOverride = selectedPhaseId;
-            this.renderPhasedWorkflow();
-        });
-
-        phaseJumperDiv.appendChild(jumpLabel);
-        phaseJumperDiv.appendChild(jumpSelect);
-        this.dynamicQuestions.appendChild(phaseJumperDiv);
 
 
         // Render Phase Indicator

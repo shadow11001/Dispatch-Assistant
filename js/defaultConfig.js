@@ -70,49 +70,49 @@ window.DispatchAssistantConfig = {
                     "id": "phase-2-store",
                     "title": "Phase 2: Store Contact",
                     "sequence": 2,
-                    "activateIf": "(emr_result === 'EMR Note Added') && (already_accepted === 'No' || already_accepted === '')",
+                    "activateIf": "(emr_result === 'EMR Note Added') && (resume_phase === 'Start from Beginning' || resume_phase === '' || resume_phase === undefined)",
                     "description": "Call Store Manager or Highest MOD."
                 },
                 {
                     "id": "phase-3-tech1",
                     "title": "Phase 3: Tech Contact Attempt 1",
                     "sequence": 3,
-                    "activateIf": "store_answ === 'Answered' || store_answ === 'No Answer / Left Voicemail'",
+                    "activateIf": "resume_phase === 'Phase 3: Tech Call 1' || store_answ === 'Answered' || store_answ === 'No Answer / Left Voicemail'",
                     "description": "Call the assigned technician."
                 },
                 {
                     "id": "phase-4-tech2",
                     "title": "Phase 4: Tech Contact Attempt 2",
                     "sequence": 4,
-                    "activateIf": "tech1_answ === 'No Answer / Left Voicemail'",
+                    "activateIf": "resume_phase === 'Phase 4: Tech Call 2' || tech1_answ === 'No Answer / Left Voicemail'",
                     "description": "Wait 5 minutes, then call tech again."
                 },
                 {
                     "id": "phase-5-fs",
                     "title": "Phase 5: FS Manager Escalation",
                     "sequence": 5,
-                    "activateIf": "['Declined', 'Cannot Meet SLA', 'Cannot Support Work', 'Asks for new assignment', 'No clear answer'].includes(tech1_answ) || ['Declined', 'Cannot Meet SLA', 'Cannot Support Work', 'Asks for new assignment', 'No Answer / Left Voicemail'].includes(tech2_answ)",
+                    "activateIf": "resume_phase === 'Phase 5: FS Manager' || ['Declined', 'Cannot Meet SLA', 'Cannot Support Work', 'Asks for new assignment', 'No clear answer'].includes(tech1_answ) || ['Declined', 'Cannot Meet SLA', 'Cannot Support Work', 'Asks for new assignment', 'No Answer / Left Voicemail'].includes(tech2_answ)",
                     "description": "Contact FS Manager for next steps."
                 },
                 {
                     "id": "phase-6-rm",
                     "title": "Phase 6: Regional Manager Escalation",
                     "sequence": 6,
-                    "activateIf": "fs_action === 'No Answer / Voicemail Left' || fs_action === 'Nothing changes after 15 minutes'",
+                    "activateIf": "resume_phase === 'Phase 6: Regional Manager' || fs_action === 'No Answer / Voicemail Left' || fs_action === 'Nothing changes after 15 minutes'",
                     "description": "Contact RM Manager for next steps."
                 },
                 {
                     "id": "phase-7-vendor",
                     "title": "Phase 7: Vendor Assignment",
                     "sequence": 7,
-                    "activateIf": "rm_action === 'No Answer / Voicemail Left' || rm_action === 'Nothing changes after 15 minutes' || fs_action === 'Assign a vendor' || rm_action === 'Assign a vendor'",
+                    "activateIf": "resume_phase === 'Phase 7: Vendor Assignment' || rm_action === 'No Answer / Voicemail Left' || rm_action === 'Nothing changes after 15 minutes' || fs_action === 'Assign a vendor' || rm_action === 'Assign a vendor'",
                     "description": "Manually assign the next eligible vendor."
                 },
                 {
                     "id": "phase-8-resolution",
                     "title": "Phase 8: Resolution & Acceptance",
                     "sequence": 8,
-                    "activateIf": "vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment'].includes(rm_action) || already_accepted === 'Yes, Proceed to Close' || vendor_status_2 === 'Did Not Accept (List Exhausted)'",
+                    "activateIf": "resume_phase === 'Phase 8: Resolution (Already Accepted)' || vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment'].includes(rm_action) || vendor_status_2 === 'Did Not Accept (List Exhausted)'",
                     "description": "Process the acceptance or wait for SC."
                 }
             ],
@@ -137,17 +137,6 @@ window.DispatchAssistantConfig = {
                     "label": "Store Number",
                     "type": "text",
                     "source": "parsed_site_number",
-                    "phase": "phase-1-init",
-                    "required": true
-                },
-                {
-                    "id": "already_accepted",
-                    "label": "Already Accepted / In Progress?",
-                    "type": "radio",
-                    "options": [
-                        "Yes, Proceed to Close",
-                        "No"
-                    ],
                     "phase": "phase-1-init",
                     "required": true
                 },
@@ -200,6 +189,22 @@ window.DispatchAssistantConfig = {
                         "Duplicate Work Order",
                         "Power Outage",
                         "EMR Note Added"
+                    ],
+                    "phase": "phase-1-init",
+                    "required": true
+                },
+                {
+                    "id": "resume_phase",
+                    "label": "Start Workflow At",
+                    "type": "select",
+                    "options": [
+                        "Start from Beginning",
+                        "Phase 3: Tech Call 1",
+                        "Phase 4: Tech Call 2",
+                        "Phase 5: FS Manager",
+                        "Phase 6: Regional Manager",
+                        "Phase 7: Vendor Assignment",
+                        "Phase 8: Resolution (Already Accepted)"
                     ],
                     "phase": "phase-1-init",
                     "required": true
@@ -527,7 +532,7 @@ window.DispatchAssistantConfig = {
                         "Accepted in SC"
                     ],
                     "phase": "phase-8-resolution",
-                    "visibleIf": "tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment'].includes(rm_action) || vendor_name !== '' || already_accepted === 'Yes, Proceed to Close' || vendor_status_2 === 'Did Not Accept (List Exhausted)'"
+                    "visibleIf": "resume_phase === 'Phase 8: Resolution (Already Accepted)' || tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment'].includes(rm_action) || vendor_name !== '' || vendor_status_2 === 'Did Not Accept (List Exhausted)'"
                 }
             ],
             "sopSections": [
