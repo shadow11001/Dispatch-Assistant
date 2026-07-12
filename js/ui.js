@@ -409,13 +409,16 @@ const UI = {
                             
                             for (let token of assetTokens) {
                                 if (token && (label === token || groupingLabel === token)) {
-                                    // Found a match
-                                    matchedModules.push({
-                                        token: token,
-                                        label: label,
-                                        rackCommLoss: node.rackCommLoss,
-                                        modCommLoss: node.modCommLoss
-                                    });
+                                    // Check if we already matched this exact token (to prevent 28 duplicate blocks)
+                                    const alreadyMatched = matchedModules.some(m => m.token === token);
+                                    if (!alreadyMatched) {
+                                        matchedModules.push({
+                                            token: token,
+                                            label: label,
+                                            rackCommLoss: node.rackCommLoss,
+                                            modCommLoss: node.modCommLoss
+                                        });
+                                    }
                                     break; // Only match once per node
                                 }
                             }
