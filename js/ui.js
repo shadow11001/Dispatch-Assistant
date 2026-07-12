@@ -243,6 +243,22 @@ const UI = {
                         // Track extracted phones to display copy buttons
                         if (!this.scContacts) this.scContacts = {};
 
+                        // Map secondary details from woData if available
+                        if (e.detail.woData) {
+                            if (e.detail.woData.store && (!this.formState['store_number'] || this.formState['store_number'].trim() === "")) {
+                                this.formState['store_number'] = e.detail.woData.store;
+                                stateUpdated = true;
+                            }
+                            if (e.detail.woData.trade && (!this.formState['trade'] || this.formState['trade'].trim() === "")) {
+                                this.formState['trade'] = e.detail.woData.trade; // Handle FM suffix formatted
+                                stateUpdated = true;
+                            }
+                            if (e.detail.woData.priority && (!this.formState['priority'] || this.formState['priority'].trim() === "")) {
+                                this.formState['priority'] = e.detail.woData.priority;
+                                stateUpdated = true;
+                            }
+                        }
+
                         locationNotes.forEach(note => {
                             let fieldId = null;
                             if (note.Header === "HVAC/R Tech Name") fieldId = "tech_name";
