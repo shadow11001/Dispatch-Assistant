@@ -257,6 +257,14 @@ const UI = {
                                 this.formState['priority'] = e.detail.woData.priority;
                                 stateUpdated = true;
                             }
+                            if (e.detail.woData.systems) {
+                                this.formState['assets'] = e.detail.woData.systems;
+                                stateUpdated = true;
+                            }
+                            if (e.detail.woData.rack) {
+                                this.formState['rack'] = e.detail.woData.rack;
+                                stateUpdated = true;
+                            }
                         }
 
                         locationNotes.forEach(note => {

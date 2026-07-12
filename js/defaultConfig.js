@@ -175,6 +175,13 @@ window.DispatchAssistantConfig = {
                     ]
                 },
                 {
+                    "id": "rack",
+                    "label": "Rack",
+                    "type": "text",
+                    "source": "parsed_rack",
+                    "phase": "phase-1-init"
+                },
+                {
                     "id": "assets",
                     "label": "Affected Assets",
                     "type": "text",
