@@ -29,7 +29,19 @@
                         return window.dispatchEvent(new CustomEvent('serviceChannelDataReady', { detail: { woId: woId, error: `Invalid status ${createWoRes.status}` } }));
                     }
                     const createWoData = JSON.parse(createWoRes.responseText);
-                    const locationId = createWoData?.response?.Result?.Model?.woResponse?.Result?.workOrder?.LocationId;
+
+                    // Helper to recursively find LocationId
+                    const findLocationId = (obj) => {
+                        if (!obj || typeof obj !== 'object') return null;
+                        if (obj.LocationId) return obj.LocationId;
+                        for (const key of Object.keys(obj)) {
+                            const result = findLocationId(obj[key]);
+                            if (result) return result;
+                        }
+                        return null;
+                    };
+
+                    const locationId = findLocationId(createWoData);
                     
                     if (!locationId) {
                         window.dispatchEvent(new CustomEvent('serviceChannelDataReady', { detail: { woId: woId, error: 'No LocationId found' } }));
