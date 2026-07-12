@@ -148,7 +148,7 @@
         if (!e.detail || !e.detail.storeNumber) return;
         
         const storeNum = e.detail.storeNumber;
-        const iotUrl = `https://saone.walmart.com/api/sensors/getsensorhierarchy`;
+        const iotUrl = `https://weiot-em-telemetryapi.prod.walmart.com/api/sensors/getsensorhierarchy`;
         const payload = JSON.stringify({
              "cc": "US",
              "storeNo": storeNum,
