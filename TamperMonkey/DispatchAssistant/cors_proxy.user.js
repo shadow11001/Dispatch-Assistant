@@ -5,11 +5,38 @@
 // @description  Bypasses CORS for Dispatch Assistant standalone file to pull ServiceChannel data
 // @author       You
 // @match        file:///*
+// @match        https://em.walmart.com/*
 // @grant        GM_xmlhttpRequest
+// @grant        GM_setValue
+// @grant        GM_getValue
 // ==/UserScript==
 
 (function() {
     'use strict';
+
+    // ---- TOKEN SNIFFER (runs on em.walmart.com) ----
+    if (window.location.hostname === 'em.walmart.com') {
+        const origOpen = XMLHttpRequest.prototype.open;
+        const origSetRequestHeader = XMLHttpRequest.prototype.setRequestHeader;
+
+        XMLHttpRequest.prototype.open = function(method, url) {
+            this._url = url;
+            origOpen.apply(this, arguments);
+        };
+
+        XMLHttpRequest.prototype.setRequestHeader = function(header, value) {
+            if (header.toLowerCase() === 'authorization' && this._url && this._url.includes('weiot-em-telemetryapi.prod.walmart.com')) {
+                // Intercept and store the JWT
+                console.log("[Dispatch Assistant] Sniffed IoT Telemetry API Token!");
+                GM_setValue('iot_jwt_token', value);
+            }
+            origSetRequestHeader.apply(this, arguments);
+        };
+        // We do not execute the rest of the proxy script on the walmart domain
+        return;
+    }
+
+    // ---- CORS PROXY (runs on file:///*) ----
 
     window.addEventListener('fetchFromServiceChannel', function(e) {
         if (!e.detail || !e.detail.woId) return;
@@ -155,6 +182,14 @@
              "rackIndex": null,
              "sensorIOType": null
         });
+
+        // Retrieve the sniffed token from GM storage
+        const currentToken = GM_getValue('iot_jwt_token');
+
+        if (!currentToken) {
+             window.dispatchEvent(new CustomEvent('iotDataReady', { detail: { storeNumber: storeNum, error: 'No IoT Auth Token sniffed yet. Please open a tab to https://em.walmart.com/ and let it load.' } }));
+             return;
+        }
         
         GM_xmlhttpRequest({
             method: 'POST',
@@ -163,7 +198,8 @@
                 "Accept": "application/json, text/plain, */*",
                 "Content-Type": "application/json",
                 "x-tenant": "US",
-                "lang": "en"
+                "lang": "en",
+                "authorization": currentToken
             },
             data: payload,
             onload: function(res) {
