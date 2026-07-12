@@ -168,7 +168,7 @@
             data: payload,
             onload: function(res) {
                 try {
-                    if (res.status !== 200) {
+                    if (res.status !== 200 && res.status !== 201) {
                         return window.dispatchEvent(new CustomEvent('iotDataReady', { detail: { storeNumber: storeNum, error: `Invalid status ${res.status}` } }));
                     }
                     const data = JSON.parse(res.responseText);
