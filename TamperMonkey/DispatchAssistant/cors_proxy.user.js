@@ -160,8 +160,10 @@
             method: 'POST',
             url: iotUrl,
             headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
+                "Accept": "application/json, text/plain, */*",
+                "Content-Type": "application/json",
+                "x-tenant": "US",
+                "lang": "en"
             },
             data: payload,
             onload: function(res) {
