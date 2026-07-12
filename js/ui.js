@@ -206,6 +206,74 @@ const UI = {
         `;
     },
 
+    async fetchSCLocationNotes(woId) {
+        if (!woId) return;
+        
+        try {
+            // 1. Get CreateWorkorderDetailsModel to extract LocationId
+            const createWoUrl = `https://www.servicechannel.com/sc/wo/WorkOrders/CreateWorkorderDetailsModel?id=${woId}`;
+            const createWoRes = await fetch(createWoUrl);
+            if (!createWoRes.ok) return;
+            const createWoData = await createWoRes.json();
+            
+            const locationId = createWoData.LocationId;
+            if (!locationId) return;
+            
+            // 2. Get GetLocationNotes using LocationId
+            const notesUrl = `https://www.servicechannel.com/sc/Location/GetLocationNotes?locationId=${locationId}&includeEmptyValue=false`;
+            const notesRes = await fetch(notesUrl);
+            if (!notesRes.ok) return;
+            const notesData = await notesRes.json();
+            
+            if (notesData && notesData.response && notesData.response.Result) {
+                const notesStr = notesData.response.Result;
+                const notesObj = JSON.parse(notesStr);
+                const locationNotes = notesObj.LocationNotes || [];
+                
+                // Map the results to our state
+                let stateUpdated = false;
+                
+                // Helper to parse Name & Phone
+                const parseContact = (val) => {
+                    if (!val) return { name: "", phone: "" };
+                    const regex = /(.+?)\s*\((\d{3})\)\s*(\d{3}-\d{4})/;
+                    const match = val.match(regex);
+                    if (match) {
+                        return { name: match[1].trim(), phone: `(${match[2]}) ${match[3]}` };
+                    }
+                    return { name: val, phone: "" };
+                };
+                
+                // Track extracted phones to display copy buttons
+                if (!this.scContacts) this.scContacts = {};
+
+                locationNotes.forEach(note => {
+                    let fieldId = null;
+                    if (note.Header === "HVAC/R Tech Name") fieldId = "tech_name";
+                    if (note.Header === "FS Manager") fieldId = "fs_name";
+                    if (note.Header === "FM Regional Manager") fieldId = "rm_name";
+                    
+                    if (fieldId) {
+                        const parsed = parseContact(note.Value);
+                        if (!this.formState[fieldId]) { // Don't overwrite if agent already typed something
+                            this.formState[fieldId] = parsed.name;
+                            stateUpdated = true;
+                        }
+                        if (parsed.phone) {
+                            this.scContacts[fieldId] = parsed.phone;
+                        }
+                    }
+                });
+                
+                if (stateUpdated) {
+                    this._debouncedPhaseRender();
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching SC Location Notes:", error);
+        }
+    },
+
     buildForm: function (profile, parsedData) {
         if(typeof this._clearPendingDebounce === 'function') this._clearPendingDebounce();
         this.currentProfile = profile;
@@ -515,10 +583,38 @@ const UI = {
                      maybeUpdateLinkPhase(e.target.value);
                      this._debouncedPhaseRender();
                 });
+                if (field.id === 'work_order') {
+                    inputObj.addEventListener('blur', (e) => {
+                        const woId = e.target.value.trim();
+                        if (woId) {
+                            this.fetchSCLocationNotes(woId);
+                        }
+                    });
+                }
             }
 
             // Immediately set the correct link view based on current value
             maybeUpdateLinkPhase(currentValue);
+
+            // Add phone number copy badge if applicable
+            if (this.scContacts && this.scContacts[field.id]) {
+                const phoneStr = this.scContacts[field.id];
+                const copyBadge = document.createElement('div');
+                copyBadge.className = "mt-1 inline-flex items-center text-xs bg-theme-panel1 border border-theme-border rounded px-2 py-1 cursor-pointer hover:bg-theme-bg transition";
+                copyBadge.innerHTML = `<span class="mr-1 text-theme-textmuted">Phone:</span> <span class="font-mono text-theme-accentsec">${phoneStr}</span> <svg class="w-3 h-3 ml-1 text-theme-textmuted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>`;
+                copyBadge.title = "Click to copy phone number";
+                copyBadge.onclick = () => {
+                    navigator.clipboard.writeText(phoneStr);
+                    const originalHtml = copyBadge.innerHTML;
+                    copyBadge.innerHTML = `<span class="text-green-500 font-bold">Copied!</span>`;
+                    setTimeout(() => { copyBadge.innerHTML = originalHtml; }, 2000);
+                };
+                
+                const wrapper = document.createElement('div');
+                wrapper.appendChild(inputObj);
+                wrapper.appendChild(copyBadge);
+                inputObj = wrapper;
+            }
 
             fieldDiv.appendChild(inputObj);
             this.dynamicQuestions.appendChild(fieldDiv);
@@ -817,10 +913,38 @@ const UI = {
                      maybeUpdateLinkPhase(e.target.value);
                      this._debouncedPhaseRender();
                 });
+                if (field.id === 'work_order') {
+                    inputObj.addEventListener('blur', (e) => {
+                        const woId = e.target.value.trim();
+                        if (woId) {
+                            this.fetchSCLocationNotes(woId);
+                        }
+                    });
+                }
             }
 
             // Immediately set the correct link view based on current value
             maybeUpdateLinkPhase(currentValue);
+
+            // Add phone number copy badge if applicable
+            if (this.scContacts && this.scContacts[field.id]) {
+                const phoneStr = this.scContacts[field.id];
+                const copyBadge = document.createElement('div');
+                copyBadge.className = "mt-1 inline-flex items-center text-xs bg-theme-panel1 border border-theme-border rounded px-2 py-1 cursor-pointer hover:bg-theme-bg transition";
+                copyBadge.innerHTML = `<span class="mr-1 text-theme-textmuted">Phone:</span> <span class="font-mono text-theme-accentsec">${phoneStr}</span> <svg class="w-3 h-3 ml-1 text-theme-textmuted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>`;
+                copyBadge.title = "Click to copy phone number";
+                copyBadge.onclick = () => {
+                    navigator.clipboard.writeText(phoneStr);
+                    const originalHtml = copyBadge.innerHTML;
+                    copyBadge.innerHTML = `<span class="text-green-500 font-bold">Copied!</span>`;
+                    setTimeout(() => { copyBadge.innerHTML = originalHtml; }, 2000);
+                };
+                
+                const wrapper = document.createElement('div');
+                wrapper.appendChild(inputObj);
+                wrapper.appendChild(copyBadge);
+                inputObj = wrapper;
+            }
 
             fieldDiv.appendChild(inputObj);
             this.dynamicQuestions.appendChild(fieldDiv);
