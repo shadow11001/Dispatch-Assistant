@@ -30,23 +30,41 @@
                     }
                     const createWoData = JSON.parse(createWoRes.responseText);
 
-                    // Helper to recursively find LocationId
-                    const findLocationId = (obj) => {
+                    // Helper to recursively find a key
+                    const findKey = (obj, targetKey) => {
                         if (!obj || typeof obj !== 'object') return null;
-                        if (obj.LocationId) return obj.LocationId;
+                        if (obj[targetKey]) return obj[targetKey];
                         for (const key of Object.keys(obj)) {
-                            const result = findLocationId(obj[key]);
+                            const result = findKey(obj[key], targetKey);
                             if (result) return result;
                         }
                         return null;
                     };
 
-                    const locationId = findLocationId(createWoData);
+                    const locationId = findKey(createWoData, 'LocationId');
                     
                     if (!locationId) {
                         window.dispatchEvent(new CustomEvent('serviceChannelDataReady', { detail: { woId: woId, error: 'No LocationId found' } }));
                         return;
                     }
+
+                    // Extract StoreId, Priority, and Trade
+                    const storeId = findKey(createWoData, 'StoreId');
+                    const priority = findKey(createWoData, 'Priority');
+                    let trade = findKey(createWoData, 'Trade');
+                    
+                    // Handle "FM - " prefix for Trade if it exists
+                    if (trade && trade.startsWith("FM - ")) {
+                        trade = trade.substring(5).toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+                    } else if (trade) {
+                        trade = trade.toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+                    }
+
+                    const woData = {
+                        store: storeId || "",
+                        trade: trade || "",
+                        priority: priority || ""
+                    };
                     
                     const notesUrl = `https://www.servicechannel.com/sc/Location/GetLocationNotes?locationId=${locationId}&includeEmptyValue=false`;
                     
@@ -62,7 +80,7 @@
                                     return window.dispatchEvent(new CustomEvent('serviceChannelDataReady', { detail: { woId: woId, error: `Invalid status ${notesRes.status}` } }));
                                 }
                                 const notesData = JSON.parse(notesRes.responseText);
-                                window.dispatchEvent(new CustomEvent('serviceChannelDataReady', { detail: { woId: woId, data: notesData } }));
+                                window.dispatchEvent(new CustomEvent('serviceChannelDataReady', { detail: { woId: woId, data: notesData, woData: woData } }));
                             } catch (err) {
                                 window.dispatchEvent(new CustomEvent('serviceChannelDataReady', { detail: { woId: woId, error: 'Failed to parse notesData: ' + err.message } }));
                             }
