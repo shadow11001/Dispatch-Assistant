@@ -297,13 +297,50 @@ const UI = {
             const fieldDiv = document.createElement('div');
             fieldDiv.className = "mb-3 rounded p-2 focus-within:bg-theme-input transition";
             
+            const labelContainer = document.createElement('div');
+            labelContainer.className = "flex justify-between items-end block text-sm font-bold text-theme-text mb-1";
+
             const label = document.createElement('label');
-            label.className = "block text-sm font-bold text-theme-text mb-1";
             label.innerText = field.label + (field.required ? " *" : "");
+            labelContainer.appendChild(label);
+
+            let linkElPhase = null;
+            const maybeUpdateLinkPhase = (val) => {
+                if (!linkElPhase) return;
+                if (val && val.trim().length > 0) {
+                    linkElPhase.style.display = 'flex';
+                    if (field.id === 'store_number') {
+                        linkElPhase.href = `https://em.walmart.com/us/sensors?query=US%7C${val.trim()}#`;
+                    } else if (field.id === 'work_order') {
+                        linkElPhase.href = `https://www.servicechannel.com/sc/wo/workorders/list?id=${val.trim()}`;
+                    }
+                } else {
+                    linkElPhase.style.display = 'none';
+                }
+            };
+
+            if (field.id === 'store_number') {
+                linkElPhase = document.createElement('a');
+                linkElPhase.id = 'iot-link-phase';
+                linkElPhase.target = '_blank';
+                linkElPhase.className = "text-theme-accentsec hover:underline text-xs flex items-center";
+                linkElPhase.innerText = "Open in IoT";
+                linkElPhase.style.display = 'none'; // hidden initially
+                labelContainer.appendChild(linkElPhase);
+            } else if (field.id === 'work_order') {
+                linkElPhase = document.createElement('a');
+                linkElPhase.id = 'servicechannel-link-phase';
+                linkElPhase.target = '_blank';
+                linkElPhase.className = "text-theme-accentsec hover:underline text-xs flex items-center";
+                linkElPhase.innerText = "Open in ServiceChannel";
+                linkElPhase.style.display = 'none'; // hidden initially
+                labelContainer.appendChild(linkElPhase);
+            }
+
             
             // Do not append top-level label for timer start buttons
             if (field.type !== 'timerStartButton') {
-                fieldDiv.appendChild(label);
+                fieldDiv.appendChild(labelContainer);
             }
 
             const isTrainingMode = this.trainingModeToggle ? this.trainingModeToggle.checked : false;
@@ -475,9 +512,13 @@ const UI = {
                 inputObj.value = currentValue;
                 inputObj.addEventListener('input', (e) => {
                      this.formState[field.id] = e.target.value;
+                     maybeUpdateLinkPhase(e.target.value);
                      this._debouncedPhaseRender();
                 });
             }
+
+            // Immediately set the correct link view based on current value
+            maybeUpdateLinkPhase(currentValue);
 
             fieldDiv.appendChild(inputObj);
             this.dynamicQuestions.appendChild(fieldDiv);
@@ -559,13 +600,49 @@ const UI = {
             const fieldDiv = document.createElement('div');
             fieldDiv.className = "mb-3 rounded p-2 focus-within:bg-theme-input transition";
             
+            const labelContainer = document.createElement('div');
+            labelContainer.className = "flex justify-between items-end block text-sm font-bold text-theme-text mb-1";
+
             const label = document.createElement('label');
-            label.className = "block text-sm font-bold text-theme-text mb-1";
             label.innerText = field.label + (field.required ? " *" : "");
+            labelContainer.appendChild(label);
+
+            let linkElPhase = null;
+            const maybeUpdateLinkPhase = (val) => {
+                if (!linkElPhase) return;
+                if (val && val.trim().length > 0) {
+                    linkElPhase.style.display = 'flex';
+                    if (field.id === 'store_number') {
+                        linkElPhase.href = `https://em.walmart.com/us/sensors?query=US%7C${val.trim()}#`;
+                    } else if (field.id === 'work_order') {
+                        linkElPhase.href = `https://www.servicechannel.com/sc/wo/workorders/list?id=${val.trim()}`;
+                    }
+                } else {
+                    linkElPhase.style.display = 'none';
+                }
+            };
+
+            if (field.id === 'store_number') {
+                linkElPhase = document.createElement('a');
+                linkElPhase.id = 'iot-link-phase';
+                linkElPhase.target = '_blank';
+                linkElPhase.className = "text-theme-accentsec hover:underline text-xs flex items-center";
+                linkElPhase.innerText = "Open in IoT";
+                linkElPhase.style.display = 'none'; // hidden initially
+                labelContainer.appendChild(linkElPhase);
+            } else if (field.id === 'work_order') {
+                linkElPhase = document.createElement('a');
+                linkElPhase.id = 'servicechannel-link-phase';
+                linkElPhase.target = '_blank';
+                linkElPhase.className = "text-theme-accentsec hover:underline text-xs flex items-center";
+                linkElPhase.innerText = "Open in ServiceChannel";
+                linkElPhase.style.display = 'none'; // hidden initially
+                labelContainer.appendChild(linkElPhase);
+            }
             
             // Do not append top-level label for timer start buttons
             if (field.type !== 'timerStartButton') {
-                fieldDiv.appendChild(label);
+                fieldDiv.appendChild(labelContainer);
             }
 
             const isTrainingMode = this.trainingModeToggle ? this.trainingModeToggle.checked : false;
@@ -737,9 +814,13 @@ const UI = {
                 inputObj.value = currentValue;
                 inputObj.addEventListener('input', (e) => {
                      this.formState[field.id] = e.target.value;
+                     maybeUpdateLinkPhase(e.target.value);
                      this._debouncedPhaseRender();
                 });
             }
+
+            // Immediately set the correct link view based on current value
+            maybeUpdateLinkPhase(currentValue);
 
             fieldDiv.appendChild(inputObj);
             this.dynamicQuestions.appendChild(fieldDiv);
