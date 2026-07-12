@@ -115,4 +115,33 @@
             }
         });
     });
+
+    window.addEventListener('fetchFromSAOne', function(e) {
+        if (!e.detail || !e.detail.storeNumber) return;
+        
+        const storeNum = e.detail.storeNumber;
+        const saOneUrl = `https://saone.walmart.com/api/commonService?apiUrl=%2Fsiteinfo%2FsiteCurrentState&site=${storeNum}&countryCode=US`;
+        
+        GM_xmlhttpRequest({
+            method: 'GET',
+            url: saOneUrl,
+            headers: {
+                "Accept": "application/json"
+            },
+            onload: function(res) {
+                try {
+                    if (res.status !== 200) {
+                        return window.dispatchEvent(new CustomEvent('saOneDataReady', { detail: { storeNumber: storeNum, error: `Invalid status ${res.status}` } }));
+                    }
+                    const data = JSON.parse(res.responseText);
+                    window.dispatchEvent(new CustomEvent('saOneDataReady', { detail: { storeNumber: storeNum, data: data } }));
+                } catch (err) {
+                    window.dispatchEvent(new CustomEvent('saOneDataReady', { detail: { storeNumber: storeNum, error: 'Failed to parse SAOne response: ' + err.message } }));
+                }
+            },
+            onerror: function(err) {
+                window.dispatchEvent(new CustomEvent('saOneDataReady', { detail: { storeNumber: storeNum, error: err } }));
+            }
+        });
+    });
 })();

@@ -247,6 +247,7 @@ const UI = {
                         if (e.detail.woData) {
                             if (e.detail.woData.store && (!this.formState['store_number'] || this.formState['store_number'].trim() === "")) {
                                 this.formState['store_number'] = e.detail.woData.store;
+                                this.fetchSAOneData(e.detail.woData.store);
                                 stateUpdated = true;
                             }
                             if (e.detail.woData.trade && (!this.formState['trade'] || this.formState['trade'].trim() === "")) {
@@ -299,6 +300,64 @@ const UI = {
         
         // Dispatch the request
         window.dispatchEvent(new CustomEvent('fetchFromServiceChannel', { detail: { woId: woId } }));
+    },
+
+    async fetchSAOneData(storeNumber) {
+        if (!storeNumber) return;
+        
+        const saOneHandler = (e) => {
+            if (e.detail && e.detail.storeNumber === storeNumber) {
+                window.removeEventListener('saOneDataReady', saOneHandler);
+                
+                if (e.detail.error) {
+                    console.error("Error fetching SAOne data:", e.detail.error);
+                    return;
+                }
+                
+                const data = e.detail.data;
+                try {
+                    if (data && data.response && data.response.body && data.response.body.power) {
+                        const powerData = data.response.body.power;
+                        const sopContainer = document.getElementById('sop-container');
+                        
+                        // Remove existing SAOne status block if it exists
+                        const existingBlock = document.getElementById('saone-power-status');
+                        if (existingBlock) existingBlock.remove();
+                        
+                        if (sopContainer) {
+                            const statusBlock = document.createElement('div');
+                            statusBlock.id = 'saone-power-status';
+                            statusBlock.className = 'mb-4 p-3 rounded border text-sm shadow-sm';
+                            
+                            if (powerData.state === 'Healthy' || powerData.overall_power_state === 'ONLINE') {
+                                statusBlock.classList.add('bg-green-100', 'border-green-300', 'text-green-800');
+                                statusBlock.innerHTML = `<strong>⚡ Store Power Status:</strong> <span class="font-bold text-green-700">ONLINE</span> (${powerData.power_status || 'Utility Power'})`;
+                            } else {
+                                statusBlock.classList.add('bg-red-100', 'border-red-400', 'text-red-900');
+                                statusBlock.innerHTML = `
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                        <strong class="font-bold">⚡ Store Power Status: OFFLINE / CRITICAL</strong>
+                                    </div>
+                                    <ul class="mt-2 ml-7 list-disc text-xs">
+                                        <li>State: ${powerData.overall_power_state || powerData.state}</li>
+                                        <li>Status: ${powerData.power_status || 'Unknown'}</li>
+                                        <li>Outage Reason: ${powerData.outage_reason || 'N/A'}</li>
+                                        <li>Ticket Type: ${powerData.ticket_type || 'N/A'}</li>
+                                    </ul>
+                                `;
+                            }
+                            sopContainer.prepend(statusBlock);
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error parsing SAOne response:", error);
+                }
+            }
+        };
+        
+        window.addEventListener('saOneDataReady', saOneHandler);
+        window.dispatchEvent(new CustomEvent('fetchFromSAOne', { detail: { storeNumber: storeNumber } }));
     },
 
     buildForm: function (profile, parsedData) {
@@ -615,6 +674,13 @@ const UI = {
                         const woId = e.target.value.trim();
                         if (woId) {
                             this.fetchSCLocationNotes(woId);
+                        }
+                    });
+                } else if (field.id === 'store_number') {
+                    inputObj.addEventListener('blur', (e) => {
+                        const storeNum = e.target.value.trim();
+                        if (storeNum) {
+                            this.fetchSAOneData(storeNum);
                         }
                     });
                 }
@@ -945,6 +1011,13 @@ const UI = {
                         const woId = e.target.value.trim();
                         if (woId) {
                             this.fetchSCLocationNotes(woId);
+                        }
+                    });
+                } else if (field.id === 'store_number') {
+                    inputObj.addEventListener('blur', (e) => {
+                        const storeNum = e.target.value.trim();
+                        if (storeNum) {
+                            this.fetchSAOneData(storeNum);
                         }
                     });
                 }
