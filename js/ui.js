@@ -209,69 +209,72 @@ const UI = {
     async fetchSCLocationNotes(woId) {
         if (!woId) return;
         
-        try {
-            // 1. Get CreateWorkorderDetailsModel to extract LocationId
-            const createWoUrl = `https://www.servicechannel.com/sc/wo/WorkOrders/CreateWorkorderDetailsModel?id=${woId}`;
-            const createWoRes = await fetch(createWoUrl);
-            if (!createWoRes.ok) return;
-            const createWoData = await createWoRes.json();
-            
-            const locationId = createWoData.LocationId;
-            if (!locationId) return;
-            
-            // 2. Get GetLocationNotes using LocationId
-            const notesUrl = `https://www.servicechannel.com/sc/Location/GetLocationNotes?locationId=${locationId}&includeEmptyValue=false`;
-            const notesRes = await fetch(notesUrl);
-            if (!notesRes.ok) return;
-            const notesData = await notesRes.json();
-            
-            if (notesData && notesData.response && notesData.response.Result) {
-                const notesStr = notesData.response.Result;
-                const notesObj = JSON.parse(notesStr);
-                const locationNotes = notesObj.LocationNotes || [];
+        // Listen for the response once
+        const responseHandler = (e) => {
+            if (e.detail && e.detail.woId === woId) {
+                window.removeEventListener('serviceChannelDataReady', responseHandler);
                 
-                // Map the results to our state
-                let stateUpdated = false;
+                if (e.detail.error) {
+                    console.error("Error fetching SC Location Notes:", e.detail.error);
+                    return;
+                }
                 
-                // Helper to parse Name & Phone
-                const parseContact = (val) => {
-                    if (!val) return { name: "", phone: "" };
-                    const regex = /(.+?)\s*\((\d{3})\)\s*(\d{3}-\d{4})/;
-                    const match = val.match(regex);
-                    if (match) {
-                        return { name: match[1].trim(), phone: `(${match[2]}) ${match[3]}` };
-                    }
-                    return { name: val, phone: "" };
-                };
-                
-                // Track extracted phones to display copy buttons
-                if (!this.scContacts) this.scContacts = {};
+                const notesData = e.detail.data;
+                try {
+                    if (notesData && notesData.response && notesData.response.Result) {
+                        const notesStr = notesData.response.Result;
+                        const notesObj = JSON.parse(notesStr);
+                        const locationNotes = notesObj.LocationNotes || [];
+                        
+                        // Map the results to our state
+                        let stateUpdated = false;
+                        
+                        // Helper to parse Name & Phone
+                        const parseContact = (val) => {
+                            if (!val) return { name: "", phone: "" };
+                            const regex = /(.+?)\s*\((\d{3})\)\s*(\d{3}-\d{4})/;
+                            const match = val.match(regex);
+                            if (match) {
+                                return { name: match[1].trim(), phone: `(${match[2]}) ${match[3]}` };
+                            }
+                            return { name: val, phone: "" };
+                        };
+                        
+                        // Track extracted phones to display copy buttons
+                        if (!this.scContacts) this.scContacts = {};
 
-                locationNotes.forEach(note => {
-                    let fieldId = null;
-                    if (note.Header === "HVAC/R Tech Name") fieldId = "tech_name";
-                    if (note.Header === "FS Manager") fieldId = "fs_name";
-                    if (note.Header === "FM Regional Manager") fieldId = "rm_name";
-                    
-                    if (fieldId) {
-                        const parsed = parseContact(note.Value);
-                        if (!this.formState[fieldId]) { // Don't overwrite if agent already typed something
-                            this.formState[fieldId] = parsed.name;
-                            stateUpdated = true;
-                        }
-                        if (parsed.phone) {
-                            this.scContacts[fieldId] = parsed.phone;
+                        locationNotes.forEach(note => {
+                            let fieldId = null;
+                            if (note.Header === "HVAC/R Tech Name") fieldId = "tech_name";
+                            if (note.Header === "FS Manager") fieldId = "fs_name";
+                            if (note.Header === "FM Regional Manager") fieldId = "rm_name";
+                            
+                            if (fieldId) {
+                                const parsed = parseContact(note.Value);
+                                if (!this.formState[fieldId]) { // Don't overwrite if agent already typed something
+                                    this.formState[fieldId] = parsed.name;
+                                    stateUpdated = true;
+                                }
+                                if (parsed.phone) {
+                                    this.scContacts[fieldId] = parsed.phone;
+                                }
+                            }
+                        });
+                        
+                        if (stateUpdated) {
+                            this._debouncedPhaseRender();
                         }
                     }
-                });
-                
-                if (stateUpdated) {
-                    this._debouncedPhaseRender();
+                } catch (error) {
+                    console.error("Error parsing SC Location Notes response:", error);
                 }
             }
-        } catch (error) {
-            console.error("Error fetching SC Location Notes:", error);
-        }
+        };
+        
+        window.addEventListener('serviceChannelDataReady', responseHandler);
+        
+        // Dispatch the request
+        window.dispatchEvent(new CustomEvent('fetchFromServiceChannel', { detail: { woId: woId } }));
     },
 
     buildForm: function (profile, parsedData) {
