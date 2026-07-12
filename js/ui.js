@@ -248,6 +248,9 @@ const UI = {
                             if (e.detail.woData.store && (!this.formState['store_number'] || this.formState['store_number'].trim() === "")) {
                                 this.formState['store_number'] = e.detail.woData.store;
                                 this.fetchSAOneData(e.detail.woData.store);
+                                if (e.detail.woData.systems) {
+                                    this.fetchIOTData(e.detail.woData.store, e.detail.woData.systems);
+                                }
                                 stateUpdated = true;
                             }
                             if (e.detail.woData.trade && (!this.formState['trade'] || this.formState['trade'].trim() === "")) {
@@ -358,6 +361,118 @@ const UI = {
         
         window.addEventListener('saOneDataReady', saOneHandler);
         window.dispatchEvent(new CustomEvent('fetchFromSAOne', { detail: { storeNumber: storeNumber } }));
+    },
+
+    async fetchIOTData(storeNumber, assetString) {
+        if (!storeNumber || !assetString) return;
+        
+        // Parse the asset string (e.g. "RCU1 OGP FZR / RAT 1 / 70.6 °F, RCU2 OGP FZR / RAT 1 / 71.2 °F")
+        // Split by comma first, then by / and take the first token trimming whitespace.
+        const assetsRaw = assetString.split(',');
+        const assetTokens = [];
+        for (let a of assetsRaw) {
+            const parts = a.split('/');
+            if (parts.length > 0) {
+                assetTokens.push(parts[0].trim());
+            }
+        }
+        
+        const iotHandler = (e) => {
+            if (e.detail && e.detail.storeNumber === storeNumber) {
+                window.removeEventListener('iotDataReady', iotHandler);
+                
+                if (e.detail.error) {
+                    console.error("Error fetching IOT data:", e.detail.error);
+                    return;
+                }
+                
+                const data = e.detail.data;
+                const reqAssets = e.detail.assetString; // Unused directly, for sanity
+
+                try {
+                    const sopContainer = document.getElementById('sop-container');
+                    if (!sopContainer) return;
+                    
+                    // Recursive JSON finder
+                    const matchedModules = [];
+                    const searchModules = (node) => {
+                        if (!node) return;
+                        if (Array.isArray(node)) {
+                            node.forEach(searchModules);
+                        } else if (typeof node === 'object') {
+                            if (node.children && Array.isArray(node.children)) {
+                                searchModules(node.children);
+                            }
+                            // Check if this object is a leaf node that matches our asset tokens
+                            const label = node.label || "";
+                            const groupingLabel = node.modLabelForGrouping || "";
+                            
+                            for (let token of assetTokens) {
+                                if (token && (label === token || groupingLabel === token)) {
+                                    // Found a match
+                                    matchedModules.push({
+                                        token: token,
+                                        label: label,
+                                        rackCommLoss: node.rackCommLoss,
+                                        modCommLoss: node.modCommLoss
+                                    });
+                                    break; // Only match once per node
+                                }
+                            }
+                        }
+                    };
+                    
+                    searchModules(data);
+                    
+                    // Render UI blocks based on matched modules
+                    if (matchedModules.length > 0) {
+                        // Remove existing IoT status blocks if they exist
+                        const existingBlocks = document.querySelectorAll('.iot-telemetry-status');
+                        existingBlocks.forEach(b => b.remove());
+                        
+                        matchedModules.forEach(mod => {
+                            const statusBlock = document.createElement('div');
+                            statusBlock.className = 'iot-telemetry-status mb-4 p-3 rounded border text-sm shadow-sm';
+                            
+                            // Check if there is Comm Loss
+                            if (mod.rackCommLoss || mod.modCommLoss) {
+                                statusBlock.classList.add('bg-orange-100', 'border-orange-400', 'text-orange-900');
+                                let issueStr = [];
+                                if (mod.rackCommLoss) issueStr.push('Rack Comm Loss');
+                                if (mod.modCommLoss) issueStr.push('Module Comm Loss');
+                                
+                                statusBlock.innerHTML = `
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <strong class="font-bold">IoT Telemetry: OFFLINE (${mod.token})</strong>
+                                    </div>
+                                    <ul class="mt-1 ml-7 list-disc text-xs">
+                                        <li>Status: ${issueStr.join(' & ')}</li>
+                                    </ul>
+                                `;
+                            } else {
+                                statusBlock.classList.add('bg-blue-50', 'border-blue-200', 'text-blue-800');
+                                statusBlock.innerHTML = `<strong>IoT Telemetry:</strong> <span class="font-bold text-blue-700">ONLINE</span> (${mod.token})`;
+                            }
+                            
+                            // Append after SAOne if possible, or top of sop
+                            const saoneBlock = document.getElementById('saone-power-status');
+                            if (saoneBlock && saoneBlock.nextSibling) {
+                                sopContainer.insertBefore(statusBlock, saoneBlock.nextSibling);
+                            } else {
+                                sopContainer.appendChild(statusBlock);
+                            }
+                        });
+                    }
+                    
+                } catch (error) {
+                    console.error("Error parsing IOT response:", error);
+                }
+            }
+        };
+        
+        window.addEventListener('iotDataReady', iotHandler);
+        window.dispatchEvent(new CustomEvent('fetchFromIOT', { detail: { storeNumber: storeNumber, assetString: assetString } }));
     },
 
     buildForm: function (profile, parsedData) {
@@ -681,6 +796,10 @@ const UI = {
                         const storeNum = e.target.value.trim();
                         if (storeNum) {
                             this.fetchSAOneData(storeNum);
+                            const assets = this.formState["assets"];
+                            if (assets) {
+                                this.fetchIOTData(storeNum, assets);
+                            }
                         }
                     });
                 }
@@ -1018,6 +1137,10 @@ const UI = {
                         const storeNum = e.target.value.trim();
                         if (storeNum) {
                             this.fetchSAOneData(storeNum);
+                            const assets = this.formState["assets"];
+                            if (assets) {
+                                this.fetchIOTData(storeNum, assets);
+                            }
                         }
                     });
                 }

@@ -144,4 +144,40 @@
             }
         });
     });
+    window.addEventListener('fetchFromIOT', function(e) {
+        if (!e.detail || !e.detail.storeNumber) return;
+        
+        const storeNum = e.detail.storeNumber;
+        const iotUrl = `https://saone.walmart.com/api/sensors/getsensorhierarchy`;
+        const payload = JSON.stringify({
+             "cc": "US",
+             "storeNo": storeNum,
+             "rackIndex": null,
+             "sensorIOType": null
+        });
+        
+        GM_xmlhttpRequest({
+            method: 'POST',
+            url: iotUrl,
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            data: payload,
+            onload: function(res) {
+                try {
+                    if (res.status !== 200) {
+                        return window.dispatchEvent(new CustomEvent('iotDataReady', { detail: { storeNumber: storeNum, error: `Invalid status ${res.status}` } }));
+                    }
+                    const data = JSON.parse(res.responseText);
+                    window.dispatchEvent(new CustomEvent('iotDataReady', { detail: { storeNumber: storeNum, data: data, assetString: e.detail.assetString } }));
+                } catch (err) {
+                    window.dispatchEvent(new CustomEvent('iotDataReady', { detail: { storeNumber: storeNum, error: 'Failed to parse IOT response: ' + err.message } }));
+                }
+            },
+            onerror: function(err) {
+                window.dispatchEvent(new CustomEvent('iotDataReady', { detail: { storeNumber: storeNum, error: err } }));
+            }
+        });
+    });
 })();
