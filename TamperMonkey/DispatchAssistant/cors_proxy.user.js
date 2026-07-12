@@ -29,7 +29,7 @@
                         return window.dispatchEvent(new CustomEvent('serviceChannelDataReady', { detail: { woId: woId, error: `Invalid status ${createWoRes.status}` } }));
                     }
                     const createWoData = JSON.parse(createWoRes.responseText);
-                    const locationId = createWoData.LocationId;
+                    const locationId = createWoData?.response?.Result?.Model?.woResponse?.Result?.workOrder?.LocationId;
                     
                     if (!locationId) {
                         window.dispatchEvent(new CustomEvent('serviceChannelDataReady', { detail: { woId: woId, error: 'No LocationId found' } }));
