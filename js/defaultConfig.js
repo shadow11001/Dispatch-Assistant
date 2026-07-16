@@ -22,7 +22,7 @@ window.DispatchAssistantConfig = {
         "DISPATCH": {
             "name": "Dispatches Workflow",
             "type": "DISPATCH",
-            "noteTemplate": "Reference#: {dispatch_ref}\nTrade: {trade}\n\nStore Number: {store_number}\nWO Number: {work_order}\nPriority: {priority}\n\nAffected Assets: {assets} on {rack}\nEMR Result: {emr_result}\n\nWorkflow Started At: {resume_phase}\n\nStore Contact:\n  Name: {store_mgr_name}\n  Position: {contact_position}\n    Other: {contact_position_other}\n  Result: {store_answ}\n\nTechnician Contact:\n  Tech/Vendor: {tech_name}\n    Attempt 1: {tech1_answ}\n    Attempt 2: {tech2_answ}\n  Decline Reason:\n    Tech Attempt 1: {tech1_decline_reason}\n    Tech Attempt 2: {tech2_decline_reason}\n\nFS Manager Contact:\n  Name: {fs_name}\n  Response: {fs_action}\n    New Priority: {fs_new_priority}\n\nRegional Manager Contact:\n  Name: {rm_name}\n  Response: {rm_action}\n    New Priority: {rm_new_priority}\n\nVendor Assignment:\n  Vendor 1:\n    Name: {vendor_name}\n    Rank: {vendor_rank}\n    Status: {vendor_status}\n  Vendor 2:\n    Name: {vendor_name_2}\n    Rank: {vendor_rank_2}\n    Status: {vendor_status_2}\n  Vendor 3:\n    Name: {vendor_name_3}\n    Rank: {vendor_rank_3}\n    Status: {vendor_status_3}\n  Vendor 4:\n    Name: {vendor_name_4}\n    Rank: {vendor_rank_4}\n    Status: {vendor_status_4}\n  Vendor 5:\n    Name: {vendor_name_5}\n    Rank: {vendor_rank_5}\n    Status: {vendor_status_5}\n  Vendor 6:\n    Name: {vendor_name_6}\n    Rank: {vendor_rank_6}\n    Status: {vendor_status_6}\n  Vendor 7:\n    Name: {vendor_name_7}\n    Rank: {vendor_rank_7}\n    Status: {vendor_status_7}\n  Vendor 8:\n    Name: {vendor_name_8}\n    Rank: {vendor_rank_8}\n    Status: {vendor_status_8}\n  Vendor 9:\n    Name: {vendor_name_9}\n    Rank: {vendor_rank_9}\n    Status: {vendor_status_9}\n  Vendor 10:\n    Name: {vendor_name_10}\n    Rank: {vendor_rank_10}\n    Status: {vendor_status_10}\n\nWork Order Status: {wo_status}",
+            "noteTemplate": "Reference#: {dispatch_ref}\nTrade: {trade}\n\nStore Number: {store_number}\nWO Number: {work_order}\nPriority: {priority}\n\nAffected Assets: {assets} on {rack}\nEMR Result: {emr_result}\n\nWorkflow Started At: {resume_phase}\n\nStore Contact:\n  Name: {store_mgr_name}\n  Position: {contact_position}\n    Other: {contact_position_other}\n  Result: {store_answ}\n\nTechnician Contact:\n  Tech/Vendor: {tech_name}\n    Attempt 1: {tech1_answ}\n    Attempt 2: {tech2_answ}\n  Decline Reason:\n    Tech Attempt 1: {tech1_decline_reason}\n    Tech Attempt 2: {tech2_decline_reason}\n\nFS Manager Contact:\n  Name: {fs_name}\n  Response: {fs_action}\n    New Priority: {fs_new_priority}\n\nRegional Manager Contact:\n  Name: {rm_name}\n  Response: {rm_action}\n    New Priority: {rm_new_priority}\n\nOn-Call Manager Contact:\n  Name: {oncall_name}\n  Response: {oncall_action}\n    New Priority: {oncall_new_priority}\n\nVendor Assignment:\n  Vendor 1:\n    Name: {vendor_name}\n    Rank: {vendor_rank}\n    Status: {vendor_status}\n  Vendor 2:\n    Name: {vendor_name_2}\n    Rank: {vendor_rank_2}\n    Status: {vendor_status_2}\n  Vendor 3:\n    Name: {vendor_name_3}\n    Rank: {vendor_rank_3}\n    Status: {vendor_status_3}\n  Vendor 4:\n    Name: {vendor_name_4}\n    Rank: {vendor_rank_4}\n    Status: {vendor_status_4}\n  Vendor 5:\n    Name: {vendor_name_5}\n    Rank: {vendor_rank_5}\n    Status: {vendor_status_5}\n  Vendor 6:\n    Name: {vendor_name_6}\n    Rank: {vendor_rank_6}\n    Status: {vendor_status_6}\n  Vendor 7:\n    Name: {vendor_name_7}\n    Rank: {vendor_rank_7}\n    Status: {vendor_status_7}\n  Vendor 8:\n    Name: {vendor_name_8}\n    Rank: {vendor_rank_8}\n    Status: {vendor_status_8}\n  Vendor 9:\n    Name: {vendor_name_9}\n    Rank: {vendor_rank_9}\n    Status: {vendor_status_9}\n  Vendor 10:\n    Name: {vendor_name_10}\n    Rank: {vendor_rank_10}\n    Status: {vendor_status_10}\n\nWork Order Status: {wo_status}",
             "crystalAttributes": {
                 "issueArea": "Refrigeration",
                 "problemType": "Emergency",
@@ -103,17 +103,24 @@ window.DispatchAssistantConfig = {
                     "description": "Contact RM Manager for next steps."
                 },
                 {
+                    "id": "phase-6b-oncall",
+                    "title": "Phase 6b: On-Call Manager Escalation",
+                    "sequence": 6.5,
+                    "activateIf": "resume_phase === 'Phase 6b: On-Call Manager' || rm_timer_result === 'Did Not Accept' || rm_action === 'No Answer / Voicemail Left' || rm_action === 'Nothing changes after 15 minutes'",
+                    "description": "Contact On-Call Manager for next steps."
+                },
+                {
                     "id": "phase-7-vendor",
                     "title": "Phase 7: Vendor Assignment",
                     "sequence": 7,
-                    "activateIf": "resume_phase === 'Phase 7: Vendor Assignment' || rm_action === 'No Answer / Voicemail Left' || rm_action === 'Nothing changes after 15 minutes' || fs_action === 'Assign a vendor' || rm_action === 'Assign a vendor' || rm_timer_result === 'Did Not Accept'",
+                    "activateIf": "resume_phase === 'Phase 7: Vendor Assignment' || fs_action === 'Assign a vendor' || rm_action === 'Assign a vendor' || oncall_action === 'Assign a vendor' || oncall_timer_result === 'Did Not Accept' || oncall_action === 'No Answer / Voicemail Left' || oncall_action === 'Nothing changes after 15 minutes'",
                     "description": "Manually assign the next eligible vendor."
                 },
                 {
                     "id": "phase-8-resolution",
                     "title": "Phase 8: Resolution & Acceptance",
                     "sequence": 8,
-                    "activateIf": "resume_phase === 'Phase 8: Resolution (Already Accepted)' || ['Priority Lowered', 'Other Approved Result'].includes(fs_action) || ['Lowers priority', 'Other Approved Result'].includes(rm_action) || tech1_timer_result === 'Accepted' || tech2_timer_result === 'Accepted' || fs_timer_result === 'Accepted' || rm_timer_result === 'Accepted' || vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || vendor_status_3 === 'Accepted in SC' || vendor_status_4 === 'Accepted in SC' || vendor_status_5 === 'Accepted in SC' || vendor_status_6 === 'Accepted in SC' || vendor_status_7 === 'Accepted in SC' || vendor_status_8 === 'Accepted in SC' || vendor_status_9 === 'Accepted in SC' || vendor_status_10 === 'Accepted in SC' || vendor_status_10 === 'Did Not Accept (List Exhausted)'",
+                    "activateIf": "resume_phase === 'Phase 8: Resolution (Already Accepted)' || ['Priority Lowered', 'Other Approved Result'].includes(fs_action) || ['Lowers priority', 'Other Approved Result'].includes(rm_action) || ['Lowers priority', 'Other Approved Result'].includes(oncall_action) || tech1_timer_result === 'Accepted' || tech2_timer_result === 'Accepted' || fs_timer_result === 'Accepted' || rm_timer_result === 'Accepted' || oncall_timer_result === 'Accepted' || vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || vendor_status_3 === 'Accepted in SC' || vendor_status_4 === 'Accepted in SC' || vendor_status_5 === 'Accepted in SC' || vendor_status_6 === 'Accepted in SC' || vendor_status_7 === 'Accepted in SC' || vendor_status_8 === 'Accepted in SC' || vendor_status_9 === 'Accepted in SC' || vendor_status_10 === 'Accepted in SC' || vendor_status_10 === 'Did Not Accept (List Exhausted)'",
                     "description": "Process the acceptance or wait for SC."
                 }
             ],
@@ -211,6 +218,7 @@ window.DispatchAssistantConfig = {
                         "Phase 4: Tech Call 2",
                         "Phase 5: FS Manager",
                         "Phase 6: Regional Manager",
+                        "Phase 6b: On-Call Manager",
                         "Phase 7: Vendor Assignment",
                         "Phase 8: Resolution (Already Accepted)"
                     ],
@@ -503,6 +511,69 @@ window.DispatchAssistantConfig = {
                         "Did Not Accept"
                     ],
                     "visibleIf": "['Assigns a tech', 'Will handle assignment'].includes(rm_action)"
+                },
+                {
+                    "id": "oncall_name",
+                    "label": "On-Call Manager Name",
+                    "type": "text",
+                    "phase": "phase-6b-oncall",
+                    "required": true
+                },
+                {
+                    "id": "oncall_action",
+                    "label": "On-Call Manager Action",
+                    "type": "select",
+                    "options": [
+                        "Assigns a tech",
+                        "Will handle assignment",
+                        "Assign a vendor",
+                        "Lowers priority",
+                        "Other Approved Result",
+                        "No Answer / Voicemail Left",
+                        "Nothing changes after 15 minutes"
+                    ],
+                    "phase": "phase-6b-oncall",
+                    "required": true
+                },
+                {
+                    "id": "oncall_new_priority",
+                    "label": "New Priority Selected",
+                    "type": "select",
+                    "options": [
+                        "P1-Onsite w/i 24 hours",
+                        "P2-Onsite w/i 48 hours",
+                        "P3-Onsite w/i 3 days",
+                        "P5-Onsite w/i 5 days",
+                        "P7-Onsite w/i 7 days",
+                        "P21-Onsite w/i 21 days",
+                        "Scheduled Service",
+                        "Tech Initiated"
+                    ],
+                    "phase": "phase-6b-oncall",
+                    "visibleIf": "oncall_action === 'Lowers priority'"
+                },
+                {
+                    "id": "timer_15min_oncall",
+                    "label": "Wait 15 Mins For On-Call Assignment/Acceptance",
+                    "type": "timerStartButton",
+                    "phase": "phase-6b-oncall",
+                    "duration": "15",
+                    "options": [
+                        "Wait 15 mins for SC Acceptance"
+                    ],
+                    "visibleIf": "['Assigns a tech', 'Will handle assignment'].includes(oncall_action)"
+                },
+                {
+                    "id": "oncall_timer_result",
+                    "label": "Did they accept?",
+                    "type": "select",
+                    "phase": "phase-6b-oncall",
+                    "required": true,
+                    "options": [
+                        "Accepted",
+                        "Did Not Accept"
+                    ],
+                    "visibleIf": "['Assigns a tech', 'Will handle assignment'].includes(oncall_action)"
                 },
                 {
                     "id": "vendor_name",
@@ -948,6 +1019,12 @@ window.DispatchAssistantConfig = {
                     "title": "Phase 6: Regional Manager Escalation",
                     "showOnlyOnPhase": "phase-6-rm",
                     "content": "<div class=\"rounded border-l-4 border-red-500 bg-red-900/20 p-3 text-sm\">\n                <h3 class=\"mb-2 font-bold text-red-400\">Step 6 - Contact Regional Manager</h3>\n                <pre class=\"whitespace-pre-wrap break-words bg-gray-900 border border-gray-700 rounded-lg p-3 whitespace-pre-wrap\"><code>Hello, this is [Your Name] from Upstream Facility Services. I am calling about emergency {trade} Work Order {work_order} for Store {store_number}. We completed the tech and FS Manager steps. We need help with the next step for emergency coverage. Please advise.</code></pre>\n                \n<h4 class=\"mt-4 mb-2 font-bold text-red-400\">Voicemail Script</h4>\n<pre class=\"whitespace-pre-wrap break-words bg-gray-900 border border-gray-700 rounded-lg p-3\"><code>Hello, this is [Your Name] from Upstream Facility Services calling regarding emergency {trade} Work Order {work_order} for Store {store_number}. We have completed the escalation path and require your assistance for emergency coverage. Please call us back at 844-319-3543.</code></pre>\n                <div class=\"mt-4 flex items-center justify-between\">\n                    <h4 class=\"font-bold text-red-400\">RM Note Template</h4>\n                    <button class=\"rounded bg-red-600 px-2 py-1 text-xs hover:bg-red-700 text-white font-bold\" onclick=\"navigator.clipboard.writeText(`Reference#: {dispatch_ref} | Called Regional Manager {rm_name} about emergency {trade} Work Order {work_order} | Tech and FS Manager contact result: Escalated | RM response: {rm_action}{_rm_lowered} | Notes were added to Oracle and ServiceChannel.`)\">Copy</button>\n                </div>\n                <pre class=\"whitespace-pre-wrap break-words mt-2 rounded-lg border border-gray-700 bg-gray-900 p-3\"><code>Reference#: {dispatch_ref} | Called Regional Manager {rm_name} about emergency {trade} Work Order {work_order} | Tech and FS Manager contact result: Escalated | RM response: {rm_action}{_rm_lowered} | Notes were added to Oracle and ServiceChannel.</code></pre>\n            </div>"
+                },
+                {
+                    "id": "step-6b-oncall",
+                    "title": "Phase 6b: On-Call Manager Escalation",
+                    "showOnlyOnPhase": "phase-6b-oncall",
+                    "content": "<div class=\"rounded border-l-4 border-purple-500 bg-purple-900/20 p-3 text-sm\">\n                <h3 class=\"mb-2 font-bold text-purple-400\">Step 6b - Contact On-Call Manager</h3>\n                <pre class=\"whitespace-pre-wrap break-words bg-gray-900 border border-gray-700 rounded-lg p-3\"><code>Hello, this is [Your Name] from Upstream Facility Services. I am calling about emergency {trade} Work Order {work_order} for Store {store_number}. We completed the tech, FS Manager, and RM steps. We need help with the next step for emergency coverage. Please advise.</code></pre>\n                \n<h4 class=\"mt-4 mb-2 font-bold text-purple-400\">Voicemail Script</h4>\n<pre class=\"whitespace-pre-wrap break-words bg-gray-900 border border-gray-700 rounded-lg p-3\"><code>Hello, this is [Your Name] from Upstream Facility Services calling regarding emergency {trade} Work Order {work_order} for Store {store_number}. We have completed the escalation path and require your assistance for emergency coverage. Please call us back at 844-319-3543.</code></pre>\n                <div class=\"mt-4 flex items-center justify-between\">\n                    <h4 class=\"font-bold text-purple-400\">On-Call Note Template</h4>\n                    <button class=\"rounded bg-purple-600 px-2 py-1 text-xs hover:bg-purple-700 text-white font-bold\" onclick=\"navigator.clipboard.writeText(`Reference#: {dispatch_ref} | Called On-Call Manager {oncall_name} about emergency {trade} Work Order {work_order} | Tech, FS Manager, and RM contact result: Escalated | On-Call response: {oncall_action}{_oncall_lowered} | Timer Result: {oncall_timer_result} | Notes were added to Oracle and ServiceChannel.`)\">Copy</button>\n                </div>\n                <pre class=\"whitespace-pre-wrap break-words mt-2 rounded-lg border border-gray-700 bg-gray-900 p-3\"><code>Reference#: {dispatch_ref} | Called On-Call Manager {oncall_name} about emergency {trade} Work Order {work_order} | Tech, FS Manager, and RM contact result: Escalated | On-Call response: {oncall_action}{_oncall_lowered} | Timer Result: {oncall_timer_result} | Notes were added to Oracle and ServiceChannel.</code></pre>\n            </div>"
                 },
                 {
                     "id": "step-7-vendor",
