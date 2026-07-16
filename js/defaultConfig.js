@@ -1,9 +1,21 @@
 window.DispatchAssistantConfig = {
-    "version": "1.0.0",
-    "lastUpdated": "2026-07-11",
+    "version": "1.0.2",
+    "lastUpdated": "2026-07-16",
     "author": "Andrew Toothman",
-    "changeDescription": "Migrated Dispatch to its own standalone app. Overhauled note template formatting for Dispatch profile. Reverted version to 1.0.0",
+    "changeDescription": "Updated Dispatch profile made QoL fixes",
     "history": [
+        {
+            "version": "1.0.2",
+            "date": "2026-07-16",
+            "author": "Andrew Toothman",
+            "description": "Updated Dispatch profile made QoL fixes"
+        },
+        {
+            "version": "1.0.1",
+            "date": "2026-07-11",
+            "author": "Andrew Toothman",
+            "description": "Migrated Dispatch to its own standalone app. Overhauled note template formatting for Dispatch profile. Reverted version to 1.0.0"
+        },
         {
             "version": "1.1.0",
             "date": "2026-07-06",
@@ -22,7 +34,7 @@ window.DispatchAssistantConfig = {
         "DISPATCH": {
             "name": "Dispatches Workflow",
             "type": "DISPATCH",
-            "noteTemplate": "Reference#: {dispatch_ref}\nTrade: {trade}\n\nStore Number: {store_number}\nWO Number: {work_order}\nPriority: {priority}\n\nRack: {rack}\nAffected Assets: {assets}\nEMR Result: {emr_result}\n\nWorkflow Started At: {resume_phase}\n\nStore Contact:\n  Name: {store_mgr_name}\n  Position: {contact_position}\n    Other: {contact_position_other}\n  Result: {store_answ}\n\nTechnician Contact:\n  Tech/Vendor: {tech_name}\n    Attempt 1: {tech1_answ}\n    Attempt 2: {tech2_answ}\n  Decline Reason:\n    Tech Attempt 1: {tech1_decline_reason}\n    Tech Attempt 2: {tech2_decline_reason}\n\nFS Manager Contact:\n  Name: {fs_name}\n  Response: {fs_action}\n    New Priority: {fs_new_priority}\n\nRegional Manager Contact:\n  Name: {rm_name}\n  Response: {rm_action}\n    New Priority: {rm_new_priority}\n\nVendor Assignment:\n  Vendor 1:\n    Name: {vendor_name}\n    Rank: {vendor_rank}\n    Status: {vendor_status}\n  Vendor 2:\n    Name: {vendor_name_2}\n    Rank: {vendor_rank_2}\n    Status: {vendor_status_2}\n  Vendor 3:\n    Name: {vendor_name_3}\n    Rank: {vendor_rank_3}\n    Status: {vendor_status_3}\n  Vendor 4:\n    Name: {vendor_name_4}\n    Rank: {vendor_rank_4}\n    Status: {vendor_status_4}\n  Vendor 5:\n    Name: {vendor_name_5}\n    Rank: {vendor_rank_5}\n    Status: {vendor_status_5}\n  Vendor 6:\n    Name: {vendor_name_6}\n    Rank: {vendor_rank_6}\n    Status: {vendor_status_6}\n  Vendor 7:\n    Name: {vendor_name_7}\n    Rank: {vendor_rank_7}\n    Status: {vendor_status_7}\n  Vendor 8:\n    Name: {vendor_name_8}\n    Rank: {vendor_rank_8}\n    Status: {vendor_status_8}\n  Vendor 9:\n    Name: {vendor_name_9}\n    Rank: {vendor_rank_9}\n    Status: {vendor_status_9}\n  Vendor 10:\n    Name: {vendor_name_10}\n    Rank: {vendor_rank_10}\n    Status: {vendor_status_10}\n\nWork Order Status: {wo_status}",
+            "noteTemplate": "Reference#: {dispatch_ref}\nTrade: {trade}\n\nStore Number: {store_number}\nWO Number: {work_order}\nPriority: {priority}\n\nAffected Assets: {assets} on {rack}\nEMR Result: {emr_result}\n\nWorkflow Started At: {resume_phase}\n\nStore Contact:\n  Name: {store_mgr_name}\n  Position: {contact_position}\n    Other: {contact_position_other}\n  Result: {store_answ}\n\nTechnician Contact:\n  Tech/Vendor: {tech_name}\n    Attempt 1: {tech1_answ}\n    Attempt 2: {tech2_answ}\n  Decline Reason:\n    Tech Attempt 1: {tech1_decline_reason}\n    Tech Attempt 2: {tech2_decline_reason}\n\nFS Manager Contact:\n  Name: {fs_name}\n  Response: {fs_action}\n    New Priority: {fs_new_priority}\n\nRegional Manager Contact:\n  Name: {rm_name}\n  Response: {rm_action}\n    New Priority: {rm_new_priority}\n\nVendor Assignment:\n  Vendor 1:\n    Name: {vendor_name}\n    Rank: {vendor_rank}\n    Status: {vendor_status}\n  Vendor 2:\n    Name: {vendor_name_2}\n    Rank: {vendor_rank_2}\n    Status: {vendor_status_2}\n\nWork Order Status: {wo_status}",
             "crystalAttributes": {
                 "issueArea": "Refrigeration",
                 "problemType": "Emergency",
@@ -113,7 +125,7 @@ window.DispatchAssistantConfig = {
                     "id": "phase-8-resolution",
                     "title": "Phase 8: Resolution & Acceptance",
                     "sequence": 8,
-                    "activateIf": "resume_phase === 'Phase 8: Resolution (Already Accepted)' || ['Priority Lowered', 'Other Approved Result'].includes(fs_action) || ['Lowers priority', 'Other Approved Result'].includes(rm_action) || tech1_timer_result === 'Accepted' || tech2_timer_result === 'Accepted' || fs_timer_result === 'Accepted' || rm_timer_result === 'Accepted' || vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || vendor_status_3 === 'Accepted in SC' || vendor_status_4 === 'Accepted in SC' || vendor_status_5 === 'Accepted in SC' || vendor_status_6 === 'Accepted in SC' || vendor_status_7 === 'Accepted in SC' || vendor_status_8 === 'Accepted in SC' || vendor_status_9 === 'Accepted in SC' || vendor_status_10 === 'Accepted in SC' || (vendor_status === 'Did Not Accept (List Exhausted)' || vendor_status_2 === 'Did Not Accept (List Exhausted)' || vendor_status_3 === 'Did Not Accept (List Exhausted)' || vendor_status_4 === 'Did Not Accept (List Exhausted)' || vendor_status_5 === 'Did Not Accept (List Exhausted)' || vendor_status_6 === 'Did Not Accept (List Exhausted)' || vendor_status_7 === 'Did Not Accept (List Exhausted)' || vendor_status_8 === 'Did Not Accept (List Exhausted)' || vendor_status_9 === 'Did Not Accept (List Exhausted)' || vendor_status_10 === 'Did Not Accept (List Exhausted)')",
+                    "activateIf": "resume_phase === 'Phase 8: Resolution (Already Accepted)' || vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || ['Priority Lowered', 'Other Approved Result'].includes(fs_action) || ['Lowers priority', 'Other Approved Result'].includes(rm_action) || vendor_status_2 === 'Did Not Accept (List Exhausted)' || tech1_timer_result === 'Accepted' || tech2_timer_result === 'Accepted' || fs_timer_result === 'Accepted' || rm_timer_result === 'Accepted'",
                     "description": "Process the acceptance or wait for SC."
                 }
             ],
@@ -176,7 +188,7 @@ window.DispatchAssistantConfig = {
                 },
                 {
                     "id": "rack",
-                    "label": "Rack",
+                    "label": "Associated Rack/System",
                     "type": "text",
                     "source": "parsed_rack_associated",
                     "phase": "phase-1-init"
@@ -526,7 +538,6 @@ window.DispatchAssistantConfig = {
                     "options": [
                         "Waiting for Acceptance",
                         "Did Not Accept (Next Vendor)",
-                        "Did Not Accept (List Exhausted)",
                         "Accepted in SC"
                     ],
                     "phase": "phase-7-vendor",
@@ -564,323 +575,11 @@ window.DispatchAssistantConfig = {
                     "type": "select",
                     "options": [
                         "Waiting for Acceptance",
-                        "Did Not Accept (Next Vendor)",
                         "Did Not Accept (List Exhausted)",
                         "Accepted in SC"
                     ],
                     "phase": "phase-7-vendor",
                     "visibleIf": "vendor_name_2 !== ''",
-                    "required": true
-                },
-                {
-                    "id": "vendor_name_3",
-                    "label": "Vendor 3 Name",
-                    "type": "text",
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_status_2 === 'Did Not Accept (Next Vendor)'"
-                },
-                {
-                    "id": "vendor_rank_3",
-                    "label": "Vendor 3 Rank",
-                    "type": "text",
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_3 !== ''"
-                },
-                {
-                    "id": "timer_30min_vendor3",
-                    "label": "Start 30-Minute Vendor Timer",
-                    "type": "timerStartButton",
-                    "duration": "30",
-                    "options": [
-                        "Wait 30 mins for Vendor 3"
-                    ],
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_3 !== ''"
-                },
-                {
-                    "id": "vendor_status_3",
-                    "label": "Vendor 3 Status",
-                    "type": "select",
-                    "options": [
-                        "Waiting for Acceptance",
-                        "Did Not Accept (Next Vendor)",
-                        "Did Not Accept (List Exhausted)",
-                        "Accepted in SC"
-                    ],
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_3 !== ''",
-                    "required": true
-                },
-                {
-                    "id": "vendor_name_4",
-                    "label": "Vendor 4 Name",
-                    "type": "text",
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_status_3 === 'Did Not Accept (Next Vendor)'"
-                },
-                {
-                    "id": "vendor_rank_4",
-                    "label": "Vendor 4 Rank",
-                    "type": "text",
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_4 !== ''"
-                },
-                {
-                    "id": "timer_30min_vendor4",
-                    "label": "Start 30-Minute Vendor Timer",
-                    "type": "timerStartButton",
-                    "duration": "30",
-                    "options": [
-                        "Wait 30 mins for Vendor 4"
-                    ],
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_4 !== ''"
-                },
-                {
-                    "id": "vendor_status_4",
-                    "label": "Vendor 4 Status",
-                    "type": "select",
-                    "options": [
-                        "Waiting for Acceptance",
-                        "Did Not Accept (Next Vendor)",
-                        "Did Not Accept (List Exhausted)",
-                        "Accepted in SC"
-                    ],
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_4 !== ''",
-                    "required": true
-                },
-                {
-                    "id": "vendor_name_5",
-                    "label": "Vendor 5 Name",
-                    "type": "text",
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_status_4 === 'Did Not Accept (Next Vendor)'"
-                },
-                {
-                    "id": "vendor_rank_5",
-                    "label": "Vendor 5 Rank",
-                    "type": "text",
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_5 !== ''"
-                },
-                {
-                    "id": "timer_30min_vendor5",
-                    "label": "Start 30-Minute Vendor Timer",
-                    "type": "timerStartButton",
-                    "duration": "30",
-                    "options": [
-                        "Wait 30 mins for Vendor 5"
-                    ],
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_5 !== ''"
-                },
-                {
-                    "id": "vendor_status_5",
-                    "label": "Vendor 5 Status",
-                    "type": "select",
-                    "options": [
-                        "Waiting for Acceptance",
-                        "Did Not Accept (Next Vendor)",
-                        "Did Not Accept (List Exhausted)",
-                        "Accepted in SC"
-                    ],
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_5 !== ''",
-                    "required": true
-                },
-                {
-                    "id": "vendor_name_6",
-                    "label": "Vendor 6 Name",
-                    "type": "text",
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_status_5 === 'Did Not Accept (Next Vendor)'"
-                },
-                {
-                    "id": "vendor_rank_6",
-                    "label": "Vendor 6 Rank",
-                    "type": "text",
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_6 !== ''"
-                },
-                {
-                    "id": "timer_30min_vendor6",
-                    "label": "Start 30-Minute Vendor Timer",
-                    "type": "timerStartButton",
-                    "duration": "30",
-                    "options": [
-                        "Wait 30 mins for Vendor 6"
-                    ],
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_6 !== ''"
-                },
-                {
-                    "id": "vendor_status_6",
-                    "label": "Vendor 6 Status",
-                    "type": "select",
-                    "options": [
-                        "Waiting for Acceptance",
-                        "Did Not Accept (Next Vendor)",
-                        "Did Not Accept (List Exhausted)",
-                        "Accepted in SC"
-                    ],
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_6 !== ''",
-                    "required": true
-                },
-                {
-                    "id": "vendor_name_7",
-                    "label": "Vendor 7 Name",
-                    "type": "text",
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_status_6 === 'Did Not Accept (Next Vendor)'"
-                },
-                {
-                    "id": "vendor_rank_7",
-                    "label": "Vendor 7 Rank",
-                    "type": "text",
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_7 !== ''"
-                },
-                {
-                    "id": "timer_30min_vendor7",
-                    "label": "Start 30-Minute Vendor Timer",
-                    "type": "timerStartButton",
-                    "duration": "30",
-                    "options": [
-                        "Wait 30 mins for Vendor 7"
-                    ],
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_7 !== ''"
-                },
-                {
-                    "id": "vendor_status_7",
-                    "label": "Vendor 7 Status",
-                    "type": "select",
-                    "options": [
-                        "Waiting for Acceptance",
-                        "Did Not Accept (Next Vendor)",
-                        "Did Not Accept (List Exhausted)",
-                        "Accepted in SC"
-                    ],
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_7 !== ''",
-                    "required": true
-                },
-                {
-                    "id": "vendor_name_8",
-                    "label": "Vendor 8 Name",
-                    "type": "text",
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_status_7 === 'Did Not Accept (Next Vendor)'"
-                },
-                {
-                    "id": "vendor_rank_8",
-                    "label": "Vendor 8 Rank",
-                    "type": "text",
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_8 !== ''"
-                },
-                {
-                    "id": "timer_30min_vendor8",
-                    "label": "Start 30-Minute Vendor Timer",
-                    "type": "timerStartButton",
-                    "duration": "30",
-                    "options": [
-                        "Wait 30 mins for Vendor 8"
-                    ],
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_8 !== ''"
-                },
-                {
-                    "id": "vendor_status_8",
-                    "label": "Vendor 8 Status",
-                    "type": "select",
-                    "options": [
-                        "Waiting for Acceptance",
-                        "Did Not Accept (Next Vendor)",
-                        "Did Not Accept (List Exhausted)",
-                        "Accepted in SC"
-                    ],
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_8 !== ''",
-                    "required": true
-                },
-                {
-                    "id": "vendor_name_9",
-                    "label": "Vendor 9 Name",
-                    "type": "text",
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_status_8 === 'Did Not Accept (Next Vendor)'"
-                },
-                {
-                    "id": "vendor_rank_9",
-                    "label": "Vendor 9 Rank",
-                    "type": "text",
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_9 !== ''"
-                },
-                {
-                    "id": "timer_30min_vendor9",
-                    "label": "Start 30-Minute Vendor Timer",
-                    "type": "timerStartButton",
-                    "duration": "30",
-                    "options": [
-                        "Wait 30 mins for Vendor 9"
-                    ],
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_9 !== ''"
-                },
-                {
-                    "id": "vendor_status_9",
-                    "label": "Vendor 9 Status",
-                    "type": "select",
-                    "options": [
-                        "Waiting for Acceptance",
-                        "Did Not Accept (Next Vendor)",
-                        "Did Not Accept (List Exhausted)",
-                        "Accepted in SC"
-                    ],
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_9 !== ''",
-                    "required": true
-                },
-                {
-                    "id": "vendor_name_10",
-                    "label": "Vendor 10 Name",
-                    "type": "text",
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_status_9 === 'Did Not Accept (Next Vendor)'"
-                },
-                {
-                    "id": "vendor_rank_10",
-                    "label": "Vendor 10 Rank",
-                    "type": "text",
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_10 !== ''"
-                },
-                {
-                    "id": "timer_30min_vendor10",
-                    "label": "Start 30-Minute Vendor Timer",
-                    "type": "timerStartButton",
-                    "duration": "30",
-                    "options": [
-                        "Wait 30 mins for Vendor 10"
-                    ],
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_10 !== ''"
-                },
-                {
-                    "id": "vendor_status_10",
-                    "label": "Vendor 10 Status",
-                    "type": "select",
-                    "options": [
-                        "Waiting for Acceptance",
-                        "Did Not Accept (List Exhausted)",
-                        "Accepted in SC"
-                    ],
-                    "phase": "phase-7-vendor",
-                    "visibleIf": "vendor_name_10 !== ''",
                     "required": true
                 },
                 {
@@ -974,7 +673,7 @@ window.DispatchAssistantConfig = {
                 {
                     "id": "terminal-exhausted",
                     "title": "🛑 Workflow Halted: List Exhausted",
-                    "showIf": "(vendor_status === 'Did Not Accept (List Exhausted)' || vendor_status_2 === 'Did Not Accept (List Exhausted)' || vendor_status_3 === 'Did Not Accept (List Exhausted)' || vendor_status_4 === 'Did Not Accept (List Exhausted)' || vendor_status_5 === 'Did Not Accept (List Exhausted)' || vendor_status_6 === 'Did Not Accept (List Exhausted)' || vendor_status_7 === 'Did Not Accept (List Exhausted)' || vendor_status_8 === 'Did Not Accept (List Exhausted)' || vendor_status_9 === 'Did Not Accept (List Exhausted)' || vendor_status_10 === 'Did Not Accept (List Exhausted)') && wo_status === ''",
+                    "showIf": "vendor_status_2 === 'Did Not Accept (List Exhausted)' && wo_status === ''",
                     "content": "<div class=\"rounded border-l-4 border-red-500 bg-red-900/20 p-3 text-sm\">\n            <h4 class=\"font-bold text-red-400 mb-2\">Process Exhausted - Re-Escalate</h4>\n            <p>No approved vendors are left. Re-engage the FS Manager or Operations Manager for manual intervention.</p>\n            <pre class=\"whitespace-pre-wrap break-words mt-2 bg-gray-900 border border-gray-700 rounded-lg p-3 whitespace-pre-wrap\"><code>Hello, this is [Your Name] calling from Upstream Facility Services regarding emergency {trade} Work Order {work_order} for Store {store_number}.\nWe have exhausted the eligible vendor list and currently have no coverage. Please advise on next steps.</code></pre>\n            <div class=\"mt-4 flex items-center justify-between\">\n                <h4 class=\"font-bold text-red-400\">Escalation Note Template</h4>\n                <button class=\"rounded bg-red-600 px-2 py-1 text-xs hover:bg-red-700 text-white font-bold\" onclick=\"navigator.clipboard.writeText(`Reference#: {dispatch_ref} | Vendor list exhausted | Escalating back to FS/Operations Manager for assignment help.`)\">Copy</button>\n            </div>\n            <pre class=\"whitespace-pre-wrap break-words mt-2 rounded-lg border border-gray-700 bg-gray-900 p-3 whitespace-pre-wrap\"><code>Reference#: {dispatch_ref} | Vendor list exhausted | Escalating back to FS/Operations Manager for assignment help.</code></pre>\n        </div>",
                     "showOnlyOnPhase": "phase-8-resolution"
                 }
