@@ -92,28 +92,28 @@ window.DispatchAssistantConfig = {
                     "id": "phase-5-fs",
                     "title": "Phase 5: FS Manager Escalation",
                     "sequence": 5,
-                    "activateIf": "resume_phase === 'Phase 5: FS Manager' || ['Declined', 'Cannot Meet SLA', 'Cannot Support Work', 'Asks for new assignment', 'No clear answer'].includes(tech1_answ) || ['Declined', 'Cannot Meet SLA', 'Cannot Support Work', 'Asks for new assignment', 'No Answer / Left Voicemail'].includes(tech2_answ)",
+                    "activateIf": "resume_phase === 'Phase 5: FS Manager' || ['Declined', 'Cannot Meet SLA', 'Cannot Support Work', 'Asks for new assignment', 'No clear answer'].includes(tech1_answ) || ['Declined', 'Cannot Meet SLA', 'Cannot Support Work', 'Asks for new assignment', 'No Answer / Left Voicemail'].includes(tech2_answ) || tech1_timer_result === 'Did Not Accept' || tech2_timer_result === 'Did Not Accept'",
                     "description": "Contact FS Manager for next steps."
                 },
                 {
                     "id": "phase-6-rm",
                     "title": "Phase 6: Regional Manager Escalation",
                     "sequence": 6,
-                    "activateIf": "resume_phase === 'Phase 6: Regional Manager' || fs_action === 'No Answer / Voicemail Left' || fs_action === 'Nothing changes after 15 minutes'",
+                    "activateIf": "resume_phase === 'Phase 6: Regional Manager' || fs_action === 'No Answer / Voicemail Left' || fs_action === 'Nothing changes after 15 minutes' || fs_timer_result === 'Did Not Accept'",
                     "description": "Contact RM Manager for next steps."
                 },
                 {
                     "id": "phase-7-vendor",
                     "title": "Phase 7: Vendor Assignment",
                     "sequence": 7,
-                    "activateIf": "resume_phase === 'Phase 7: Vendor Assignment' || rm_action === 'No Answer / Voicemail Left' || rm_action === 'Nothing changes after 15 minutes' || fs_action === 'Assign a vendor' || rm_action === 'Assign a vendor'",
+                    "activateIf": "resume_phase === 'Phase 7: Vendor Assignment' || rm_action === 'No Answer / Voicemail Left' || rm_action === 'Nothing changes after 15 minutes' || fs_action === 'Assign a vendor' || rm_action === 'Assign a vendor' || rm_timer_result === 'Did Not Accept'",
                     "description": "Manually assign the next eligible vendor."
                 },
                 {
                     "id": "phase-8-resolution",
                     "title": "Phase 8: Resolution & Acceptance",
                     "sequence": 8,
-                    "activateIf": "resume_phase === 'Phase 8: Resolution (Already Accepted)' || vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || tech1_answ === 'Agreed to Accept' || tech2_answ === 'Agreed to Accept' || ['Priority Lowered', 'Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept', 'Other Approved Result'].includes(fs_action) || ['Assigns a tech', 'Will handle assignment', 'Lowers priority', 'Other Approved Result'].includes(rm_action) || vendor_status_2 === 'Did Not Accept (List Exhausted)'",
+                    "activateIf": "resume_phase === 'Phase 8: Resolution (Already Accepted)' || vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || ['Priority Lowered', 'Other Approved Result'].includes(fs_action) || ['Lowers priority', 'Other Approved Result'].includes(rm_action) || vendor_status_2 === 'Did Not Accept (List Exhausted)' || tech1_timer_result === 'Accepted' || tech2_timer_result === 'Accepted' || fs_timer_result === 'Accepted' || rm_timer_result === 'Accepted'",
                     "description": "Process the acceptance or wait for SC."
                 }
             ],
@@ -288,6 +288,18 @@ window.DispatchAssistantConfig = {
                     "visibleIf": "tech1_answ === 'Agreed to Accept'"
                 },
                 {
+                    "id": "tech1_timer_result",
+                    "label": "Did they accept?",
+                    "type": "select",
+                    "phase": "phase-3-tech1",
+                    "required": true,
+                    "options": [
+                        "Accepted",
+                        "Did Not Accept"
+                    ],
+                    "visibleIf": "tech1_answ === 'Agreed to Accept'"
+                },
+                {
                     "id": "timer_5min_tech1",
                     "label": "Wait 5 Mins Before Attempt 2",
                     "type": "timerStartButton",
@@ -329,6 +341,18 @@ window.DispatchAssistantConfig = {
                     "duration": "15",
                     "options": [
                         "Wait 15 mins for SC Acceptance"
+                    ],
+                    "visibleIf": "tech2_answ === 'Agreed to Accept'"
+                },
+                {
+                    "id": "tech2_timer_result",
+                    "label": "Did they accept?",
+                    "type": "select",
+                    "phase": "phase-4-tech2",
+                    "required": true,
+                    "options": [
+                        "Accepted",
+                        "Did Not Accept"
                     ],
                     "visibleIf": "tech2_answ === 'Agreed to Accept'"
                 },
@@ -396,6 +420,18 @@ window.DispatchAssistantConfig = {
                     "visibleIf": "['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept', 'No Answer / Voicemail Left'].includes(fs_action)"
                 },
                 {
+                    "id": "fs_timer_result",
+                    "label": "Did they accept?",
+                    "type": "select",
+                    "phase": "phase-5-fs",
+                    "required": true,
+                    "options": [
+                        "Accepted",
+                        "Did Not Accept"
+                    ],
+                    "visibleIf": "['Assigns new tech', 'Said they will assign', 'Assign named tech', 'Current tech will accept', 'No Answer / Voicemail Left'].includes(fs_action)"
+                },
+                {
                     "id": "rm_name",
                     "label": "Regional Manager Name",
                     "type": "text",
@@ -446,6 +482,18 @@ window.DispatchAssistantConfig = {
                     "duration": "15",
                     "options": [
                         "Wait 15 mins for SC Acceptance"
+                    ],
+                    "visibleIf": "['Assigns a tech', 'Will handle assignment'].includes(rm_action)"
+                },
+                {
+                    "id": "rm_timer_result",
+                    "label": "Did they accept?",
+                    "type": "select",
+                    "phase": "phase-6-rm",
+                    "required": true,
+                    "options": [
+                        "Accepted",
+                        "Did Not Accept"
                     ],
                     "visibleIf": "['Assigns a tech', 'Will handle assignment'].includes(rm_action)"
                 },
