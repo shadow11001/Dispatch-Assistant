@@ -874,6 +874,13 @@ const UI = {
                 let contentText = section.content || '';
                 // Dynamic math/variable interpolation inside SOP content!
                 if (contentText.includes('{') && contentText.includes('}')) {                      // Custom string formatting for priority bounds before standard vars
+                      
+                      contentText = contentText.replace(/{_store_email_format}/g, () => {
+                          const storeVal = this.formState['store_number'];
+                          if (!storeVal) return '00000';
+                          return String(storeVal).padStart(5, '0');
+                      });
+
                       contentText = contentText.replace(/{_fs_lowered}/g, () => {
                           const action = this.formState['fs_action'];
                           const newPrio = this.formState['fs_new_priority'];
