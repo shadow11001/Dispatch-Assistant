@@ -113,7 +113,7 @@ window.DispatchAssistantConfig = {
                     "id": "phase-8-resolution",
                     "title": "Phase 8: Resolution & Acceptance",
                     "sequence": 8,
-                    "activateIf": "resume_phase === 'Phase 8: Resolution (Already Accepted)' || ['Priority Lowered', 'Other Approved Result'].includes(fs_action) || ['Lowers priority', 'Other Approved Result'].includes(rm_action) || tech1_timer_result === 'Accepted' || tech2_timer_result === 'Accepted' || fs_timer_result === 'Accepted' || rm_timer_result === 'Accepted' || vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || vendor_status_3 === 'Accepted in SC' || vendor_status_4 === 'Accepted in SC' || vendor_status_5 === 'Accepted in SC' || vendor_status_6 === 'Accepted in SC' || vendor_status_7 === 'Accepted in SC' || vendor_status_8 === 'Accepted in SC' || vendor_status_9 === 'Accepted in SC' || vendor_status_10 === 'Accepted in SC' || vendor_status_10 === 'Did Not Accept (List Exhausted)'",
+                    "activateIf": "resume_phase === 'Phase 8: Resolution (Already Accepted)' || ['Priority Lowered', 'Other Approved Result'].includes(fs_action) || ['Lowers priority', 'Other Approved Result'].includes(rm_action) || tech1_timer_result === 'Accepted' || tech2_timer_result === 'Accepted' || fs_timer_result === 'Accepted' || rm_timer_result === 'Accepted' || vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || vendor_status_3 === 'Accepted in SC' || vendor_status_4 === 'Accepted in SC' || vendor_status_5 === 'Accepted in SC' || vendor_status_6 === 'Accepted in SC' || vendor_status_7 === 'Accepted in SC' || vendor_status_8 === 'Accepted in SC' || vendor_status_9 === 'Accepted in SC' || vendor_status_10 === 'Accepted in SC' || (vendor_status === 'Did Not Accept (List Exhausted)' || vendor_status_2 === 'Did Not Accept (List Exhausted)' || vendor_status_3 === 'Did Not Accept (List Exhausted)' || vendor_status_4 === 'Did Not Accept (List Exhausted)' || vendor_status_5 === 'Did Not Accept (List Exhausted)' || vendor_status_6 === 'Did Not Accept (List Exhausted)' || vendor_status_7 === 'Did Not Accept (List Exhausted)' || vendor_status_8 === 'Did Not Accept (List Exhausted)' || vendor_status_9 === 'Did Not Accept (List Exhausted)' || vendor_status_10 === 'Did Not Accept (List Exhausted)')",
                     "description": "Process the acceptance or wait for SC."
                 }
             ],
@@ -526,6 +526,7 @@ window.DispatchAssistantConfig = {
                     "options": [
                         "Waiting for Acceptance",
                         "Did Not Accept (Next Vendor)",
+                        "Did Not Accept (List Exhausted)",
                         "Accepted in SC"
                     ],
                     "phase": "phase-7-vendor",
@@ -564,6 +565,7 @@ window.DispatchAssistantConfig = {
                     "options": [
                         "Waiting for Acceptance",
                         "Did Not Accept (Next Vendor)",
+                        "Did Not Accept (List Exhausted)",
                         "Accepted in SC"
                     ],
                     "phase": "phase-7-vendor",
@@ -602,6 +604,7 @@ window.DispatchAssistantConfig = {
                     "options": [
                         "Waiting for Acceptance",
                         "Did Not Accept (Next Vendor)",
+                        "Did Not Accept (List Exhausted)",
                         "Accepted in SC"
                     ],
                     "phase": "phase-7-vendor",
@@ -640,6 +643,7 @@ window.DispatchAssistantConfig = {
                     "options": [
                         "Waiting for Acceptance",
                         "Did Not Accept (Next Vendor)",
+                        "Did Not Accept (List Exhausted)",
                         "Accepted in SC"
                     ],
                     "phase": "phase-7-vendor",
@@ -678,6 +682,7 @@ window.DispatchAssistantConfig = {
                     "options": [
                         "Waiting for Acceptance",
                         "Did Not Accept (Next Vendor)",
+                        "Did Not Accept (List Exhausted)",
                         "Accepted in SC"
                     ],
                     "phase": "phase-7-vendor",
@@ -716,6 +721,7 @@ window.DispatchAssistantConfig = {
                     "options": [
                         "Waiting for Acceptance",
                         "Did Not Accept (Next Vendor)",
+                        "Did Not Accept (List Exhausted)",
                         "Accepted in SC"
                     ],
                     "phase": "phase-7-vendor",
@@ -754,6 +760,7 @@ window.DispatchAssistantConfig = {
                     "options": [
                         "Waiting for Acceptance",
                         "Did Not Accept (Next Vendor)",
+                        "Did Not Accept (List Exhausted)",
                         "Accepted in SC"
                     ],
                     "phase": "phase-7-vendor",
@@ -792,6 +799,7 @@ window.DispatchAssistantConfig = {
                     "options": [
                         "Waiting for Acceptance",
                         "Did Not Accept (Next Vendor)",
+                        "Did Not Accept (List Exhausted)",
                         "Accepted in SC"
                     ],
                     "phase": "phase-7-vendor",
@@ -830,6 +838,7 @@ window.DispatchAssistantConfig = {
                     "options": [
                         "Waiting for Acceptance",
                         "Did Not Accept (Next Vendor)",
+                        "Did Not Accept (List Exhausted)",
                         "Accepted in SC"
                     ],
                     "phase": "phase-7-vendor",
@@ -965,7 +974,7 @@ window.DispatchAssistantConfig = {
                 {
                     "id": "terminal-exhausted",
                     "title": "🛑 Workflow Halted: List Exhausted",
-                    "showIf": "vendor_status_10 === 'Did Not Accept (List Exhausted)' && wo_status === ''",
+                    "showIf": "(vendor_status === 'Did Not Accept (List Exhausted)' || vendor_status_2 === 'Did Not Accept (List Exhausted)' || vendor_status_3 === 'Did Not Accept (List Exhausted)' || vendor_status_4 === 'Did Not Accept (List Exhausted)' || vendor_status_5 === 'Did Not Accept (List Exhausted)' || vendor_status_6 === 'Did Not Accept (List Exhausted)' || vendor_status_7 === 'Did Not Accept (List Exhausted)' || vendor_status_8 === 'Did Not Accept (List Exhausted)' || vendor_status_9 === 'Did Not Accept (List Exhausted)' || vendor_status_10 === 'Did Not Accept (List Exhausted)') && wo_status === ''",
                     "content": "<div class=\"rounded border-l-4 border-red-500 bg-red-900/20 p-3 text-sm\">\n            <h4 class=\"font-bold text-red-400 mb-2\">Process Exhausted - Re-Escalate</h4>\n            <p>No approved vendors are left. Re-engage the FS Manager or Operations Manager for manual intervention.</p>\n            <pre class=\"whitespace-pre-wrap break-words mt-2 bg-gray-900 border border-gray-700 rounded-lg p-3 whitespace-pre-wrap\"><code>Hello, this is [Your Name] calling from Upstream Facility Services regarding emergency {trade} Work Order {work_order} for Store {store_number}.\nWe have exhausted the eligible vendor list and currently have no coverage. Please advise on next steps.</code></pre>\n            <div class=\"mt-4 flex items-center justify-between\">\n                <h4 class=\"font-bold text-red-400\">Escalation Note Template</h4>\n                <button class=\"rounded bg-red-600 px-2 py-1 text-xs hover:bg-red-700 text-white font-bold\" onclick=\"navigator.clipboard.writeText(`Reference#: {dispatch_ref} | Vendor list exhausted | Escalating back to FS/Operations Manager for assignment help.`)\">Copy</button>\n            </div>\n            <pre class=\"whitespace-pre-wrap break-words mt-2 rounded-lg border border-gray-700 bg-gray-900 p-3 whitespace-pre-wrap\"><code>Reference#: {dispatch_ref} | Vendor list exhausted | Escalating back to FS/Operations Manager for assignment help.</code></pre>\n        </div>",
                     "showOnlyOnPhase": "phase-8-resolution"
                 }
