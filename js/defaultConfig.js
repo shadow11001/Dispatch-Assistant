@@ -1,9 +1,15 @@
 window.DispatchAssistantConfig = {
-    "version": "1.0.2",
+    "version": "1.0.3",
     "lastUpdated": "2026-07-16",
     "author": "Andrew Toothman",
-    "changeDescription": "Updated Dispatch profile made QoL fixes",
+    "changeDescription": "Fixed voicemail bugs",
     "history": [
+        {
+            "version": "1.0.3",
+            "date": "2026-07-16",
+            "author": "Andrew Toothman",
+            "description": "Fixed voicemail bugs."
+        },
         {
             "version": "1.0.2",
             "date": "2026-07-16",
