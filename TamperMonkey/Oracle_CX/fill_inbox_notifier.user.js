@@ -90,13 +90,15 @@
             }
         }
 
+
         if (fillInboxButton) {
+            infoPanel.style.display = 'block';
             fillInboxButton.click();
             statusEl.innerText = 'Polling...';
         } else {
-            statusEl.innerText = 'Button not found';
-            statusEl.style.color = 'yellow';
+            infoPanel.style.display = 'none';
         }
+
     }
 
     // Start auto-polling loop
