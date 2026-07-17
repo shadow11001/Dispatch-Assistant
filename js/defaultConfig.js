@@ -96,7 +96,7 @@ window.DispatchAssistantConfig = {
                     "id": "phase-3-tech1",
                     "title": "Phase 3: Tech Contact Attempt 1",
                     "sequence": 3,
-                    "activateIf": "resume_phase === 'Phase 3: Tech Call 1' || store_answ === 'Answered' || store_answ === 'No Answer / Left Voicemail'",
+                    "activateIf": "resume_phase === 'Phase 3: Tech Call 1' || store_answ === 'Answered' || store_answ === 'No Answer / Left Voicemail' || store_answ === 'Tech is already assigned'",
                     "description": "Call the assigned technician."
                 },
                 {
@@ -131,7 +131,7 @@ window.DispatchAssistantConfig = {
                     "id": "phase-8-resolution",
                     "title": "Phase 8: Resolution & Acceptance",
                     "sequence": 8,
-                    "activateIf": "resume_phase === 'Phase 8: Resolution (Already Accepted)' || vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || ['Priority Lowered', 'Other Approved Result'].includes(fs_action) || ['Lowers priority', 'Other Approved Result'].includes(rm_action) || vendor_status_2 === 'Did Not Accept (List Exhausted)' || tech1_timer_result === 'Accepted' || tech2_timer_result === 'Accepted' || fs_timer_result === 'Accepted' || rm_timer_result === 'Accepted'",
+                    "activateIf": "resume_phase === 'Phase 8: Resolution (Already Accepted)' || vendor_status === 'Accepted in SC' || vendor_status_2 === 'Accepted in SC' || ['Priority Lowered', 'Other Approved Result'].includes(fs_action) || ['Lowers priority', 'Other Approved Result'].includes(rm_action) || vendor_status_2 === 'Did Not Accept (List Exhausted)' || tech1_timer_result === 'Accepted' || tech1_answ === 'Already Accepted' || tech2_timer_result === 'Accepted' || fs_timer_result === 'Accepted' || rm_timer_result === 'Accepted'",
                     "description": "Process the acceptance or wait for SC."
                 }
             ],
@@ -271,6 +271,7 @@ window.DispatchAssistantConfig = {
                     "options": [
                         "Answered",
                         "No Answer / Left Voicemail",
+                        "Tech is already assigned",
                         "Store Power Outage",
                         "Issue Fixed"
                     ],
@@ -291,6 +292,7 @@ window.DispatchAssistantConfig = {
                     "options": [
                         "",
                         "Agreed to Accept",
+                        "Already Accepted",
                         "No Answer / Left Voicemail",
                         "Declined",
                         "Cannot Meet SLA",
@@ -300,6 +302,12 @@ window.DispatchAssistantConfig = {
                     ],
                     "phase": "phase-3-tech1",
                     "required": true
+                },
+                {
+                    "id": "tech1_answ_already_accepted",
+                    "type": "html",
+                    "content": "<p class=\"text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded p-2 mt-2\"><strong><i class=\"fa-solid fa-copy\"></i> Quick Copy (Already Accepted Note):</strong> <button class=\"px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded border border-gray-300 text-xs font-medium text-gray-700\" onclick=\"navigator.clipboard.writeText(`Reference#: {dispatch_ref} | Tech {tech_name} already accepted emergency {trade} Work Order {work_order} | Result: Already Accepted | Notes were added to Oracle and ServiceChannel.`)\">Copy</button></p>",
+                    "visibleIf": "tech1_answ === 'Already Accepted'"
                 },
                 {
                     "id": "timer_15min_tech1",
