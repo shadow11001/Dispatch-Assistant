@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Oracle CX Auto Fill Inbox Notifier
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  Automates pressing "Fill Inbox", intercepting the fillInbox request, and playing a sound if successful.
 // @author       Andrew Toothman - vn580fc
 // @match        https://centralops.custhelp.com/AgentWeb/*
