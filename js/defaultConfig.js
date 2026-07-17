@@ -279,6 +279,12 @@ window.DispatchAssistantConfig = {
                     "required": true
                 },
                 {
+                    "id": "store_answ_tech_assigned",
+                    "type": "html",
+                    "content": "<p class=\"text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded p-2 mt-2\"><strong><i class=\"fa-solid fa-copy\"></i> Quick Copy (Already Assigned):</strong> <button class=\"px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded border border-gray-300 text-xs font-medium text-gray-700\" onclick=\"navigator.clipboard.writeText(`Reference#: {dispatch_ref} | Called store about emergency {trade} Work Order {work_order} | Store reports tech already assigned | Moving to Tech Attempt 1.`)\">Copy</button></p>",
+                    "visibleIf": "store_answ === 'Tech is already assigned'"
+                },
+                {
                     "id": "tech_name",
                     "label": "Tech Name",
                     "type": "text",
@@ -306,7 +312,7 @@ window.DispatchAssistantConfig = {
                 {
                     "id": "tech1_answ_already_accepted",
                     "type": "html",
-                    "content": "<p class=\"text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded p-2 mt-2\"><strong><i class=\"fa-solid fa-copy\"></i> Quick Copy (Already Accepted Note):</strong> <button class=\"px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded border border-gray-300 text-xs font-medium text-gray-700\" onclick=\"navigator.clipboard.writeText(`Reference#: {dispatch_ref} | Tech {tech_name} already accepted emergency {trade} Work Order {work_order} | Result: Already Accepted | Notes were added to Oracle and ServiceChannel.`)\">Copy</button></p>",
+                    "content": "<p class=\"text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded p-2 mt-2\"><strong><i class=\"fa-solid fa-copy\"></i> Quick Copy (Already Accepted):</strong> <button class=\"px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded border border-gray-300 text-xs font-medium text-gray-700\" onclick=\"navigator.clipboard.writeText(`Reference#: {dispatch_ref} | Tech {tech_name} already accepted emergency {trade} Work Order {work_order} | Result: Already Accepted | Notes were added to Oracle and ServiceChannel.`)\">Copy</button></p>",
                     "visibleIf": "tech1_answ === 'Already Accepted'"
                 },
                 {
