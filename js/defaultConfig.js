@@ -40,7 +40,7 @@ window.DispatchAssistantConfig = {
         "DISPATCH": {
             "name": "Dispatches Workflow",
             "type": "DISPATCH",
-            "noteTemplate": "Reference#: {dispatch_ref}\nTrade: {trade}\n\nStore Number: {store_number}\nWO Number: {work_order}\nPriority: {priority}\n\nAffected Assets: {assets} on {rack}\nEMR Result: {emr_result}\n\nWorkflow Started At: {resume_phase}\n\nStore Contact:\n  Name: {store_mgr_name}\n  Position: {contact_position}\n    Other: {contact_position_other}\n  Result: {store_answ}\n\nTechnician Contact:\n  Tech/Vendor: {tech_name}\n    Attempt 1: {tech1_answ}\n    Attempt 2: {tech2_answ}\n  Decline Reason:\n    Tech Attempt 1: {tech1_decline_reason}\n    Tech Attempt 2: {tech2_decline_reason}\n\nFS Manager Contact:\n  Name: {fs_name}\n  Response: {fs_action}\n    New Priority: {fs_new_priority}\n\nRegional Manager Contact:\n  Name: {rm_name}\n  Response: {rm_action}\n    New Priority: {rm_new_priority}\n\nVendor Assignment:\n  Vendor 1:\n    Name: {vendor_name}\n    Rank: {vendor_rank}\n    Status: {vendor_status}\n  Vendor 2:\n    Name: {vendor_name_2}\n    Rank: {vendor_rank_2}\n    Status: {vendor_status_2}\n\nWork Order Status: {wo_status}",
+            "noteTemplate": "Reference#: {dispatch_ref}\nTrade: {trade}\n\nStore Number: {store_number}\nWO Number: {work_order}\nPriority: {priority}\n\nRack: {rack}\nAffected Assets: {assets} on {rack}\nEMR Result: {emr_result}\n\nWorkflow Started At: {resume_phase}\n\nStore Contact:\n  Name: {store_mgr_name}\n  Position: {contact_position}\n    Other: {contact_position_other}\n  Result: {store_answ}\n\nTechnician Contact:\n  Tech/Vendor: {tech_name}\n    Attempt 1: {tech1_answ}\n    Attempt 2: {tech2_answ}\n  Decline Reason:\n    Tech Attempt 1: {tech1_decline_reason}\n    Tech Attempt 2: {tech2_decline_reason}\n\nFS Manager Contact:\n  Name: {fs_name}\n  Response: {fs_action}\n    New Priority: {fs_new_priority}\n\nRegional Manager Contact:\n  Name: {rm_name}\n  Response: {rm_action}\n    New Priority: {rm_new_priority}\n\nVendor Assignment:\n  Vendor 1:\n    Name: {vendor_name}\n    Rank: {vendor_rank}\n    Status: {vendor_status}\n  Vendor 2:\n    Name: {vendor_name_2}\n    Rank: {vendor_rank_2}\n    Status: {vendor_status_2}\n\nWork Order Status: {wo_status}",
             "crystalAttributes": {
                 "issueArea": "Refrigeration",
                 "problemType": "Emergency",
@@ -194,9 +194,9 @@ window.DispatchAssistantConfig = {
                 },
                 {
                     "id": "rack",
-                    "label": "Associated Rack/System",
+                    "label": "Rack",
                     "type": "text",
-                    "source": "parsed_rack_associated",
+                    "source": "parsed_rack",
                     "phase": "phase-1-init"
                 },
                 {
