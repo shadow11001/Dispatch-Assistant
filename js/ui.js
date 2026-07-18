@@ -845,7 +845,7 @@ const UI = {
             backBtn.innerText = "Back";
             backBtn.onclick = () => {
                 this.currentPhaseIndex--;
-                this.renderPhasedWorkflow();
+                this._debouncedPhaseRender();
             };
             navContainer.appendChild(backBtn);
         }
@@ -890,7 +890,7 @@ const UI = {
                 this.completedPhases.push(currentPhase.id);
             }
             this.currentPhaseIndex++;
-            this.renderPhasedWorkflow();
+            this._debouncedPhaseRender();
             };
         navContainer.appendChild(nextBtn);
         this.dynamicQuestions.appendChild(navContainer);

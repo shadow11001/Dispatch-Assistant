@@ -64,18 +64,29 @@ const DecisionEngine = {
             // Always show required/intro sections
             if (section.alwaysShow) return true;
             
+            let shouldShow = false;
+
             // Show ONLY on this specific phase, hide afterwards
             if (section.showOnlyOnPhase) {
-                return (section.showOnlyOnPhase === currentPhaseId);
+                if (section.showOnlyOnPhase !== currentPhaseId) return false;
+                shouldShow = true;
             }
 
             // Show if specific condition matches
-            if (section.showIf && this.checkCondition(section.showIf, formData)) return true;
+            if (section.showIf) {
+                if (!this.checkCondition(section.showIf, formData)) return false;
+                shouldShow = true;
+            }
             
             // Show if a certain workflow phase just completed
-            if (section.showAfter && section.showAfter === lastCompletedPhase) return true;
+            if (section.showAfter) {
+                if (section.showAfter !== lastCompletedPhase) return false;
+                shouldShow = true;
+            }
             
-            return false;
+            // If neither showOnlyOnPhase, showIf, or showAfter was provided, but isn't always show, we return false.
+            // If at least one was evaluated and passes the logical AND checks (didn't early return false), we return true.
+            return shouldShow;
         });
     },
 
