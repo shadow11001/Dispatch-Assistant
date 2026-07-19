@@ -1,9 +1,16 @@
-window.DispatchAssistantConfig = {
-  "version": "1.0.4",
-  "lastUpdated": "2026-07-17",
+window.DispatchAssistantConfig = 
+{
+  "version": "1.0.5",
+  "lastUpdated": "2026-07-19",
   "author": "Andrew Toothman",
-  "changeDescription": "Updated Dispatch Profile and made QoL fixes.",
+  "changeDescription": "Fixed a bug found by Jannetha",
   "history": [
+    {
+      "version": "1.0.5",
+      "date": "2026-07-19",
+      "author": "Andrew Toothman",
+      "description": "Fixed a bug found by Jannetha"
+    },
     {
       "version": "1.0.4",
       "date": "2026-07-17",
@@ -985,7 +992,7 @@ window.DispatchAssistantConfig = {
           "title": "Phase 3: Tech Call 1",
           "showOnlyOnPhase": "phase-3-tech1",
           "content": "<div class=\"rounded border-l-4 border-blue-500 bg-blue-900/20 p-3 text-sm\">\n                <h3 class=\"mb-2 font-bold text-blue-400\">Step 3 - Contact the Assigned Technician</h3>\n                <pre class=\"whitespace-pre-wrap break-words bg-gray-900 border border-gray-700 rounded-lg p-3 whitespace-pre-wrap\"><code>Hello, this is [Your Name] from Upstream Facility Services calling regarding emergency {trade} Work Order {work_order} for Store {store_number}.\nThe affected equipment listed in ServiceChannel is {assets} on {rack}.\nThis is a {priority} work order. Can you complete this work within the required SLA?</code></pre>\n                \n<h4 class=\"mt-4 mb-2 font-bold text-blue-400\">Voicemail Script</h4>\n<pre class=\"whitespace-pre-wrap break-words bg-gray-900 border border-gray-700 rounded-lg p-3\"><code>Hello, this is [Your Name] from Upstream Facility Services calling regarding emergency {trade} Work Order {work_order} for Store {store_number}. The affected equipment listed in ServiceChannel is {assets} on {rack}. This is a {priority} work order. We will attempt to call back in the next 5 minutes for the second attempt.</code></pre>\n                <div class=\"mt-4 flex items-center justify-between\">\n                    <h4 class=\"font-bold text-blue-400\">Call Note Template</h4>\n                    <button class=\"rounded bg-blue-600 px-2 py-1 text-xs hover:bg-blue-700 text-white font-bold\" onclick=\"navigator.clipboard.writeText(`Reference#: {dispatch_ref} | Call 1 | Called assigned tech {tech_name} about emergency {trade} Work Order {work_order} | Result: {tech1_answ} | Timer Result: {tech1_timer_result} | Notes were added to Oracle and ServiceChannel.`)\">Copy</button>\n                </div>\n                <pre class=\"whitespace-pre-wrap break-words mt-2 rounded-lg border border-gray-700 bg-gray-900 p-3\"><code>Reference#: {dispatch_ref} | Call 1 | Called assigned tech {tech_name} about emergency {trade} Work Order {work_order} | Result: {tech1_answ} | Timer Result: {tech1_timer_result} | Notes were added to Oracle and ServiceChannel.</code></pre>\n            </div>",
-          "showIf": "tech1_answ === 'Agreed to Accept'"
+          "showIf": "tech1_answ === 'Agreed to Accept' || tech1_answ === ''"
         },
         {
           "id": "step-3-tech1-accepted",
@@ -1013,7 +1020,7 @@ window.DispatchAssistantConfig = {
           "title": "Phase 4: Tech Call 2",
           "showOnlyOnPhase": "phase-4-tech2",
           "content": "<div class=\"rounded border-l-4 border-yellow-500 bg-yellow-900/20 p-3 text-sm\">\n                <h3 class=\"mb-2 font-bold text-yellow-400\">Step 4 - Second Call Attempt</h3>\n                <p>Call #1 was not answered. Waiting 5 minutes.</p>\n                <pre class=\"whitespace-pre-wrap break-words mt-2 bg-gray-900 border border-gray-700 rounded-lg p-3 whitespace-pre-wrap\"><code>Hello, this is [Your Name] from Upstream Facility Services. I am calling again about emergency {trade} Work Order {work_order} for Store {store_number}. Can you complete this work within the required SLA?</code></pre>\n                \n<h4 class=\"mt-4 mb-2 font-bold text-yellow-400\">Voicemail Script</h4>\n<pre class=\"whitespace-pre-wrap break-words bg-gray-900 border border-gray-700 rounded-lg p-3\"><code>Hello, this is [Your Name] from Upstream Facility Services calling regarding emergency {trade} Work Order {work_order} for Store {store_number}. The affected equipment listed in ServiceChannel is {assets} on {rack}. This is a {priority} work order. We will now call the next escalation point.</code></pre>\n                <div class=\"mt-4 flex items-center justify-between\">\n                    <h4 class=\"font-bold text-yellow-400\">Call 2 Note Template</h4>\n                    <button class=\"rounded bg-yellow-600 px-2 py-1 text-xs hover:bg-yellow-700 text-white font-bold\" onclick=\"navigator.clipboard.writeText(`Reference#: {dispatch_ref} | Call 2 | Called assigned tech {tech_name} about emergency {trade} Work Order {work_order} | Result: {tech2_answ} | Timer Result: {tech2_timer_result} | Notes were added to Oracle and ServiceChannel.`)\">Copy</button>\n                </div>\n                <pre class=\"whitespace-pre-wrap break-words mt-2 rounded-lg border border-gray-700 bg-gray-900 p-3\"><code>Reference#: {dispatch_ref} | Call 2 | Called assigned tech {tech_name} about emergency {trade} Work Order {work_order} | Result: {tech2_answ} | Timer Result: {tech2_timer_result} | Notes were added to Oracle and ServiceChannel.</code></pre>\n            </div>",
-          "showIf": "tech2_answ === 'Agreed to Accept'"
+          "showIf": "tech2_answ === 'Agreed to Accept' || tech2_answ === ''"
         },
         {
           "id": "step-4-tech2-voicemail",
