@@ -233,6 +233,18 @@ window.DispatchAssistantConfig =
           "required": true
         },
         {
+          "id": "duplicate_store_check",
+          "label": "Avoid Duplicate Store Calls: Confirmed store was not already called?",
+          "type": "select",
+          "options": [
+            "",
+            "Yes - No Prior Contact",
+            "Yes - Prior Contact Confirmed"
+          ],
+          "phase": "phase-1-init",
+          "required": true
+        },
+        {
           "id": "resume_phase",
           "label": "Start Workflow At",
           "type": "select",
@@ -956,6 +968,12 @@ window.DispatchAssistantConfig =
       ],
       "sopSections": [
         {
+          "id": "step-1-triage",
+          "title": "Phase 1: Automated Triage & VCC",
+          "showOnlyOnPhase": "phase-1-init",
+          "content": "<div class=\"rounded border-l-4 border-indigo-500 bg-indigo-900/20 p-3 text-sm mb-4\">\n  <h4 class=\"font-bold text-indigo-400 mb-2\">Automated Work-Order Triage</h4>\n  <ul class=\"list-disc pl-5 space-y-1\">\n    <li>Review system readings, alarm history, and trends.</li>\n    <li><strong>Defrost Check:</strong> A unit displaying <strong>DF (Defrost)</strong> is NOT an emergency condition alone. Verify before dispatching.</li>\n    <li><strong>Consolidation:</strong> Attach related high-temperature work orders to existing emergency rack-failure work orders to prevent duplicates.</li>\n  </ul>\n</div>\n<div class=\"rounded border-l-4 border-green-500 bg-green-900/20 p-3 text-sm\">\n  <h4 class=\"font-bold text-green-400 mb-2\">VCC Status Expectation</h4>\n  <p>Remain in <strong>Available</strong> (do not use Special Project AUX). Use <strong>ACW</strong> for documentation. In the disposition notes, enter <strong>ONLY the Work Order #</strong>.</p>\n</div>"
+        },
+        {
           "id": "step-1-init",
           "title": "Phase 1: Initial Investigation",
           "showOnlyOnPhase": "phase-1-init",
@@ -1040,7 +1058,7 @@ window.DispatchAssistantConfig =
           "id": "step-5-fsm",
           "title": "Phase 5: FS Manager Escalation",
           "showOnlyOnPhase": "phase-5-fs",
-          "content": "<div class=\"rounded border-l-4 border-orange-500 bg-orange-900/20 p-3 text-sm\">\n                <h3 class=\"mb-2 font-bold text-orange-400\">Step 5 - Contact FS Manager</h3>\n                <pre class=\"whitespace-pre-wrap break-words bg-gray-900 border border-gray-700 rounded-lg p-3 whitespace-pre-wrap\"><code>Hello, this is [Your Name] calling from Upstream Facility Services regarding emergency {trade} Work Order {work_order} for Store {store_number}.\nWe completed the required tech calls. We need your help with the next step for emergency coverage. The affected equipment is {assets} on {rack}. Please advise.</code></pre>\n                \n<h4 class=\"mt-4 mb-2 font-bold text-orange-400\">Voicemail Script</h4>\n<pre class=\"whitespace-pre-wrap break-words bg-gray-900 border border-gray-700 rounded-lg p-3\"><code>Hello, this is [Your Name] from Upstream Facility Services calling regarding emergency {trade} Work Order {work_order} for Store {store_number}. The affected equipment listed in ServiceChannel is {assets} on {rack}. This is a {priority} work order. We will now call the next escalation point.</code></pre>\n                <div class=\"mt-4 flex items-center justify-between\">\n                    <h4 class=\"font-bold text-orange-400\">FSM Note Template</h4>\n                    <button class=\"rounded bg-orange-600 px-2 py-1 text-xs hover:bg-orange-700 text-white font-bold\" onclick=\"navigator.clipboard.writeText(`Reference#: {dispatch_ref} | Called FS Manager {fs_name} about emergency {trade} Work Order {work_order} | Tech contact result: Escalated | FS Manager response: {fs_action}{_fs_lowered} | Timer Result: {fs_timer_result} | Notes were added to Oracle and ServiceChannel.`)\">Copy</button>\n                </div>\n                <pre class=\"whitespace-pre-wrap break-words mt-2 rounded-lg border border-gray-700 bg-gray-900 p-3\"><code>Reference#: {dispatch_ref} | Called FS Manager {fs_name} about emergency {trade} Work Order {work_order} | Tech contact result: Escalated | FS Manager response: {fs_action}{_fs_lowered} | Timer Result: {fs_timer_result} | Notes were added to Oracle and ServiceChannel.</code></pre>\n            </div>"
+          "content": "<div class=\"rounded border-l-4 border-orange-500 bg-orange-900/20 p-3 text-sm\">\n                <h3 class=\"mb-2 font-bold text-orange-400\">Step 5 - Contact FS Manager</h3>\n                <pre class=\"whitespace-pre-wrap break-words bg-gray-900 border border-gray-700 rounded-lg p-3 whitespace-pre-wrap\"><code>Hello, this is [Your Name] calling from Upstream Facility Services regarding emergency {trade} Work Order {work_order} for Store {store_number}.\nWe completed the required tech calls. We need your help with the next step for emergency coverage. The affected equipment is {assets} on {rack}. Please advise.</code></pre>\n                \n<h4 class=\"mt-4 mb-2 font-bold text-orange-400\">Voicemail Script</h4>\n<pre class=\"whitespace-pre-wrap break-words bg-gray-900 border border-gray-700 rounded-lg p-3\"><code>Hello, this is [Your Name] from Upstream Facility Services calling regarding emergency {trade} Work Order {work_order} for Store {store_number}. The affected equipment listed in ServiceChannel is {assets} on {rack}. This is a {priority} work order. We will now call the next escalation point.</code></pre>\n                <div class=\"mt-4 flex items-center justify-between\">\n                    <h4 class=\"font-bold text-orange-400\">FSM Note Template</h4>\n                    <button class=\"rounded bg-orange-600 px-2 py-1 text-xs hover:bg-orange-700 text-white font-bold\" onclick=\"navigator.clipboard.writeText(`Reference#: {dispatch_ref} | Called FS Manager {fs_name} about emergency {trade} Work Order {work_order} | Tech contact result: Escalated | FS Manager response: {fs_action}{_fs_lowered} | Timer Result: {fs_timer_result} | Notes were added to Oracle and ServiceChannel.`)\">Copy</button>\n                </div>\n                <pre class=\"whitespace-pre-wrap break-words mt-2 rounded-lg border border-gray-700 bg-gray-900 p-3\"><code>Reference#: {dispatch_ref} | Called FS Manager {fs_name} about emergency {trade} Work Order {work_order} | Tech contact result: Escalated | FS Manager response: {fs_action}{_fs_lowered} | Timer Result: {fs_timer_result} | Notes were added to Oracle and ServiceChannel.</code></pre>\n            </div><div class=\"rounded border-l-4 border-gray-500 bg-gray-900/20 p-3 text-sm mt-4\">\n<h4 class=\"font-bold text-gray-400 mb-2\">Unnecessary Contacts Feedback</h4>\n<p>If a technician or manager advises this call was unnecessary, document their feedback and the \"Why\" in the Operations Tracer so we can improve the triage filters.</p>\n</div>"
         },
         {
           "id": "step-6-rm",
